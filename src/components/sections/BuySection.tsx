@@ -131,7 +131,7 @@ export default function BuySection({ resourceId, price }: BuySectionProps) {
                 toast.info("Verification taking longer than usual.", { description: "Please refresh the page in a minute." });
               }
             }
-          } catch (e) {
+          } catch {
             // keep polling
           }
         }, 3000);
