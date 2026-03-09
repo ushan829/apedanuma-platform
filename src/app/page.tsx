@@ -1,101 +1,180 @@
-import Image from "next/image";
+import Link from "next/link";
+import HeroSection from "@/components/sections/HeroSection";
 
-export default function Home() {
+export default function HomePage() {
   return (
-    <div className="grid grid-rows-[20px_1fr_20px] items-center justify-items-center min-h-screen p-8 pb-20 gap-16 sm:p-20 font-[family-name:var(--font-geist-sans)]">
-      <main className="flex flex-col gap-8 row-start-2 items-center sm:items-start">
-        <Image
-          className="dark:invert"
-          src="https://nextjs.org/icons/next.svg"
-          alt="Next.js logo"
-          width={180}
-          height={38}
-          priority
-        />
-        <ol className="list-inside list-decimal text-sm text-center sm:text-left font-[family-name:var(--font-geist-mono)]">
-          <li className="mb-2">
-            Get started by editing{" "}
-            <code className="bg-black/[.05] dark:bg-white/[.06] px-1 py-0.5 rounded font-semibold">
-              src/app/page.tsx
-            </code>
-            .
-          </li>
-          <li>Save and see your changes instantly.</li>
-        </ol>
+    <main className="relative overflow-hidden">
 
-        <div className="flex gap-4 items-center flex-col sm:flex-row">
-          <a
-            className="rounded-full border border-solid border-transparent transition-colors flex items-center justify-center bg-foreground text-background gap-2 hover:bg-[#383838] dark:hover:bg-[#ccc] text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="https://nextjs.org/icons/vercel.svg"
-              alt="Vercel logomark"
-              width={20}
-              height={20}
-            />
-            Deploy now
-          </a>
-          <a
-            className="rounded-full border border-solid border-black/[.08] dark:border-white/[.145] transition-colors flex items-center justify-center hover:bg-[#f2f2f2] dark:hover:bg-[#1a1a1a] hover:border-transparent text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 sm:min-w-44"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Read our docs
-          </a>
+      {/* ── Hero ── */}
+      <HeroSection />
+
+      {/* ── Features Grid ── */}
+      <section className="section z-10 relative">
+        <div className="container-xl">
+          <div className="text-center mb-16 space-y-4">
+            <div className="badge-gold mx-auto w-fit">Why Ape Danuma</div>
+            <h2 className="text-balance">
+              Everything you need to{" "}
+              <span className="text-gradient-luminary">ace your O/Ls</span>
+            </h2>
+            <p className="max-w-xl mx-auto" style={{ color: "var(--foreground-secondary)" }}>
+              We provide the most comprehensive, high-quality study materials designed
+              specifically for Sri Lankan English Medium students.
+            </p>
+          </div>
+
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+            {features.map((f, i) => (
+              <div
+                key={f.title}
+                className={`card ${i === 0 ? "card-accent" : i === 2 ? "card-gold" : ""}`}
+              >
+                <div
+                  className="mb-4 flex h-11 w-11 items-center justify-center rounded-xl text-xl"
+                  style={{
+                    background: i % 3 === 0
+                      ? "rgba(124,31,255,0.12)"
+                      : i % 3 === 2
+                      ? "rgba(245,158,11,0.12)"
+                      : "rgba(255,255,255,0.05)",
+                    border: `1px solid ${
+                      i % 3 === 0
+                        ? "rgba(124,31,255,0.25)"
+                        : i % 3 === 2
+                        ? "rgba(245,158,11,0.25)"
+                        : "rgba(255,255,255,0.08)"
+                    }`,
+                  }}
+                >
+                  {f.icon}
+                </div>
+                <h4 className="mb-2 font-display font-semibold" style={{ color: "var(--foreground)" }}>
+                  {f.title}
+                </h4>
+                <p className="text-sm leading-relaxed" style={{ color: "var(--foreground-secondary)" }}>
+                  {f.description}
+                </p>
+              </div>
+            ))}
+          </div>
         </div>
-      </main>
-      <footer className="row-start-3 flex gap-6 flex-wrap items-center justify-center">
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
+      </section>
+
+      {/* ── CTA Banner ── */}
+      <section className="section z-10 relative">
+        <div className="container-xl">
+          <div
+            className="rounded-3xl p-12 text-center relative overflow-hidden"
+            style={{
+              background:
+                "linear-gradient(135deg, rgba(124,31,255,0.12) 0%, rgba(10,10,10,0.8) 50%, rgba(245,158,11,0.08) 100%)",
+              border: "1px solid rgba(124,31,255,0.2)",
+              boxShadow:
+                "0 0 60px rgba(124,31,255,0.1), inset 0 1px 0 rgba(255,255,255,0.06)",
+            }}
+          >
+            <div
+              className="absolute -top-20 -left-20 rounded-full opacity-30"
+              style={{
+                width: 300, height: 300,
+                background: "radial-gradient(circle, rgba(124,31,255,0.3), transparent 70%)",
+                filter: "blur(40px)",
+              }}
+            />
+            <div
+              className="absolute -bottom-20 -right-20 rounded-full opacity-20"
+              style={{
+                width: 280, height: 280,
+                background: "radial-gradient(circle, rgba(245,158,11,0.3), transparent 70%)",
+                filter: "blur(40px)",
+              }}
+            />
+
+            <div className="relative z-10 space-y-6">
+              <div className="badge-accent mx-auto w-fit">Limited Enrollment Open</div>
+              <h2 className="text-balance max-w-2xl mx-auto">
+                Your journey to{" "}
+                <span className="text-gradient-premium">fluent, powerful English</span>{" "}
+                begins today
+              </h2>
+              <p className="max-w-lg mx-auto" style={{ color: "var(--foreground-secondary)" }}>
+                Join thousands of learners who have transformed their communication,
+                careers, and confidence with Ape Danuma EM.
+              </p>
+              <div className="flex flex-wrap justify-center gap-4 pt-2">
+                <a href="#" className="btn-primary px-10 py-3.5 text-base">Claim Your Spot</a>
+                <a href="#" className="btn-outline-accent px-10 py-3.5 text-base">View Curriculum</a>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* ── Footer ── */}
+      <footer className="border-t py-10 z-10 relative" style={{ borderColor: "var(--border)" }}>
+        <div
+          className="container-xl flex flex-col sm:flex-row items-center justify-between gap-4 text-sm"
+          style={{ color: "var(--foreground-muted)" }}
         >
-          <Image
-            aria-hidden
-            src="https://nextjs.org/icons/file.svg"
-            alt="File icon"
-            width={16}
-            height={16}
-          />
-          Learn
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="https://nextjs.org/icons/window.svg"
-            alt="Window icon"
-            width={16}
-            height={16}
-          />
-          Examples
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="https://nextjs.org/icons/globe.svg"
-            alt="Globe icon"
-            width={16}
-            height={16}
-          />
-          Go to nextjs.org →
-        </a>
+          <span className="font-display font-semibold flex items-baseline gap-1.5">
+            <span style={{ color: "var(--foreground)" }}>Ape Danuma</span>
+            <span
+              style={{
+                background: "linear-gradient(135deg, #9455ff, #7c1fff)",
+                WebkitBackgroundClip: "text",
+                WebkitTextFillColor: "transparent",
+              }}
+            >
+              EM
+            </span>
+          </span>
+          <span>© {new Date().getFullYear()} Ape Danuma EM. All rights reserved.</span>
+          <div className="flex gap-5">
+            <Link href="/privacy" className="hover:text-white transition-colors" style={{ color: "var(--foreground-muted)" }}>Privacy</Link>
+            <Link href="/terms" className="hover:text-white transition-colors" style={{ color: "var(--foreground-muted)" }}>Terms</Link>
+            <Link href="/contact" className="hover:text-white transition-colors" style={{ color: "var(--foreground-muted)" }}>Contact</Link>
+          </div>
+        </div>
       </footer>
-    </div>
+    </main>
   );
 }
+
+const features = [
+  {
+    icon: "✦",
+    title: "Complete Resource Library",
+    description:
+      "Access thousands of past papers, term test papers, and model papers for all three terms in one organized place.",
+  },
+  {
+    icon: "⬡",
+    title: "All O/L Subjects Covered",
+    description:
+      "From Core subjects to Categories 1, 2, and 3, find dedicated study materials for every single subject you face.",
+  },
+  {
+    icon: "◈",
+    title: "Premium Short Notes",
+    description:
+      "Highly organized, beautifully formatted short notes designed specifically for quick revision and maximum retention.",
+  },
+  {
+    icon: "◉",
+    title: "Strictly Syllabus Aligned",
+    description:
+      "Every single note and paper is 100% aligned with the latest Sri Lankan G.C.E O/L English Medium curriculum.",
+  },
+  {
+    icon: "⬟",
+    title: "Smart Search & Filters",
+    description:
+      "Don't waste time scrolling. Find the exact grade, subject, and material type you need in seconds with our advanced filters.",
+  },
+  {
+    icon: "✧",
+    title: "High-Quality PDFs",
+    description:
+      "Crystal clear, professionally formatted PDF documents that are perfect for reading on any device or printing out.",
+  },
+];
