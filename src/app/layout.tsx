@@ -71,6 +71,11 @@ export default function RootLayout({
   return (
     <html lang="en" className={`${inter.variable} ${poppins.variable}`}>
       <body className="antialiased">
+        {/* Ghibli Touches: Background Clouds */}
+        <div className="ghibli-cloud" style={{ top: '15%', width: '300px', height: '150px', animationDelay: '0s' }} />
+        <div className="ghibli-cloud" style={{ top: '45%', width: '450px', height: '200px', animationDelay: '-20s' }} />
+        <div className="ghibli-cloud" style={{ top: '75%', width: '250px', height: '120px', animationDelay: '-40s' }} />
+        
         <Navbar />
         {children}
         <Toaster
