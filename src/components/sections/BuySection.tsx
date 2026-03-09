@@ -13,9 +13,34 @@ interface BuySectionProps {
 type PurchaseState = "loading" | "not-purchased" | "purchased";
 type DownloadState = "idle" | "downloading" | "error";
 
+interface PayHerePayment {
+  sandbox: boolean;
+  merchant_id: string;
+  return_url: string;
+  cancel_url: string;
+  notify_url: string;
+  order_id: string;
+  items: string;
+  amount: string;
+  currency: string;
+  hash: string;
+  first_name: string;
+  last_name: string;
+  email: string;
+  phone: string;
+  address: string;
+  city: string;
+  country: string;
+}
+
 declare global {
   interface Window {
-    payhere: any;
+    payhere: {
+      onCompleted: (orderId: string) => void;
+      onDismissed: () => void;
+      onError: (error: string) => void;
+      startPayment: (payment: PayHerePayment) => void;
+    };
   }
 }
 
@@ -42,7 +67,7 @@ export default function BuySection({ resourceId, price }: BuySectionProps) {
 
       const { orderId, hash, amount, merchantId, currency, environment, user, itemTitle } = await res.json();
 
-      const payment = {
+      const payment: PayHerePayment = {
         sandbox: environment === "sandbox",
         merchant_id: merchantId,
         return_url: window.location.origin + "/dashboard",
@@ -68,7 +93,7 @@ export default function BuySection({ resourceId, price }: BuySectionProps) {
         return;
       }
 
-      window.payhere.onCompleted = function onCompleted(orderId: string) {
+      window.payhere.onCompleted = function onCompleted() {
         toast.success("Payment Successful!", { description: "Your resource is now unlocked." });
         setState("purchased");
         router.refresh();
@@ -85,7 +110,7 @@ export default function BuySection({ resourceId, price }: BuySectionProps) {
       };
 
       window.payhere.startPayment(payment);
-    } catch (err) {
+    } catch (err: unknown) {
       console.error("[Purchase] Network error:", err);
       toast.error("Network Error", { description: "Failed to connect to the server." });
       setState("not-purchased");

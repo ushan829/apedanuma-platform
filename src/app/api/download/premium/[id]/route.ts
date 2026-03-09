@@ -113,8 +113,8 @@ export async function GET(
       .replace(/\s+/g, "-")
       .toLowerCase();
 
-    // Use transformToWebStream() and cast to any as Next.js 14 requires it for BodyInit
-    const stream = s3Response.Body.transformToWebStream() as any;
+    // Use transformToWebStream() — Next.js 14 natively supports ReadableStream in NextResponse
+    const stream = s3Response.Body.transformToWebStream();
 
     return new NextResponse(stream, {
       status: 200,
