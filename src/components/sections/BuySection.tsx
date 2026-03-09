@@ -65,14 +65,26 @@ export default function BuySection({ resourceId, price }: BuySectionProps) {
         return;
       }
 
-      const { orderId, hash, amount, merchantId, currency, environment, user, itemTitle } = await res.json();
+      const { 
+        orderId, 
+        hash, 
+        amount, 
+        merchantId, 
+        currency, 
+        environment, 
+        return_url,
+        cancel_url,
+        notify_url,
+        user, 
+        itemTitle 
+      } = await res.json();
 
       const payment: PayHerePayment = {
         sandbox: environment === "sandbox",
         merchant_id: merchantId,
-        return_url: window.location.origin + "/dashboard",
-        cancel_url: window.location.href,
-        notify_url: window.location.origin + "/api/payments/notify",
+        return_url: return_url,
+        cancel_url: cancel_url,
+        notify_url: notify_url,
         order_id: orderId,
         items: itemTitle || "Premium Resource",
         amount: amount,

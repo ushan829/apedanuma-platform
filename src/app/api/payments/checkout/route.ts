@@ -66,9 +66,9 @@ export async function POST(req: NextRequest) {
       });
     }
 
-    const merchantId = process.env.PAYHERE_MERCHANT_ID;
-    const merchantSecret = process.env.PAYHERE_SECRET;
-    const environment = process.env.PAYHERE_ENV || "sandbox";
+    const merchantId = (process.env.PAYHERE_MERCHANT_ID || "").trim();
+    const merchantSecret = (process.env.PAYHERE_SECRET || "").trim();
+    const environment = (process.env.PAYHERE_ENV || "sandbox").trim();
 
     if (!merchantId || !merchantSecret) {
       console.error("[Checkout POST] Missing PayHere credentials in ENV");
@@ -85,6 +85,7 @@ export async function POST(req: NextRequest) {
     console.log("🟢 PAYHERE HASH DEBUG:", { merchantId, orderId, formattedAmount, currency, hashString, hash });
 
     const nameParts = user.name.split(" ");
+    const baseUrl = (process.env.NEXTAUTH_URL || process.env.NEXT_PUBLIC_APP_URL || "https://english-apedanuma.vercel.app").trim().replace(/\/$/, "");
     
     return NextResponse.json({
       success: true,
@@ -94,6 +95,9 @@ export async function POST(req: NextRequest) {
       currency,
       merchantId,
       environment,
+      return_url: `${baseUrl}/dashboard`,
+      cancel_url: `${baseUrl}/premium-store`,
+      notify_url: `${baseUrl}/api/payments/notify`,
       user: {
         first_name: nameParts[0] || "Student",
         last_name: nameParts.slice(1).join(" ") || "User",
