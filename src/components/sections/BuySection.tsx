@@ -10,7 +10,7 @@ interface BuySectionProps {
   price: number;
 }
 
-type PurchaseState = "loading" | "not-purchased" | "purchased";
+type PurchaseState = "loading" | "not-purchased" | "pending" | "completed" | "failed";
 type DownloadState = "idle" | "downloading" | "error";
 
 interface PayHerePayment {
@@ -106,9 +106,35 @@ export default function BuySection({ resourceId, price }: BuySectionProps) {
       }
 
       window.payhere.onCompleted = function onCompleted() {
-        toast.success("Payment Successful!", { description: "Your resource is now unlocked." });
-        setState("purchased");
-        router.refresh();
+        toast.info("Payment received! Verifying...", { description: "Please wait a moment while we confirm the transaction." });
+        setState("pending");
+        
+        // Poll backend to verify webhook completion
+        let attempts = 0;
+        const interval = setInterval(async () => {
+          attempts++;
+          try {
+            const r = await fetch(`/api/user/has-purchased/${resourceId}`);
+            const data = await r.json();
+            
+            if (data.status === "completed") {
+              clearInterval(interval);
+              setState("completed");
+              toast.success("Payment Verified!", { description: "Your resource is now unlocked." });
+              router.refresh();
+            } else if (data.status === "failed" || attempts >= 10) {
+              clearInterval(interval);
+              setState(data.status === "failed" ? "failed" : "pending");
+              if (data.status === "failed") {
+                toast.error("Payment Failed", { description: "The transaction was declined by the gateway." });
+              } else {
+                toast.info("Verification taking longer than usual.", { description: "Please refresh the page in a minute." });
+              }
+            }
+          } catch (e) {
+            // keep polling
+          }
+        }, 3000);
       };
 
       window.payhere.onDismissed = function onDismissed() {
@@ -118,7 +144,7 @@ export default function BuySection({ resourceId, price }: BuySectionProps) {
 
       window.payhere.onError = function onError(error: string) {
         toast.error("Payment Error", { description: error });
-        setState("not-purchased");
+        setState("failed");
       };
 
       window.payhere.startPayment(payment);
@@ -164,8 +190,12 @@ export default function BuySection({ resourceId, price }: BuySectionProps) {
     // Session cookie is sent automatically — no manual token needed.
     fetch(`/api/user/has-purchased/${resourceId}`)
       .then((r) => r.json())
-      .then((data: { hasPurchased: boolean }) => {
-        setState(data.hasPurchased ? "purchased" : "not-purchased");
+      .then((data: { status: string }) => {
+        // Valid statuses: "completed", "pending", "failed", "not-purchased"
+        if (data.status === "completed") setState("completed");
+        else if (data.status === "pending") setState("pending");
+        else if (data.status === "failed") setState("failed");
+        else setState("not-purchased");
       })
       .catch(() => setState("not-purchased"));
   }, [resourceId]);
@@ -180,7 +210,7 @@ export default function BuySection({ resourceId, price }: BuySectionProps) {
     >
       {/* Price column */}
       <div className="flex-1">
-        {state === "purchased" ? (
+        {state === "completed" ? (
           <>
             <p className="text-xs mb-1 flex items-center gap-1.5" style={{ color: "#34d399" }}>
               <svg width="12" height="12" viewBox="0 0 12 12" fill="none" aria-hidden="true">
@@ -242,7 +272,7 @@ export default function BuySection({ resourceId, price }: BuySectionProps) {
           </div>
         )}
 
-        {state === "not-purchased" && (
+        {(state === "not-purchased" || state === "failed") && (
           <button
             type="button"
             onClick={handlePurchase}
@@ -254,14 +284,33 @@ export default function BuySection({ resourceId, price }: BuySectionProps) {
               color: "#fff",
             }}
           >
-            Purchase &amp; Download
+            {state === "failed" ? "Retry Purchase" : "Purchase & Download"}
             <svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true">
               <path d="M8 2v8M4 7l4 4 4-4M2 13h12" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" />
             </svg>
           </button>
         )}
 
-        {state === "purchased" && (
+        {state === "pending" && (
+          <button
+            type="button"
+            disabled
+            className="flex items-center justify-center gap-2 rounded-xl px-7 py-3 text-sm font-bold transition-all duration-300 disabled:opacity-80"
+            style={{
+              background: "linear-gradient(135deg, #f59e0b 0%, #fbbf24 60%, #f59e0b 100%)",
+              backgroundSize: "200% auto",
+              boxShadow: "0 0 24px rgba(245,158,11,0.3), 0 4px 12px rgba(0,0,0,0.2)",
+              color: "#fff",
+            }}
+          >
+            <svg className="animate-spin" width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true">
+              <circle cx="8" cy="8" r="6" stroke="currentColor" strokeWidth="1.6" strokeDasharray="10 10" />
+            </svg>
+            Verifying Payment...
+          </button>
+        )}
+
+        {state === "completed" && (
           <button
             type="button"
             onClick={handleDownload}

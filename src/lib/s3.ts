@@ -27,15 +27,15 @@ function ensureInit() {
 
   _client = new S3Client({
     region: "auto",
-    endpoint: `https://${process.env.R2_ACCOUNT_ID}.r2.cloudflarestorage.com`,
+    endpoint: `https://${process.env.R2_ACCOUNT_ID?.trim()}.r2.cloudflarestorage.com`,
     credentials: {
-      accessKeyId:     process.env.R2_ACCESS_KEY_ID     as string,
-      secretAccessKey: process.env.R2_SECRET_ACCESS_KEY as string,
+      accessKeyId:     process.env.R2_ACCESS_KEY_ID?.trim()     as string,
+      secretAccessKey: process.env.R2_SECRET_ACCESS_KEY?.trim() as string,
     },
   });
 
-  _bucket    = process.env.R2_BUCKET_NAME as string;
-  _publicUrl = (process.env.R2_PUBLIC_URL as string).replace(/\/$/, "");
+  _bucket    = process.env.R2_BUCKET_NAME?.trim() as string;
+  _publicUrl = (process.env.R2_PUBLIC_URL?.trim() as string).replace(/\/$/, "");
 }
 
 /** Returns the lazily-initialised S3 client. Throws if env vars are missing. */

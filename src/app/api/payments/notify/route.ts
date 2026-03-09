@@ -15,7 +15,7 @@ export async function POST(req: NextRequest) {
     const md5sig = formData.get("md5sig") as string;
     const payment_id = formData.get("payment_id") as string;
 
-    const merchantSecret = process.env.PAYHERE_SECRET!;
+    const merchantSecret = (process.env.PAYHERE_SECRET || "").trim();
     
     if (!merchantSecret) {
       console.error("[PayHere Notify] Secret missing");
