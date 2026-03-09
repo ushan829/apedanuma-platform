@@ -66,12 +66,12 @@ export async function POST(req: NextRequest) {
       });
     }
 
-    const merchantId = (process.env.PAYHERE_MERCHANT_ID || "").trim();
+    const merchantId = (process.env.PAYHERE_MERCHANT_ID || "1234391").trim();
     const merchantSecret = (process.env.PAYHERE_SECRET || "").trim();
     const environment = (process.env.PAYHERE_ENV || "sandbox").trim();
 
-    if (!merchantId || !merchantSecret) {
-      console.error("[Checkout POST] Missing PayHere credentials in ENV");
+    if (!merchantSecret) {
+      console.error("[Checkout POST] Missing PayHere secret in ENV");
       return NextResponse.json({ success: false, message: "Server misconfiguration" }, { status: 500 });
     }
 
@@ -86,10 +86,9 @@ export async function POST(req: NextRequest) {
 
     const nameParts = user.name.split(" ");
     
-    // PayHere strictly validates that the URLs match the registered domain in the portal.
-    // We use apedanuma.lk for production to bypass the 'Unauthorized payment request' error.
-    const isLocal = process.env.NODE_ENV === "development";
-    const baseUrl = isLocal ? "http://localhost:3000" : "https://apedanuma.lk";
+    // Domain matching: Fallback to apedanuma.lk if no environment variable is provided,
+    // as the PayHere sandbox dashboard is configured with that domain.
+    const baseUrl = (process.env.NEXTAUTH_URL || process.env.NEXT_PUBLIC_APP_URL || "https://apedanuma.lk").trim().replace(/\/$/, "");
     
     return NextResponse.json({
       success: true,
