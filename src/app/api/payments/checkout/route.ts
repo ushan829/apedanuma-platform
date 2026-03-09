@@ -85,7 +85,11 @@ export async function POST(req: NextRequest) {
     console.log("🟢 PAYHERE HASH DEBUG:", { merchantId, orderId, formattedAmount, currency, hashString, hash });
 
     const nameParts = user.name.split(" ");
-    const baseUrl = (process.env.NEXTAUTH_URL || process.env.NEXT_PUBLIC_APP_URL || "https://english-apedanuma.vercel.app").trim().replace(/\/$/, "");
+    
+    // PayHere strictly validates that the URLs match the registered domain in the portal.
+    // We use apedanuma.lk for production to bypass the 'Unauthorized payment request' error.
+    const isLocal = process.env.NODE_ENV === "development";
+    const baseUrl = isLocal ? "http://localhost:3000" : "https://apedanuma.lk";
     
     return NextResponse.json({
       success: true,
