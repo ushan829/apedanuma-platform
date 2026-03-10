@@ -146,7 +146,6 @@ export default function BuySection({ resourceId, price }: BuySectionProps) {
       };
 
       window.payhere.onDismissed = function onDismissed() {
-        toast.error("Payment Cancelled", { description: "You closed the payment window." });
         setState("not-purchased");
       };
 
@@ -155,6 +154,9 @@ export default function BuySection({ resourceId, price }: BuySectionProps) {
         setState("failed");
       };
 
+      // Set state back to not-purchased before opening the modal
+      // so if the user closes the modal without onDismissed firing, it isn't stuck.
+      setState("not-purchased");
       window.payhere.startPayment(payment);
     } catch (err: unknown) {
       console.error("[Purchase] Network error:", err);
@@ -199,9 +201,9 @@ export default function BuySection({ resourceId, price }: BuySectionProps) {
     fetch(`/api/user/has-purchased/${resourceId}`)
       .then((r) => r.json())
       .then((data: { status: string }) => {
-        // Valid statuses: "completed", "pending", "failed", "not-purchased"
+        // Treat "pending" database status as "not-purchased" in the UI 
+        // to allow users to click the purchase button again if they previously abandoned a checkout.
         if (data.status === "completed") setState("completed");
-        else if (data.status === "pending") setState("pending");
         else if (data.status === "failed") setState("failed");
         else setState("not-purchased");
       })
