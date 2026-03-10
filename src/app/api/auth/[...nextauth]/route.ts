@@ -32,6 +32,9 @@ const authOptions: AuthOptions = {
               role: "student",
               emailVerified: true,
             });
+          } else if (!dbUser.emailVerified) {
+            dbUser.emailVerified = true;
+            await dbUser.save();
           }
 
           // Generate our custom ad_session JWT
