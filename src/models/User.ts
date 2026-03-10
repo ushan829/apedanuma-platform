@@ -7,7 +7,7 @@ import bcrypt from "bcryptjs";
 export interface IUser extends Document {
   name: string;
   email: string;
-  password: string;
+  password?: string;
   role: "student" | "admin";
   /** IDs of premium resources the student has purchased. */
   purchasedResources: Types.ObjectId[];
@@ -51,9 +51,6 @@ const UserSchema = new Schema<IUser>(
 
     password: {
       type: String,
-      required: [true, "Password is required."],
-      minlength: [8, "Password must be at least 8 characters."],
-      /** Never return the password hash in query results by default. */
       select: false,
     },
 
@@ -96,7 +93,7 @@ UserSchema.index({ role: 1 });
    ───────────────────────────────────────── */
 UserSchema.pre("save", async function () {
   // Only re-hash when the password field is actually modified.
-  if (!this.isModified("password")) return;
+  if (!this.isModified("password") || !this.password) return;
 
   const salt = await bcrypt.genSalt(12);
   this.password = await bcrypt.hash(this.password, salt);
