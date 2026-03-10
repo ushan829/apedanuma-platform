@@ -2,60 +2,45 @@
 
 import { useState } from "react";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
 
-export default function LoginPage() {
-  const router = useRouter();
-
+export default function ForgotPasswordPage() {
   /* ── Form state ── */
   const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
 
   /* ── UI state ── */
   const [loading, setLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
+  const [message, setMessage] = useState<{ type: "success" | "error"; text: string } | null>(null);
 
   /* ── Submit handler ── */
   async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
-    setError(null);
+    setMessage(null);
 
     if (!email.trim()) {
-      setError("Please enter your email address.");
-      return;
-    }
-    if (!password) {
-      setError("Please enter your password.");
+      setMessage({ type: "error", text: "Please enter your email address." });
       return;
     }
 
     setLoading(true);
 
     try {
-      const res = await fetch("/api/auth/login", {
+      const res = await fetch("/api/auth/forgot-password", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email: email.trim(), password }),
+        body: JSON.stringify({ email: email.trim() }),
       });
 
-      const data: {
-        success: boolean;
-        message: string;
-        user?: { id: string; name: string; email: string; role: string };
-      } = await res.json();
+      const data = await res.json();
 
       if (!res.ok) {
-        setError(data.message ?? "Sign in failed. Please try again.");
+        setMessage({ type: "error", text: data.message ?? "An error occurred. Please try again." });
         return;
       }
 
-      // The JWT is now set as an httpOnly cookie by the server.
-      // Redirect based on role so each user lands in the right place.
-      const destination = data.user?.role === "admin" ? "/admin" : "/";
-      router.push(destination);
-      router.refresh(); // flush server-component cache so the navbar reflects the new session
+      setMessage({ type: "success", text: data.message });
+      setEmail(""); // clear the form
     } catch {
-      setError("Could not connect to the server. Please check your connection.");
+      setMessage({ type: "error", text: "Could not connect to the server. Please check your connection." });
     } finally {
       setLoading(false);
     }
@@ -105,10 +90,10 @@ export default function LoginPage() {
           </Link>
           <div className="text-center">
             <h1 className="font-display font-bold text-2xl" style={{ color: "var(--foreground)" }}>
-              Welcome Back
+              Reset Password
             </h1>
-            <p className="text-sm mt-1.5 max-w-xs leading-relaxed" style={{ color: "var(--foreground-muted)" }}>
-              Sign in to access your study materials and continue your O/L preparation journey.
+            <p className="text-sm mt-1.5 max-w-xs leading-relaxed mx-auto" style={{ color: "var(--foreground-muted)" }}>
+              Enter your email address and we&apos;ll send you a link to reset your password.
             </p>
           </div>
         </div>
@@ -134,21 +119,39 @@ export default function LoginPage() {
             }}
           />
 
-          {/* ── Error banner ── */}
-          {error && (
+          {/* ── Message banner ── */}
+          {message && (
             <div
               className="flex items-start gap-3 rounded-xl px-4 py-3 mb-5 text-sm"
-              style={{
-                background: "rgba(239,68,68,0.08)",
-                border: "1px solid rgba(239,68,68,0.28)",
-                color: "#f87171",
-              }}
+              style={
+                message.type === "error"
+                  ? {
+                      background: "rgba(239,68,68,0.08)",
+                      border: "1px solid rgba(239,68,68,0.28)",
+                      color: "#f87171",
+                    }
+                  : {
+                      background: "rgba(16,185,129,0.08)",
+                      border: "1px solid rgba(16,185,129,0.28)",
+                      color: "#34d399",
+                    }
+              }
             >
               <svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true" className="shrink-0 mt-0.5">
                 <circle cx="8" cy="8" r="7" stroke="currentColor" strokeWidth="1.4" />
-                <path d="M8 5v3.5M8 10.5v.5" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round" />
+                <path
+                  d={
+                    message.type === "error"
+                      ? "M8 5v3.5M8 10.5v.5" // Error icon (!)
+                      : "M5 8l2 2 4-4" // Success icon (check)
+                  }
+                  stroke="currentColor"
+                  strokeWidth="1.4"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                />
               </svg>
-              {error}
+              {message.text}
             </div>
           )}
 
@@ -177,39 +180,7 @@ export default function LoginPage() {
               />
             </div>
 
-            {/* Password */}
-            <div className="flex flex-col gap-2">
-              <div className="flex items-center justify-between gap-2">
-                <label
-                  htmlFor="password"
-                  className="text-sm font-medium"
-                  style={{ color: "var(--foreground-secondary)" }}
-                >
-                  Password
-                </label>
-                <Link
-                  href="/forgot-password"
-                  className="text-xs font-medium transition-colors duration-200 hover:text-[#b890ff] shrink-0"
-                  style={{ color: "var(--foreground-muted)" }}
-                >
-                  Forgot Password?
-                </Link>
-              </div>
-              <input
-                id="password"
-                name="password"
-                type="password"
-                autoComplete="current-password"
-                placeholder="Enter your password"
-                className="input"
-                required
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                disabled={loading}
-              />
-            </div>
-
-            {/* Sign In button */}
+            {/* Submit button */}
             <button
               type="submit"
               disabled={loading}
@@ -242,7 +213,7 @@ export default function LoginPage() {
                     <circle cx="7.5" cy="7.5" r="6" stroke="rgba(255,255,255,0.35)" strokeWidth="1.5" />
                     <path d="M7.5 1.5a6 6 0 016 6" stroke="white" strokeWidth="1.5" strokeLinecap="round" />
                   </svg>
-                  <span className="relative z-10">Signing in…</span>
+                  <span className="relative z-10">Sending Link…</span>
                 </>
               ) : (
                 <>
@@ -250,9 +221,9 @@ export default function LoginPage() {
                     width="15" height="15" viewBox="0 0 15 15" fill="none"
                     aria-hidden="true" className="relative z-10"
                   >
-                    <path d="M13 7.5H2M9 3l4 4.5L9 12" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" />
+                    <path d="M1.5 7.5h12M9 3l4.5 4.5L9 12" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" />
                   </svg>
-                  <span className="relative z-10">Sign In</span>
+                  <span className="relative z-10">Send Reset Link</span>
                 </>
               )}
             </button>
@@ -266,30 +237,18 @@ export default function LoginPage() {
             <div className="flex-1 h-px" style={{ background: "var(--border)" }} />
           </div>
 
-          {/* Register inline text link */}
+          {/* Back to login */}
           <p className="text-center text-sm" style={{ color: "var(--foreground-muted)" }}>
-            Don&apos;t have an account?{" "}
+            Remember your password?{" "}
             <Link
-              href="/register"
+              href="/login"
               className="font-semibold transition-colors duration-200 hover:text-[#b890ff]"
               style={{ color: "#9455ff" }}
             >
-              Register here
+              Back to Login
             </Link>
           </p>
         </div>
-
-        {/* Footer note */}
-        <p className="text-center text-xs mt-6" style={{ color: "var(--foreground-disabled)" }}>
-          By signing in you agree to our{" "}
-          <Link href="/terms" className="underline underline-offset-2 hover:text-[#b890ff] transition-colors">
-            Terms
-          </Link>
-          {" "}and{" "}
-          <Link href="/privacy" className="underline underline-offset-2 hover:text-[#b890ff] transition-colors">
-            Privacy Policy
-          </Link>.
-        </p>
 
       </div>
     </main>

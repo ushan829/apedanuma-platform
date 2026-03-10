@@ -2,60 +2,60 @@
 
 import { useState } from "react";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
+import { useRouter, useParams } from "next/navigation";
 
-export default function LoginPage() {
+export default function ResetPasswordPage() {
   const router = useRouter();
+  const params = useParams();
+  const token = params.token as string;
 
   /* ── Form state ── */
-  const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
 
   /* ── UI state ── */
   const [loading, setLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
+  const [message, setMessage] = useState<{ type: "success" | "error"; text: string } | null>(null);
 
   /* ── Submit handler ── */
   async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
-    setError(null);
+    setMessage(null);
 
-    if (!email.trim()) {
-      setError("Please enter your email address.");
+    if (password.length < 8) {
+      setMessage({ type: "error", text: "Password must be at least 8 characters long." });
       return;
     }
-    if (!password) {
-      setError("Please enter your password.");
+
+    if (password !== confirmPassword) {
+      setMessage({ type: "error", text: "Passwords do not match." });
       return;
     }
 
     setLoading(true);
 
     try {
-      const res = await fetch("/api/auth/login", {
+      const res = await fetch("/api/auth/reset-password", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email: email.trim(), password }),
+        body: JSON.stringify({ token, password }),
       });
 
-      const data: {
-        success: boolean;
-        message: string;
-        user?: { id: string; name: string; email: string; role: string };
-      } = await res.json();
+      const data = await res.json();
 
       if (!res.ok) {
-        setError(data.message ?? "Sign in failed. Please try again.");
+        setMessage({ type: "error", text: data.message ?? "An error occurred. Please try again." });
         return;
       }
 
-      // The JWT is now set as an httpOnly cookie by the server.
-      // Redirect based on role so each user lands in the right place.
-      const destination = data.user?.role === "admin" ? "/admin" : "/";
-      router.push(destination);
-      router.refresh(); // flush server-component cache so the navbar reflects the new session
+      setMessage({ type: "success", text: data.message });
+      
+      // Redirect to login after 3 seconds
+      setTimeout(() => {
+        router.push("/login");
+      }, 3000);
     } catch {
-      setError("Could not connect to the server. Please check your connection.");
+      setMessage({ type: "error", text: "Could not connect to the server. Please check your connection." });
     } finally {
       setLoading(false);
     }
@@ -105,10 +105,10 @@ export default function LoginPage() {
           </Link>
           <div className="text-center">
             <h1 className="font-display font-bold text-2xl" style={{ color: "var(--foreground)" }}>
-              Welcome Back
+              Set New Password
             </h1>
-            <p className="text-sm mt-1.5 max-w-xs leading-relaxed" style={{ color: "var(--foreground-muted)" }}>
-              Sign in to access your study materials and continue your O/L preparation journey.
+            <p className="text-sm mt-1.5 max-w-xs leading-relaxed mx-auto" style={{ color: "var(--foreground-muted)" }}>
+              Please enter your new password below.
             </p>
           </div>
         </div>
@@ -134,85 +134,92 @@ export default function LoginPage() {
             }}
           />
 
-          {/* ── Error banner ── */}
-          {error && (
+          {/* ── Message banner ── */}
+          {message && (
             <div
               className="flex items-start gap-3 rounded-xl px-4 py-3 mb-5 text-sm"
-              style={{
-                background: "rgba(239,68,68,0.08)",
-                border: "1px solid rgba(239,68,68,0.28)",
-                color: "#f87171",
-              }}
+              style={
+                message.type === "error"
+                  ? {
+                      background: "rgba(239,68,68,0.08)",
+                      border: "1px solid rgba(239,68,68,0.28)",
+                      color: "#f87171",
+                    }
+                  : {
+                      background: "rgba(16,185,129,0.08)",
+                      border: "1px solid rgba(16,185,129,0.28)",
+                      color: "#34d399",
+                    }
+              }
             >
               <svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true" className="shrink-0 mt-0.5">
                 <circle cx="8" cy="8" r="7" stroke="currentColor" strokeWidth="1.4" />
-                <path d="M8 5v3.5M8 10.5v.5" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round" />
+                <path
+                  d={
+                    message.type === "error"
+                      ? "M8 5v3.5M8 10.5v.5" // Error icon (!)
+                      : "M5 8l2 2 4-4" // Success icon (check)
+                  }
+                  stroke="currentColor"
+                  strokeWidth="1.4"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                />
               </svg>
-              {error}
+              {message.text}
             </div>
           )}
 
           <form className="flex flex-col gap-5" noValidate onSubmit={handleSubmit}>
 
-            {/* Email */}
+            {/* Password */}
             <div className="flex flex-col gap-2">
               <label
-                htmlFor="email"
+                htmlFor="password"
                 className="text-sm font-medium"
                 style={{ color: "var(--foreground-secondary)" }}
               >
-                Email Address
+                New Password
               </label>
-              <input
-                id="email"
-                name="email"
-                type="email"
-                autoComplete="email"
-                placeholder="you@example.com"
-                className="input"
-                required
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                disabled={loading}
-              />
-            </div>
-
-            {/* Password */}
-            <div className="flex flex-col gap-2">
-              <div className="flex items-center justify-between gap-2">
-                <label
-                  htmlFor="password"
-                  className="text-sm font-medium"
-                  style={{ color: "var(--foreground-secondary)" }}
-                >
-                  Password
-                </label>
-                <Link
-                  href="/forgot-password"
-                  className="text-xs font-medium transition-colors duration-200 hover:text-[#b890ff] shrink-0"
-                  style={{ color: "var(--foreground-muted)" }}
-                >
-                  Forgot Password?
-                </Link>
-              </div>
               <input
                 id="password"
                 name="password"
                 type="password"
-                autoComplete="current-password"
-                placeholder="Enter your password"
+                placeholder="Enter new password"
                 className="input"
                 required
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
-                disabled={loading}
+                disabled={loading || message?.type === "success"}
               />
             </div>
 
-            {/* Sign In button */}
+            {/* Confirm Password */}
+            <div className="flex flex-col gap-2">
+              <label
+                htmlFor="confirmPassword"
+                className="text-sm font-medium"
+                style={{ color: "var(--foreground-secondary)" }}
+              >
+                Confirm New Password
+              </label>
+              <input
+                id="confirmPassword"
+                name="confirmPassword"
+                type="password"
+                placeholder="Confirm new password"
+                className="input"
+                required
+                value={confirmPassword}
+                onChange={(e) => setConfirmPassword(e.target.value)}
+                disabled={loading || message?.type === "success"}
+              />
+            </div>
+
+            {/* Submit button */}
             <button
               type="submit"
-              disabled={loading}
+              disabled={loading || message?.type === "success"}
               className="relative flex items-center justify-center gap-2.5 w-full rounded-xl py-3.5 font-bold text-sm overflow-hidden transition-all duration-300 hover:-translate-y-1 mt-1 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#9455ff] disabled:opacity-60 disabled:cursor-not-allowed disabled:hover:translate-y-0"
               style={{
                 background: "linear-gradient(135deg, #7c1fff 0%, #9455ff 55%, #7c1fff 100%)",
@@ -242,7 +249,7 @@ export default function LoginPage() {
                     <circle cx="7.5" cy="7.5" r="6" stroke="rgba(255,255,255,0.35)" strokeWidth="1.5" />
                     <path d="M7.5 1.5a6 6 0 016 6" stroke="white" strokeWidth="1.5" strokeLinecap="round" />
                   </svg>
-                  <span className="relative z-10">Signing in…</span>
+                  <span className="relative z-10">Resetting Password…</span>
                 </>
               ) : (
                 <>
@@ -250,46 +257,15 @@ export default function LoginPage() {
                     width="15" height="15" viewBox="0 0 15 15" fill="none"
                     aria-hidden="true" className="relative z-10"
                   >
-                    <path d="M13 7.5H2M9 3l4 4.5L9 12" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" />
+                    <path d="M11 5L6 10l-2.5-2.5" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" />
                   </svg>
-                  <span className="relative z-10">Sign In</span>
+                  <span className="relative z-10">Reset Password</span>
                 </>
               )}
             </button>
 
           </form>
-
-          {/* Divider */}
-          <div className="flex items-center gap-3 my-5">
-            <div className="flex-1 h-px" style={{ background: "var(--border)" }} />
-            <span className="text-xs" style={{ color: "var(--foreground-disabled)" }}>or</span>
-            <div className="flex-1 h-px" style={{ background: "var(--border)" }} />
-          </div>
-
-          {/* Register inline text link */}
-          <p className="text-center text-sm" style={{ color: "var(--foreground-muted)" }}>
-            Don&apos;t have an account?{" "}
-            <Link
-              href="/register"
-              className="font-semibold transition-colors duration-200 hover:text-[#b890ff]"
-              style={{ color: "#9455ff" }}
-            >
-              Register here
-            </Link>
-          </p>
         </div>
-
-        {/* Footer note */}
-        <p className="text-center text-xs mt-6" style={{ color: "var(--foreground-disabled)" }}>
-          By signing in you agree to our{" "}
-          <Link href="/terms" className="underline underline-offset-2 hover:text-[#b890ff] transition-colors">
-            Terms
-          </Link>
-          {" "}and{" "}
-          <Link href="/privacy" className="underline underline-offset-2 hover:text-[#b890ff] transition-colors">
-            Privacy Policy
-          </Link>.
-        </p>
 
       </div>
     </main>

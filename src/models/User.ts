@@ -16,6 +16,9 @@ export interface IUser extends Document {
   updatedAt: Date;
   /** Instance method: verify a plain-text password against the stored hash. */
   comparePassword(candidatePassword: string): Promise<boolean>;
+  /** Optional fields for password reset functionality */
+  resetPasswordToken?: string;
+  resetPasswordExpires?: Date;
 }
 
 /* ─────────────────────────────────────────
@@ -64,6 +67,9 @@ const UserSchema = new Schema<IUser>(
       type: [{ type: Schema.Types.ObjectId, ref: "Resource" }],
       default: [],
     },
+
+    resetPasswordToken: String,
+    resetPasswordExpires: Date,
   },
   {
     timestamps: true, // Adds createdAt + updatedAt automatically.
