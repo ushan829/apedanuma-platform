@@ -1,10 +1,13 @@
-"use client";
-
 import Link from "next/link";
-import useSWR from "swr";
 import { getSubjectStyle } from "@/lib/free-resources";
+import { getServerSession } from "@/lib/auth-cookie";
+import connectToDatabase from "@/lib/mongodb";
+import User from "@/models/User";
+import Order from "@/models/Order";
+import "@/models/Resource"; // Ensure Resource model is registered for populate
+import { redirect } from "next/navigation";
 
-const fetcher = (url: string) => fetch(url, { cache: "no-store" }).then((res) => res.json());
+export const dynamic = "force-dynamic";
 
 type PurchasedResource = {
   _id: string;
@@ -15,14 +18,6 @@ type PurchasedResource = {
   description: string;
   pageCount: number | null;
   fileSize: string | null;
-};
-
-type DashboardUser = {
-  name: string;
-  email: string;
-  role: string;
-  createdAt: string;
-  purchasedResources: PurchasedResource[];
 };
 
 function ResourceCard({ resource }: { resource: PurchasedResource }) {
@@ -84,29 +79,45 @@ function ResourceCard({ resource }: { resource: PurchasedResource }) {
   );
 }
 
-function LibrarySkeleton() {
-  return (
-    <div className="space-y-6 animate-pulse">
-      <div>
-        <div className="h-8 w-48 rounded-xl mb-2" style={{ background: "rgba(255,255,255,0.07)" }} />
-        <div className="h-4 w-64 rounded" style={{ background: "rgba(255,255,255,0.05)" }} />
-      </div>
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
-        {[1,2,3,4,5,6].map((i) => <div key={i} className="rounded-2xl h-60" style={{ background: "rgba(255,255,255,0.04)" }} />)}
-      </div>
-    </div>
-  );
-}
-
-export default function HistoryPage() {
-  const { data, error, isLoading } = useSWR<{ success: boolean; user?: DashboardUser }>("/api/user/me", fetcher, { revalidateOnFocus: true });
-
-  if (isLoading || !data) return <LibrarySkeleton />;
-  if (error || !data.success || !data.user) {
-    return <div className="text-center py-20 text-red-400">Failed to load library data.</div>;
+export default async function HistoryPage() {
+  const session = getServerSession();
+  if (!session) {
+    redirect("/login");
   }
 
-  const purchased = data.user.purchasedResources ?? [];
+  await connectToDatabase();
+  const user = await User.findById(session.sub)
+    .populate({
+      path: "purchasedResources",
+      match: { isPublished: true },
+    })
+    .lean();
+
+  if (!user) {
+    redirect("/login");
+  }
+
+  const completedOrders = await Order.find({
+    user: session.sub,
+    paymentStatus: "completed"
+  }).populate({
+    path: "resource",
+    match: { isPublished: true },
+  }).lean();
+
+  const orderResources = completedOrders
+    .map(o => o.resource)
+    .filter(Boolean) as unknown as PurchasedResource[];
+
+  const userResources = (user.purchasedResources as unknown as PurchasedResource[] || [])
+    .filter(Boolean);
+
+  const allResourcesMap = new Map();
+  [...userResources, ...orderResources].forEach((r) => {
+    if (r && r._id) allResourcesMap.set(String(r._id), r);
+  });
+
+  const purchased = Array.from(allResourcesMap.values());
 
   return (
     <div className="space-y-8">

@@ -12,12 +12,12 @@ import Order from "@/models/Order";
 export const dynamic = "force-dynamic";
 
 export async function GET(req: NextRequest) {
-  const session = getSession(req);
-  if (!session) {
-    return NextResponse.json({ success: false, message: "Not authenticated." }, { status: 401 });
-  }
-
   try {
+    const session = getSession(req);
+    if (!session || !session.sub) {
+      return NextResponse.json({ success: false, message: "Not authenticated." }, { status: 401 });
+    }
+
     await connectToDatabase();
 
     const user = await User.findById(session.sub)

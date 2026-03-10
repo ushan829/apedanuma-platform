@@ -1,11 +1,12 @@
-"use client";
-
-import { useState } from "react";
 import Link from "next/link";
-import useSWR from "swr";
 import { getSubjectStyle } from "@/lib/free-resources";
+import { getServerSession } from "@/lib/auth-cookie";
+import connectToDatabase from "@/lib/mongodb";
+import User from "@/models/User";
+import "@/models/Resource"; // Ensure Resource model is registered for populate
+import { redirect } from "next/navigation";
 
-const fetcher = (url: string) => fetch(url, { cache: "no-store" }).then((res) => res.json());
+export const dynamic = "force-dynamic";
 
 type PurchasedResource = {
   _id: string;
@@ -16,15 +17,7 @@ type PurchasedResource = {
   description: string;
   pageCount: number | null;
   fileSize: string | null;
-};
-
-type DashboardUser = {
-  name: string;
-  email: string;
-  role: string;
-  emailVerified: boolean;
-  createdAt: string;
-  purchasedResources: PurchasedResource[];
+  isPublished: boolean;
 };
 
 const MOTIVATIONAL_QUOTES = [
@@ -122,47 +115,37 @@ function ResourceCard({ resource }: { resource: PurchasedResource }) {
   );
 }
 
-function DashboardSkeleton() {
-  return (
-    <div className="space-y-10 animate-pulse">
-      <div>
-        <div className="h-4 w-20 rounded-full mb-3" style={{ background: "rgba(255,255,255,0.07)" }} />
-        <div className="h-10 w-64 rounded-xl mb-2" style={{ background: "rgba(255,255,255,0.07)" }} />
-        <div className="h-4 w-80 rounded-full" style={{ background: "rgba(255,255,255,0.05)" }} />
-      </div>
-      <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-        {[1,2,3].map((i) => <div key={i} className="rounded-2xl h-28" style={{ background: "rgba(255,255,255,0.05)" }} />)}
-      </div>
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
-        {[1,2,3].map((i) => <div key={i} className="rounded-2xl h-52" style={{ background: "rgba(255,255,255,0.04)" }} />)}
-      </div>
-    </div>
-  );
-}
-
-export default function DashboardPage() {
-  const { data, error, isLoading } = useSWR<{ success: boolean; user?: DashboardUser }>("/api/user/me", fetcher, { revalidateOnFocus: true });
-  const [quote] = useState(
-    () => MOTIVATIONAL_QUOTES[Math.floor(Math.random() * MOTIVATIONAL_QUOTES.length)]
-  );
-
-  if (isLoading || !data) return <DashboardSkeleton />;
-  if (error || !data.success || !data.user) {
-    return <div className="text-center py-20 text-red-400">Failed to load dashboard data.</div>;
+export default async function DashboardPage() {
+  const session = getServerSession();
+  if (!session) {
+    redirect("/login");
   }
 
-  const user = data.user;
-  const firstName = user.name.split(" ")[0] ?? "there";
-  const purchased = user.purchasedResources ?? [];
+  await connectToDatabase();
+  const userDoc = await User.findById(session.sub)
+    .populate({
+      path: "purchasedResources",
+      match: { isPublished: true },
+    })
+    .lean();
+
+  if (!userDoc) {
+    redirect("/login");
+  }
+
+  const purchased = (userDoc.purchasedResources || []) as unknown as PurchasedResource[];
+  const quote = MOTIVATIONAL_QUOTES[Math.floor(Math.random() * MOTIVATIONAL_QUOTES.length)];
+
+  const firstName = userDoc.name?.split(" ")[0] ?? "there";
   const uniqueSubjects = new Set(purchased.map((r) => r.subject)).size;
-  const memberSince = user.createdAt
-    ? new Date(user.createdAt).toLocaleDateString("en-US", { month: "short", year: "numeric" })
-    : "—";
+  const memberSince = userDoc.createdAt
+    ? new Date(userDoc.createdAt as Date).toLocaleDateString("en-US", { month: "short", year: "numeric" })
+    : new Date().toLocaleDateString("en-US", { month: "short", year: "numeric" });
 
   return (
     <div className="space-y-10">
       {/* Verification Warning */}
-      {!user.emailVerified && (
+      {!userDoc.emailVerified && (
         <div
           className="flex items-start gap-3 rounded-2xl px-5 py-4 text-sm relative overflow-hidden"
           style={{
@@ -179,7 +162,7 @@ export default function DashboardPage() {
           <div>
             <p className="font-semibold text-red-400 mb-0.5">Please check your email to verify your account.</p>
             <p className="text-red-400/80 leading-relaxed">
-              We&apos;ve sent a verification link to <span className="font-medium text-red-300">{user.email}</span>. You need to verify your email before purchasing premium resources.
+              We&apos;ve sent a verification link to <span className="font-medium text-red-300">{userDoc.email}</span>. You need to verify your email before purchasing premium resources.
             </p>
           </div>
         </div>
@@ -213,7 +196,7 @@ export default function DashboardPage() {
             icon={<svg width="20" height="20" viewBox="0 0 20 20" fill="none" aria-hidden="true"><circle cx="10" cy="10" r="8" stroke="currentColor" strokeWidth="1.4" /><path d="M10 6v4l3 2" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round" strokeLinejoin="round" /></svg>}
           />
           <StatCard
-            label="Member Since" value={memberSince} sub={user.email}
+            label="Member Since" value={memberSince} sub={userDoc.email}
             accentColor="#fbbf24" accentBg="rgba(245,158,11,0.1)" accentBorder="rgba(245,158,11,0.22)"
             icon={<svg width="20" height="20" viewBox="0 0 20 20" fill="none" aria-hidden="true"><circle cx="10" cy="8" r="3.5" stroke="currentColor" strokeWidth="1.4" /><path d="M3 18c0-3.314 3.134-6 7-6s7 2.686 7 6" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round" /></svg>}
           />
