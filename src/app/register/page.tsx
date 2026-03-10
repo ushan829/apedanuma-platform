@@ -19,12 +19,6 @@ export default function RegisterPage() {
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState(false);
 
-  const handleGoogleLogin = () => {
-    const params = new URLSearchParams(window.location.search);
-    const from = params.get("from") || "/dashboard";
-    signIn("google", { callbackUrl: from });
-  };
-
   /* ── Submit handler ── */
   async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
@@ -182,7 +176,7 @@ export default function RegisterPage() {
           {/* ── Google Sign Up ── */}
           <button
             type="button"
-            onClick={handleGoogleLogin}
+            onClick={() => signIn("google", { callbackUrl: "/dashboard" })}
             disabled={loading || success}
             className="flex items-center justify-center gap-3 w-full rounded-xl py-3 text-sm font-semibold transition-all duration-200 hover:-translate-y-0.5 disabled:opacity-50 disabled:cursor-not-allowed"
             style={{
