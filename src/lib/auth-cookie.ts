@@ -4,6 +4,7 @@
  * For Edge middleware, use `jose` directly in `src/middleware.ts`.
  */
 import { type NextRequest } from "next/server";
+import { cookies } from "next/headers";
 import jwt from "jsonwebtoken";
 
 export const SESSION_COOKIE = "ad_session";
@@ -25,10 +26,25 @@ export function getSession(req: NextRequest): SessionPayload | null {
   if (!token) return null;
 
   const secret = process.env.JWT_SECRET;
-  if (!secret) {
-    console.error("[auth-cookie] JWT_SECRET is not configured.");
+  if (!secret) return null;
+
+  try {
+    return jwt.verify(token, secret) as SessionPayload;
+  } catch {
     return null;
   }
+}
+
+/**
+ * Reads the `ad_session` httpOnly cookie for Server Components.
+ */
+export function getServerSession(): SessionPayload | null {
+  const cookieStore = cookies();
+  const token = cookieStore.get(SESSION_COOKIE)?.value;
+  if (!token) return null;
+
+  const secret = process.env.JWT_SECRET;
+  if (!secret) return null;
 
   try {
     return jwt.verify(token, secret) as SessionPayload;

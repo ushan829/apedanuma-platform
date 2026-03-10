@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { getSession } from "@/lib/auth-cookie";
 import connectToDatabase from "@/lib/mongodb";
 import User from "@/models/User";
+import Order from "@/models/Order";
 
 /**
  * GET /api/user/me
@@ -32,18 +33,40 @@ export async function GET(req: NextRequest) {
       return NextResponse.json({ success: false, message: "User not found." }, { status: 404 });
     }
 
-    const purchasedResources = (user.purchasedResources as unknown as Record<string, unknown>[])
-      .filter(Boolean)
-      .map((r) => ({
-        _id:          String(r._id),
-        title:        r.title as string,
-        subject:      r.subject as string,
-        grade:        r.grade as number,
-        materialType: r.materialType as string,
-        description:  (r.description as string) ?? "",
-        pageCount:    (r.pageCount as number | null) ?? null,
-        fileSize:     (r.fileSize as string | null) ?? null,
-      }));
+    // Fallback sync: Also fetch completed orders from the Order collection 
+    // in case the PayHere webhook failed to update the User document.
+    const completedOrders = await Order.find({
+      user: session.sub,
+      paymentStatus: "completed"
+    }).populate({
+      path: "resource",
+      select: "title subject grade materialType description pageCount fileSize isPublished",
+      match: { isPublished: true },
+    }).lean();
+
+    const orderResources = completedOrders
+      .map(o => o.resource)
+      .filter(Boolean) as unknown as Record<string, unknown>[];
+
+    const userResources = (user.purchasedResources as unknown as Record<string, unknown>[] || [])
+      .filter(Boolean);
+
+    // Merge and deduplicate resources
+    const allResourcesMap = new Map();
+    [...userResources, ...orderResources].forEach((r) => {
+      if (r && r._id) allResourcesMap.set(String(r._id), r);
+    });
+
+    const purchasedResources = Array.from(allResourcesMap.values()).map((r) => ({
+      _id:          String(r._id),
+      title:        r.title as string,
+      subject:      r.subject as string,
+      grade:        r.grade as number,
+      materialType: r.materialType as string,
+      description:  (r.description as string) ?? "",
+      pageCount:    (r.pageCount as number | null) ?? null,
+      fileSize:     (r.fileSize as string | null) ?? null,
+    }));
 
     return NextResponse.json({
       success: true,

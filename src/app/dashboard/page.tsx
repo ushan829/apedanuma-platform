@@ -1,8 +1,11 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import Link from "next/link";
+import useSWR from "swr";
 import { getSubjectStyle } from "@/lib/free-resources";
+
+const fetcher = (url: string) => fetch(url, { cache: "no-store" }).then((res) => res.json());
 
 type PurchasedResource = {
   _id: string;
@@ -138,36 +141,28 @@ function DashboardSkeleton() {
 }
 
 export default function DashboardPage() {
-  const [user, setUser] = useState<DashboardUser | null>(null);
-  const [loading, setLoading] = useState(true);
+  const { data, error, isLoading } = useSWR<{ success: boolean; user?: DashboardUser }>("/api/user/me", fetcher, { revalidateOnFocus: true });
   const [quote] = useState(
     () => MOTIVATIONAL_QUOTES[Math.floor(Math.random() * MOTIVATIONAL_QUOTES.length)]
   );
 
-  useEffect(() => {
-    // Add cache: "no-store" to ensure we always fetch fresh data when the component mounts
-    fetch("/api/user/me", { cache: "no-store" })
-      .then((r) => r.json())
-      .then((data: { success: boolean; user?: DashboardUser }) => {
-        if (data.success && data.user) setUser(data.user);
-      })
-      .catch(() => {})
-      .finally(() => setLoading(false));
-  }, []);
+  if (isLoading || !data) return <DashboardSkeleton />;
+  if (error || !data.success || !data.user) {
+    return <div className="text-center py-20 text-red-400">Failed to load dashboard data.</div>;
+  }
 
-  if (loading) return <DashboardSkeleton />;
-
-  const firstName = user?.name.split(" ")[0] ?? "there";
-  const purchased = user?.purchasedResources ?? [];
+  const user = data.user;
+  const firstName = user.name.split(" ")[0] ?? "there";
+  const purchased = user.purchasedResources ?? [];
   const uniqueSubjects = new Set(purchased.map((r) => r.subject)).size;
-  const memberSince = user?.createdAt
+  const memberSince = user.createdAt
     ? new Date(user.createdAt).toLocaleDateString("en-US", { month: "short", year: "numeric" })
     : "—";
 
   return (
     <div className="space-y-10">
       {/* Verification Warning */}
-      {user && !user.emailVerified && (
+      {!user.emailVerified && (
         <div
           className="flex items-start gap-3 rounded-2xl px-5 py-4 text-sm relative overflow-hidden"
           style={{
@@ -218,7 +213,7 @@ export default function DashboardPage() {
             icon={<svg width="20" height="20" viewBox="0 0 20 20" fill="none" aria-hidden="true"><circle cx="10" cy="10" r="8" stroke="currentColor" strokeWidth="1.4" /><path d="M10 6v4l3 2" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round" strokeLinejoin="round" /></svg>}
           />
           <StatCard
-            label="Member Since" value={memberSince} sub={user?.email}
+            label="Member Since" value={memberSince} sub={user.email}
             accentColor="#fbbf24" accentBg="rgba(245,158,11,0.1)" accentBorder="rgba(245,158,11,0.22)"
             icon={<svg width="20" height="20" viewBox="0 0 20 20" fill="none" aria-hidden="true"><circle cx="10" cy="8" r="3.5" stroke="currentColor" strokeWidth="1.4" /><path d="M3 18c0-3.314 3.134-6 7-6s7 2.686 7 6" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round" /></svg>}
           />

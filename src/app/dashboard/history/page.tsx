@@ -1,8 +1,10 @@
 "use client";
 
-import { useState, useEffect } from "react";
 import Link from "next/link";
+import useSWR from "swr";
 import { getSubjectStyle } from "@/lib/free-resources";
+
+const fetcher = (url: string) => fetch(url, { cache: "no-store" }).then((res) => res.json());
 
 type PurchasedResource = {
   _id: string;
@@ -97,23 +99,14 @@ function LibrarySkeleton() {
 }
 
 export default function HistoryPage() {
-  const [user, setUser] = useState<DashboardUser | null>(null);
-  const [loading, setLoading] = useState(true);
+  const { data, error, isLoading } = useSWR<{ success: boolean; user?: DashboardUser }>("/api/user/me", fetcher, { revalidateOnFocus: true });
 
-  useEffect(() => {
-    // Add cache: "no-store" to ensure we always fetch fresh data when the component mounts
-    fetch("/api/user/me", { cache: "no-store" })
-      .then((r) => r.json())
-      .then((data: { success: boolean; user?: DashboardUser }) => {
-        if (data.success && data.user) setUser(data.user);
-      })
-      .catch(() => {})
-      .finally(() => setLoading(false));
-  }, []);
+  if (isLoading || !data) return <LibrarySkeleton />;
+  if (error || !data.success || !data.user) {
+    return <div className="text-center py-20 text-red-400">Failed to load library data.</div>;
+  }
 
-  if (loading) return <LibrarySkeleton />;
-
-  const purchased = user?.purchasedResources ?? [];
+  const purchased = data.user.purchasedResources ?? [];
 
   return (
     <div className="space-y-8">

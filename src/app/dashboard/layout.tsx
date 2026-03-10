@@ -1,8 +1,10 @@
 "use client";
 
-import { useState, useEffect } from "react";
 import { usePathname } from "next/navigation";
 import Link from "next/link";
+import useSWR from "swr";
+
+const fetcher = (url: string) => fetch(url, { cache: "no-store" }).then((res) => res.json());
 
 type UserInfo = { name: string; email: string; role: string };
 
@@ -44,27 +46,13 @@ const NAV_ITEMS = [
 
 export default function DashboardLayout({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
-  const [user, setUser] = useState<UserInfo | null>(null);
-
-  const [loading, setLoading] = useState(true);
-
-  useEffect(() => {
-    fetch("/api/user/me", { cache: "no-store" })
-      .then((r) => r.json())
-      .then((data: { success: boolean; user?: UserInfo }) => {
-        if (data.success && data.user) setUser(data.user);
-      })
-      .catch((err) => {
-        console.error("Dashboard layout fetch error:", err);
-      })
-      .finally(() => {
-        setLoading(false);
-      });
-  }, []);
+  
+  const { data, isLoading } = useSWR<{ success: boolean; user?: UserInfo }>("/api/user/me", fetcher, { revalidateOnFocus: true });
+  const user = data?.user;
 
   const initials = user
     ? user.name.split(" ").map((n) => n[0]).join("").slice(0, 2).toUpperCase()
-    : loading ? "…" : "?";
+    : isLoading ? "…" : "?";
 
   return (
     <div className="relative min-h-[calc(100vh-68px)] flex overflow-hidden">
