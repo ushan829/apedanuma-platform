@@ -77,7 +77,9 @@ export default function RootLayout({
         <div className="ghibli-cloud" style={{ top: '75%', width: '250px', height: '120px', animationDelay: '-40s' }} />
         
         <Navbar />
-        {children}
+        <div className="pt-[68px] min-h-screen flex flex-col">
+          {children}
+        </div>
         <Toaster
           theme="dark"
           position="bottom-right"

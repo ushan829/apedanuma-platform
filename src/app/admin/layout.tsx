@@ -147,7 +147,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
 
       <aside
         className={`
-          fixed lg:sticky top-[68px] z-40 lg:z-auto
+          fixed lg:sticky top-[68px] lg:top-0 z-40 lg:z-auto
           h-[calc(100vh-68px)] flex flex-col shrink-0
           transition-transform duration-300 ease-in-out
           ${mobileOpen ? "translate-x-0" : "-translate-x-full lg:translate-x-0"}
@@ -285,7 +285,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
 
         {/* Mobile top bar */}
         <div
-          className="lg:hidden flex items-center gap-3 px-4 py-3 sticky top-[68px] z-20"
+          className="lg:hidden flex items-center gap-3 px-4 py-3 sticky top-0 z-20"
           style={{
             background: "rgba(6,6,12,0.9)",
             backdropFilter: "blur(16px)",

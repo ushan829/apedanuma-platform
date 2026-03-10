@@ -356,7 +356,7 @@ export default function Navbar() {
 
   return (
     <header
-      className={`nav-glass sticky top-0 z-[100] transition-all duration-300 ${isScrolled ? "nav-scrolled" : ""}`}
+      className={`nav-glass fixed w-full top-0 z-[100] transition-all duration-300 ${isScrolled ? "nav-scrolled" : ""}`}
       role="banner"
     >
       <div className="container-xl">

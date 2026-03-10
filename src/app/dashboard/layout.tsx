@@ -90,7 +90,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
 
       {/* ── Sidebar (desktop) ── */}
       <aside
-        className="hidden lg:flex flex-col shrink-0 sticky top-[68px] h-[calc(100vh-68px)]"
+        className="hidden lg:flex flex-col shrink-0 sticky top-0 h-[calc(100vh-68px)]"
         style={{
           width: 228,
           borderRight: "1px solid rgba(255,255,255,0.06)",
@@ -172,10 +172,10 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
       </aside>
 
       {/* ── Main content ── */}
-      <div className="flex-1 min-w-0 pt-24 lg:pt-0">
+      <div className="flex-1 min-w-0">
         {/* Mobile tab bar */}
         <div
-          className="lg:hidden sticky top-[68px] z-10 flex gap-1 px-4 py-3 overflow-x-auto no-scrollbar scrollbar-hide select-none"
+          className="lg:hidden sticky top-0 z-10 flex gap-1 px-4 py-3 overflow-x-auto no-scrollbar scrollbar-hide select-none"
           style={{
             background: "rgba(10,10,10,0.85)",
             backdropFilter: "blur(24px) saturate(150%)",
