@@ -49,7 +49,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    fetch("/api/user/me")
+    fetch("/api/user/me", { cache: "no-store" })
       .then((r) => r.json())
       .then((data: { success: boolean; user?: UserInfo }) => {
         if (data.success && data.user) setUser(data.user);

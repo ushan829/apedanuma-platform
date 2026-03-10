@@ -101,7 +101,8 @@ export default function HistoryPage() {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    fetch("/api/user/me")
+    // Add cache: "no-store" to ensure we always fetch fresh data when the component mounts
+    fetch("/api/user/me", { cache: "no-store" })
       .then((r) => r.json())
       .then((data: { success: boolean; user?: DashboardUser }) => {
         if (data.success && data.user) setUser(data.user);

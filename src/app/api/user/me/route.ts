@@ -8,6 +8,8 @@ import User from "@/models/User";
  * Returns the authenticated user's full profile including populated purchasedResources.
  * Used by the dashboard to display real purchased content.
  */
+export const dynamic = "force-dynamic";
+
 export async function GET(req: NextRequest) {
   const session = getSession(req);
   if (!session) {

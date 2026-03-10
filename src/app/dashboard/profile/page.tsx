@@ -49,7 +49,7 @@ export default function ProfilePage() {
   const [showConfirmPw, setShowConfirmPw]       = useState(false);
 
   useEffect(() => {
-    fetch("/api/user/me")
+    fetch("/api/user/me", { cache: "no-store" })
       .then((r) => {
         if (!r.ok) throw new Error("Failed to fetch");
         return r.json();
