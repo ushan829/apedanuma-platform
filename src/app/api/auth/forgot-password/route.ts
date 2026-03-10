@@ -4,11 +4,10 @@ import dbConnect from "@/lib/mongodb";
 import User from "@/models/User";
 import { Resend } from "resend";
 
-const resend = new Resend(process.env.RESEND_API_KEY);
-
 export async function POST(req: Request) {
   try {
     const { email } = await req.json();
+    const apiKey = process.env.RESEND_API_KEY;
 
     if (!email) {
       return NextResponse.json(
@@ -31,8 +30,6 @@ export async function POST(req: Request) {
     // Generate token
     const resetToken = crypto.randomBytes(32).toString("hex");
     
-    // Hash token for database storage (optional but recommended, however prompt says "Save these to the User document", let's just save raw for ease or hashed)
-    // Actually, storing raw token is fine for this requirement but let's just save raw
     user.resetPasswordToken = resetToken;
     user.resetPasswordExpires = new Date(Date.now() + 3600000); // 1 hour from now
 
@@ -57,12 +54,22 @@ export async function POST(req: Request) {
       </div>
     `;
 
-    await resend.emails.send({
-      from: "Ape Danuma <noreply@english-apedanuma.vercel.app>", // Ensure this domain is verified in Resend, or use onboarding domain if testing.
-      to: user.email,
-      subject: "Password Reset Request - Ape Danuma",
-      html: emailHtml,
-    });
+    if (apiKey) {
+      const resend = new Resend(apiKey);
+      await resend.emails.send({
+        from: "Ape Danuma <onboarding@resend.dev>",
+        to: user.email,
+        subject: "Password Reset Request - Ape Danuma",
+        html: emailHtml,
+      });
+    } else {
+      console.warn("RESEND_API_KEY is missing. Password reset email not sent.");
+      // In development or if keys are missing, we still want to show the success message 
+      // but maybe log the link for testing if needed.
+      if (process.env.NODE_ENV === "development") {
+        console.log("Reset Link (Dev):", resetUrl);
+      }
+    }
 
     return NextResponse.json(
       { message: "If an account with that email exists, we have sent a password reset link." },
