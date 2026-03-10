@@ -3,7 +3,7 @@
 import { useState, useEffect } from "react";
 import Link from "next/link";
 import { toast } from "sonner";
-import { useRouter } from "next/navigation";
+import { useRouter, usePathname } from "next/navigation";
 
 interface BuySectionProps {
   resourceId: string;
@@ -47,7 +47,9 @@ declare global {
 export default function BuySection({ resourceId, price }: BuySectionProps) {
   const [state, setState] = useState<PurchaseState>("loading");
   const [downloadState, setDownloadState] = useState<DownloadState>("idle");
+  const [showAuthModal, setShowAuthModal] = useState(false);
   const router = useRouter();
+  const pathname = usePathname();
 
   async function handlePurchase() {
     setState("loading");
@@ -59,6 +61,12 @@ export default function BuySection({ resourceId, price }: BuySectionProps) {
       });
 
       if (!res.ok) {
+        if (res.status === 401) {
+          setShowAuthModal(true);
+          setState("not-purchased");
+          return;
+        }
+
         const data = await res.json().catch(() => ({}));
         toast.error("Checkout Failed", { description: data.message || "Could not initiate payment." });
         setState("not-purchased");
@@ -352,6 +360,84 @@ export default function BuySection({ resourceId, price }: BuySectionProps) {
           </button>
         )}
       </div>
+
+      {/* Auth Modal */}
+      {showAuthModal && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4" style={{ background: "rgba(0,0,0,0.6)", backdropFilter: "blur(8px)" }}>
+          <div
+            className="relative w-full max-w-md p-8 overflow-hidden rounded-2xl"
+            style={{
+              background: "rgba(255,255,255,0.04)",
+              backdropFilter: "blur(24px) saturate(150%)",
+              border: "1px solid rgba(255,255,255,0.08)",
+              boxShadow: "0 0 0 1px rgba(124,31,255,0.05) inset, 0 8px 40px rgba(0,0,0,0.5), inset 0 1px 0 rgba(255,255,255,0.06)",
+            }}
+          >
+            {/* Top-edge highlight */}
+            <div
+              className="absolute top-0 left-0 right-0 h-px pointer-events-none"
+              style={{
+                background: "linear-gradient(90deg, transparent, rgba(124,31,255,0.45) 35%, rgba(148,85,255,0.25) 65%, transparent)",
+              }}
+            />
+            
+            <button 
+              onClick={() => setShowAuthModal(false)}
+              className="absolute top-4 right-4 p-2 rounded-full transition-colors hover:bg-white/5"
+              style={{ color: "var(--foreground-muted)" }}
+            >
+              <svg width="14" height="14" viewBox="0 0 14 14" fill="none" aria-hidden="true">
+                <path d="M1 1l12 12M13 1L1 13" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
+              </svg>
+            </button>
+
+            <div className="flex flex-col items-center text-center mt-2 mb-6">
+              <div 
+                className="flex items-center justify-center w-12 h-12 rounded-2xl mb-4"
+                style={{
+                  background: "linear-gradient(135deg, rgba(124,31,255,0.2), rgba(87,0,190,0.3))",
+                  border: "1px solid rgba(124,31,255,0.3)",
+                  color: "#c4a0ff",
+                }}
+              >
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                  <path d="M12 11c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v3h16v-3c0-2.66-5.33-4-8-4z" fill="currentColor" opacity="0.8" />
+                </svg>
+              </div>
+              <h3 className="font-display font-bold text-xl mb-2" style={{ color: "var(--foreground)" }}>Join Ape Danuma to Continue</h3>
+              <p className="text-sm leading-relaxed" style={{ color: "var(--foreground-muted)" }}>
+                Please create a free account to purchase this resource and access it anytime from your library.
+              </p>
+            </div>
+
+            <div className="flex flex-col gap-3">
+              <Link
+                href={`/register?from=${encodeURIComponent(pathname)}`}
+                className="flex items-center justify-center w-full py-3 rounded-xl text-sm font-bold transition-all duration-300 hover:-translate-y-0.5"
+                style={{
+                  background: "linear-gradient(135deg, #7c1fff 0%, #9455ff 60%, #7c1fff 100%)",
+                  backgroundSize: "200% auto",
+                  boxShadow: "0 0 20px rgba(124,31,255,0.3), 0 4px 12px rgba(0,0,0,0.3)",
+                  color: "#fff",
+                }}
+              >
+                Sign Up Now
+              </Link>
+              <Link
+                href={`/login?from=${encodeURIComponent(pathname)}`}
+                className="flex items-center justify-center w-full py-3 rounded-xl text-sm font-semibold transition-all duration-200 hover:-translate-y-0.5"
+                style={{
+                  background: "rgba(255,255,255,0.05)",
+                  border: "1px solid rgba(255,255,255,0.1)",
+                  color: "var(--foreground)",
+                }}
+              >
+                Login
+              </Link>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
