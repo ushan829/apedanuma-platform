@@ -49,8 +49,8 @@ export async function GET(req: NextRequest) {
         name:               user.name,
         email:              user.email,
         role:               user.role,
-        emailVerified:         user.emailVerified,
-        createdAt:          (user.createdAt as Date).toISOString(),
+        emailVerified:      user.emailVerified,
+        createdAt:          user.createdAt ? (user.createdAt as Date).toISOString() : new Date().toISOString(),
         purchasedResources,
       },
     });

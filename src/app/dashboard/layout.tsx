@@ -46,18 +46,25 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
   const pathname = usePathname();
   const [user, setUser] = useState<UserInfo | null>(null);
 
+  const [loading, setLoading] = useState(true);
+
   useEffect(() => {
     fetch("/api/user/me")
       .then((r) => r.json())
       .then((data: { success: boolean; user?: UserInfo }) => {
         if (data.success && data.user) setUser(data.user);
       })
-      .catch(() => {});
+      .catch((err) => {
+        console.error("Dashboard layout fetch error:", err);
+      })
+      .finally(() => {
+        setLoading(false);
+      });
   }, []);
 
   const initials = user
     ? user.name.split(" ").map((n) => n[0]).join("").slice(0, 2).toUpperCase()
-    : "…";
+    : loading ? "…" : "?";
 
   return (
     <div className="relative min-h-[calc(100vh-68px)] flex overflow-hidden">

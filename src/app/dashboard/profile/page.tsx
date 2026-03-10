@@ -50,14 +50,19 @@ export default function ProfilePage() {
 
   useEffect(() => {
     fetch("/api/user/me")
-      .then((r) => r.json())
+      .then((r) => {
+        if (!r.ok) throw new Error("Failed to fetch");
+        return r.json();
+      })
       .then((data: { success: boolean; user?: UserInfo }) => {
         if (data.success && data.user) {
           setUser(data.user);
           setName(data.user.name);
         }
       })
-      .catch(() => {})
+      .catch((err) => {
+        console.error("Profile fetch error:", err);
+      })
       .finally(() => setLoading(false));
   }, []);
 
