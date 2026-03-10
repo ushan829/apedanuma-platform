@@ -172,13 +172,13 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
       </aside>
 
       {/* ── Main content ── */}
-      <div className="flex-1 min-w-0">
+      <div className="flex-1 min-w-0 pt-24 lg:pt-0">
         {/* Mobile tab bar */}
         <div
-          className="lg:hidden sticky top-[68px] z-10 flex gap-1 px-4 py-2 overflow-x-auto no-scrollbar"
+          className="lg:hidden sticky top-[68px] z-10 flex gap-1 px-4 py-3 overflow-x-auto no-scrollbar scrollbar-hide select-none"
           style={{
             background: "rgba(10,10,10,0.85)",
-            backdropFilter: "blur(16px)",
+            backdropFilter: "blur(24px) saturate(150%)",
             borderBottom: "1px solid rgba(255,255,255,0.06)",
           }}
         >
@@ -188,7 +188,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
               <Link
                 key={item.href}
                 href={item.href}
-                className="flex items-center gap-1.5 shrink-0 rounded-lg px-3 py-1.5 text-xs font-medium transition-all duration-200"
+                className="flex items-center gap-1.5 shrink-0 rounded-lg px-4 py-2 text-xs font-medium transition-all duration-200 whitespace-nowrap"
                 style={{
                   background: isActive ? "rgba(124,31,255,0.15)" : "transparent",
                   border: isActive ? "1px solid rgba(124,31,255,0.25)" : "1px solid transparent",

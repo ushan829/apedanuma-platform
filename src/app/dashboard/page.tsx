@@ -190,14 +190,14 @@ export default function DashboardPage() {
       )}
 
       {/* Welcome */}
-      <div>
-        <div className="flex items-center gap-2 mb-1">
-          <span className="text-[0.7rem] font-bold uppercase tracking-widest" style={{ color: "#9455ff" }}>Dashboard</span>
+      <div className="pt-2 sm:pt-0">
+        <div className="flex items-center gap-2 mb-1.5">
+          <span className="text-[0.65rem] sm:text-[0.7rem] font-bold uppercase tracking-widest" style={{ color: "#9455ff" }}>Dashboard</span>
         </div>
-        <h1 className="font-display font-bold text-3xl sm:text-4xl" style={{ color: "var(--foreground)" }}>
+        <h1 className="font-display font-bold text-2xl sm:text-3xl md:text-4xl leading-tight sm:leading-none" style={{ color: "var(--foreground)" }}>
           Welcome back, <span className="text-gradient-arcane">{firstName}.</span>
         </h1>
-        <p className="mt-2 text-sm italic" style={{ color: "var(--foreground-muted)" }}>&ldquo;{quote}&rdquo;</p>
+        <p className="mt-2.5 text-sm italic leading-relaxed" style={{ color: "var(--foreground-muted)" }}>&ldquo;{quote}&rdquo;</p>
       </div>
 
       {/* Stats */}

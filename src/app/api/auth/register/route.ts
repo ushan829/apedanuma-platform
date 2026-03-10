@@ -121,7 +121,7 @@ export async function POST(req: NextRequest) {
     if (apiKey) {
       const resend = new Resend(apiKey);
       await resend.emails.send({
-        from: "Ape Danuma <onboarding@resend.dev>",
+        from: "Ape Danuma <verify@apedanuma.lk>",
         to: newUser.email,
         subject: "Verify your email - Ape Danuma",
         html: emailHtml,

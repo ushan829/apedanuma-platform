@@ -57,7 +57,7 @@ export async function POST(req: Request) {
     if (apiKey) {
       const resend = new Resend(apiKey);
       await resend.emails.send({
-        from: "Ape Danuma <onboarding@resend.dev>",
+        from: "Ape Danuma <verify@apedanuma.lk>",
         to: user.email,
         subject: "Password Reset Request - Ape Danuma",
         html: emailHtml,
