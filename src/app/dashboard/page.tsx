@@ -19,6 +19,7 @@ type DashboardUser = {
   name: string;
   email: string;
   role: string;
+  isVerified: boolean;
   createdAt: string;
   purchasedResources: PurchasedResource[];
 };
@@ -164,6 +165,30 @@ export default function DashboardPage() {
 
   return (
     <div className="space-y-10">
+      {/* Verification Warning */}
+      {user && !user.isVerified && (
+        <div
+          className="flex items-start gap-3 rounded-2xl px-5 py-4 text-sm relative overflow-hidden"
+          style={{
+            background: "rgba(239,68,68,0.08)",
+            border: "1px solid rgba(239,68,68,0.28)",
+            color: "#f87171",
+          }}
+        >
+          <div className="absolute top-0 left-0 w-1 h-full bg-red-500/50" />
+          <svg width="20" height="20" viewBox="0 0 20 20" fill="none" aria-hidden="true" className="shrink-0 mt-0.5">
+            <circle cx="10" cy="10" r="8.5" stroke="currentColor" strokeWidth="1.5" />
+            <path d="M10 6v5M10 13.5v.5" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
+          </svg>
+          <div>
+            <p className="font-semibold text-red-400 mb-0.5">Please verify your email address</p>
+            <p className="text-red-400/80 leading-relaxed">
+              We&apos;ve sent a verification link to <span className="font-medium text-red-300">{user.email}</span>. You need to verify your email before purchasing premium resources.
+            </p>
+          </div>
+        </div>
+      )}
+
       {/* Welcome */}
       <div>
         <div className="flex items-center gap-2 mb-1">

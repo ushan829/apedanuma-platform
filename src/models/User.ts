@@ -19,6 +19,9 @@ export interface IUser extends Document {
   /** Optional fields for password reset functionality */
   resetPasswordToken?: string;
   resetPasswordExpires?: Date;
+  /** Email verification fields */
+  isVerified: boolean;
+  verificationToken?: string;
 }
 
 /* ─────────────────────────────────────────
@@ -70,6 +73,12 @@ const UserSchema = new Schema<IUser>(
 
     resetPasswordToken: String,
     resetPasswordExpires: Date,
+
+    isVerified: {
+      type: Boolean,
+      default: false,
+    },
+    verificationToken: String,
   },
   {
     timestamps: true, // Adds createdAt + updatedAt automatically.
