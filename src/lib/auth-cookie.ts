@@ -13,6 +13,7 @@ export interface SessionPayload {
   name: string;
   email: string;
   role: string;
+  emailVerified: boolean;
 }
 
 /**

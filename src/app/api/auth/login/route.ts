@@ -97,6 +97,7 @@ export async function POST(req: NextRequest) {
         name: user.name,
         email: user.email,
         role: user.role,
+        emailVerified: user.emailVerified,
       },
       jwtSecret,
       { expiresIn: COOKIE_MAX_AGE }

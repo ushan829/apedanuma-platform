@@ -1,6 +1,10 @@
 import { NextResponse } from "next/server";
+import jwt from "jsonwebtoken";
 import connectToDatabase from "@/lib/mongodb";
 import User from "@/models/User";
+import { SESSION_COOKIE } from "@/lib/auth-cookie";
+
+const COOKIE_MAX_AGE = 7 * 24 * 60 * 60; // 7 days in seconds
 
 /* ─────────────────────────────────────────
    GET /api/auth/verify?token=...
@@ -11,7 +15,7 @@ export async function GET(req: Request) {
     const token = searchParams.get("token");
 
     if (!token) {
-      return new NextResponse("Token is missing.", { status: 400 });
+      return NextResponse.redirect(new URL("/login?error=Token is missing", req.url));
     }
 
     await connectToDatabase();
@@ -23,15 +27,44 @@ export async function GET(req: Request) {
       return NextResponse.redirect(new URL("/login?error=Invalid or expired verification link", req.url));
     }
 
-    user.isVerified = true;
+    user.emailVerified = true;
     user.verificationToken = undefined;
 
     await user.save();
 
-    // Redirect to login or success page
-    return NextResponse.redirect(new URL("/login?verified=true", req.url));
+    /* ── Sign the JWT to log the user in ─────────────────────────────── */
+    const jwtSecret = process.env.JWT_SECRET;
+    if (!jwtSecret) {
+      console.error("[GET /api/auth/verify] JWT_SECRET is not defined.");
+      return NextResponse.redirect(new URL("/login?verified=true", req.url));
+    }
+
+    const sessionToken = jwt.sign(
+      {
+        sub: user._id.toString(),
+        name: user.name,
+        email: user.email,
+        role: user.role,
+        emailVerified: user.emailVerified,
+      },
+      jwtSecret,
+      { expiresIn: COOKIE_MAX_AGE }
+    );
+
+    // Redirect to dashboard
+    const response = NextResponse.redirect(new URL("/dashboard?verified=true", req.url));
+
+    response.cookies.set(SESSION_COOKIE, sessionToken, {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === "production",
+      sameSite: "strict",
+      path: "/",
+      maxAge: COOKIE_MAX_AGE,
+    });
+
+    return response;
   } catch (error) {
     console.error("[GET /api/auth/verify]", error);
-    return new NextResponse("An error occurred during verification.", { status: 500 });
+    return NextResponse.redirect(new URL("/login?error=Verification failed due to a server error", req.url));
   }
 }

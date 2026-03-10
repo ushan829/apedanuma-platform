@@ -29,12 +29,12 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ success: false, message: "Resource has no valid price" }, { status: 400 });
     }
 
-    const user = await User.findById(session.sub).select("name email purchasedResources isVerified");
+    const user = await User.findById(session.sub).select("name email purchasedResources emailVerified");
     if (!user) {
       return NextResponse.json({ success: false, message: "User not found" }, { status: 404 });
     }
 
-    if (!user.isVerified) {
+    if (!user.emailVerified) {
       return NextResponse.json({ success: false, message: "Please verify your email to purchase." }, { status: 403 });
     }
 

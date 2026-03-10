@@ -18,7 +18,7 @@ export async function GET(req: NextRequest) {
     await connectToDatabase();
 
     const user = await User.findById(session.sub)
-      .select("name email role createdAt purchasedResources isVerified")
+      .select("name email role createdAt purchasedResources emailVerified")
       .populate({
         path: "purchasedResources",
         select: "title subject grade materialType description pageCount fileSize isPublished",
@@ -49,7 +49,7 @@ export async function GET(req: NextRequest) {
         name:               user.name,
         email:              user.email,
         role:               user.role,
-        isVerified:         user.isVerified,
+        emailVerified:         user.emailVerified,
         createdAt:          (user.createdAt as Date).toISOString(),
         purchasedResources,
       },

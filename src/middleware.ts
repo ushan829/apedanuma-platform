@@ -6,6 +6,7 @@ const SESSION_COOKIE = "ad_session";
 interface SessionPayload {
   sub: string;
   role: string;
+  emailVerified: boolean;
 }
 
 async function verifyToken(token: string): Promise<SessionPayload | null> {
@@ -57,9 +58,32 @@ export async function middleware(req: NextRequest) {
     }
   }
 
+  /* ── /premium-store and checkout — must be authenticated & verified ── */
+  if (pathname.startsWith("/premium-store") || pathname.startsWith("/api/payments/checkout")) {
+    // If not authenticated, redirect to login (for page) or return 401 (for API)
+    if (!session) {
+      if (pathname.startsWith("/api/")) {
+        return NextResponse.json({ success: false, message: "Authentication required." }, { status: 401 });
+      }
+      const loginUrl = req.nextUrl.clone();
+      loginUrl.pathname = "/login";
+      loginUrl.searchParams.set("from", pathname);
+      return NextResponse.redirect(loginUrl);
+    }
+    // If authenticated but not verified, redirect to dashboard to see warning or return 403
+    if (!session.emailVerified) {
+      if (pathname.startsWith("/api/")) {
+        return NextResponse.json({ success: false, message: "Please verify your email to purchase." }, { status: 403 });
+      }
+      const dashboardUrl = req.nextUrl.clone();
+      dashboardUrl.pathname = "/dashboard";
+      return NextResponse.redirect(dashboardUrl);
+    }
+  }
+
   return NextResponse.next();
 }
 
 export const config = {
-  matcher: ["/admin/:path*", "/dashboard/:path*"],
+  matcher: ["/admin/:path*", "/dashboard/:path*", "/premium-store/:path*", "/api/payments/checkout"],
 };
