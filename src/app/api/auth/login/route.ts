@@ -4,6 +4,7 @@ import connectToDatabase from "@/lib/mongodb";
 import User from "@/models/User";
 import { SESSION_COOKIE } from "@/lib/auth-cookie";
 import { checkRateLimit, getClientIp } from "@/lib/rateLimit";
+import { loginSchema } from "@/lib/validations/user";
 
 const COOKIE_MAX_AGE = 7 * 24 * 60 * 60; // 7 days in seconds
 
@@ -26,9 +27,9 @@ export async function POST(req: NextRequest) {
     }
 
     /* 2. Parse & validate the request body ──────────────────────────── */
-    let body: unknown;
+    let jsonBody: unknown;
     try {
-      body = await req.json();
+      jsonBody = await req.json();
     } catch {
       return NextResponse.json(
         { success: false, message: "Invalid JSON body." },
@@ -36,21 +37,20 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    const { email, password } = body as Record<string, unknown>;
+    const result = loginSchema.safeParse(jsonBody);
 
-    if (!email || typeof email !== "string") {
+    if (!result.success) {
       return NextResponse.json(
-        { success: false, message: "Email address is required." },
+        { 
+          success: false, 
+          message: result.error.errors[0].message,
+          errors: result.error.flatten().fieldErrors 
+        },
         { status: 400 }
       );
     }
 
-    if (!password || typeof password !== "string") {
-      return NextResponse.json(
-        { success: false, message: "Password is required." },
-        { status: 400 }
-      );
-    }
+    const { email, password } = result.data;
 
     /* 2. Connect to the database ─────────────────────────────────────── */
     await connectToDatabase();
@@ -60,9 +60,7 @@ export async function POST(req: NextRequest) {
        excluded from all queries by default. We re-include it only here
        for the comparison step, then never expose it in the response.
     ──────────────────────────────────────────────────────────────────── */
-    const user = await User.findOne({
-      email: email.trim().toLowerCase(),
-    }).select("+password");
+    const user = await User.findOne({ email }).select("+password");
 
     if (!user) {
       return NextResponse.json(

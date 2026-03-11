@@ -5,6 +5,8 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { signIn } from "next-auth/react";
 
+import { registerSchema } from "@/lib/validations/user";
+
 export default function RegisterPage() {
   const router = useRouter();
 
@@ -17,22 +19,24 @@ export default function RegisterPage() {
   /* ── UI state ── */
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [fieldErrors, setFieldErrors] = useState<Record<string, string[]>>({});
   const [success, setSuccess] = useState(false);
 
   /* ── Submit handler ── */
   async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
     setError(null);
+    setFieldErrors({});
 
-    // Client-side validation
-    if (name.trim().length < 2) {
-      setError("Name must be at least 2 characters.");
+    // Client-side validation with Zod
+    const result = registerSchema.safeParse({ name, email, password });
+    
+    if (!result.success) {
+      setFieldErrors(result.error.flatten().fieldErrors);
+      setError(result.error.errors[0].message);
       return;
     }
-    if (password.length < 8) {
-      setError("Password must be at least 8 characters.");
-      return;
-    }
+
     if (password !== confirmPassword) {
       setError("Passwords do not match. Please check and try again.");
       return;
@@ -44,13 +48,14 @@ export default function RegisterPage() {
       const res = await fetch("/api/auth/register", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ name: name.trim(), email: email.trim(), password }),
+        body: JSON.stringify(result.data),
       });
 
-      const data: { success: boolean; message: string } = await res.json();
+      const data: { success: boolean; message: string; errors?: Record<string, string[]> } = await res.json();
 
       if (!res.ok) {
         setError(data.message ?? "Registration failed. Please try again.");
+        if (data.errors) setFieldErrors(data.errors);
         return;
       }
 

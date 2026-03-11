@@ -11,6 +11,8 @@ function FieldLabel({ htmlFor, children }: { htmlFor: string; children: React.Re
   );
 }
 
+import { contactSchema } from "@/lib/validations/user";
+
 export default function ContactForm() {
   const [name,    setName]    = useState("");
   const [email,   setEmail]   = useState("");
@@ -21,8 +23,10 @@ export default function ContactForm() {
   async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
 
-    if (!name.trim() || !email.trim() || !subject.trim() || !message.trim()) {
-      toast.error("Please fill in all fields.");
+    const result = contactSchema.safeParse({ name, email, subject, message });
+
+    if (!result.success) {
+      toast.error(result.error.errors[0].message);
       return;
     }
 
@@ -31,7 +35,7 @@ export default function ContactForm() {
       const res = await fetch("/api/contact", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ name: name.trim(), email: email.trim(), subject: subject.trim(), message: message.trim() }),
+        body: JSON.stringify(result.data),
       });
       const data = await res.json() as { success: boolean; message: string };
 

@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import connectToDatabase from "@/lib/mongodb";
 import Message from "@/models/Message";
+import { contactSchema } from "@/lib/validations/user";
 
 /* ─────────────────────────────────────────
    POST /api/contact
@@ -8,9 +9,9 @@ import Message from "@/models/Message";
    ───────────────────────────────────────── */
 export async function POST(req: NextRequest) {
   try {
-    let body: unknown;
+    let jsonBody: unknown;
     try {
-      body = await req.json();
+      jsonBody = await req.json();
     } catch {
       return NextResponse.json(
         { success: false, message: "Invalid request body." },
@@ -18,28 +19,28 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    const { name, email, subject, message } = body as Record<string, unknown>;
+    const result = contactSchema.safeParse(jsonBody);
 
-    if (!name || typeof name !== "string" || !name.trim()) {
-      return NextResponse.json({ success: false, message: "Name is required." }, { status: 400 });
+    if (!result.success) {
+      return NextResponse.json(
+        { 
+          success: false, 
+          message: result.error.errors[0].message,
+          errors: result.error.flatten().fieldErrors 
+        },
+        { status: 400 }
+      );
     }
-    if (!email || typeof email !== "string" || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email.trim())) {
-      return NextResponse.json({ success: false, message: "A valid email address is required." }, { status: 400 });
-    }
-    if (!subject || typeof subject !== "string" || !subject.trim()) {
-      return NextResponse.json({ success: false, message: "Subject is required." }, { status: 400 });
-    }
-    if (!message || typeof message !== "string" || !message.trim()) {
-      return NextResponse.json({ success: false, message: "Message is required." }, { status: 400 });
-    }
+
+    const { name, email, subject, message } = result.data;
 
     await connectToDatabase();
 
     await Message.create({
-      name: (name as string).trim(),
-      email: (email as string).trim().toLowerCase(),
-      subject: (subject as string).trim(),
-      message: (message as string).trim(),
+      name,
+      email,
+      subject,
+      message,
     });
 
     return NextResponse.json(

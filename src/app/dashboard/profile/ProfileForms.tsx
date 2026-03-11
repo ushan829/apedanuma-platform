@@ -68,6 +68,8 @@ function PasswordInput({ value, onChange, placeholder, show, onToggle }: {
   );
 }
 
+import { updateProfileSchema } from "@/lib/validations/user";
+
 export default function ProfileForms({ initialName }: { initialName: string }) {
   const router = useRouter();
 
@@ -86,14 +88,22 @@ export default function ProfileForms({ initialName }: { initialName: string }) {
 
   async function handleSaveName(e: React.FormEvent) {
     e.preventDefault();
-    if (!name.trim()) { toast.error("Name cannot be empty."); return; }
+    
+    const result = updateProfileSchema.safeParse({ name });
+    
+    if (!result.success) {
+      toast.error(result.error.errors[0].message);
+      return;
+    }
+
     if (name.trim() === initialName) { toast.error("No changes to save."); return; }
+    
     setSavingName(true);
     try {
       const res = await fetch("/api/auth/me/update", {
         method: "PATCH",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ name: name.trim() }),
+        body: JSON.stringify(result.data),
       });
       const json = await res.json();
       if (!json.success) throw new Error(json.message);
@@ -108,15 +118,22 @@ export default function ProfileForms({ initialName }: { initialName: string }) {
 
   async function handleSavePassword(e: React.FormEvent) {
     e.preventDefault();
-    if (!currentPassword) { toast.error("Current password is required."); return; }
-    if (newPassword.length < 8) { toast.error("New password must be at least 8 characters."); return; }
+
+    const result = updateProfileSchema.safeParse({ currentPassword, newPassword });
+
+    if (!result.success) {
+      toast.error(result.error.errors[0].message);
+      return;
+    }
+
     if (newPassword !== confirmPassword) { toast.error("New passwords do not match."); return; }
+    
     setSavingPassword(true);
     try {
       const res = await fetch("/api/auth/me/update", {
         method: "PATCH",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ currentPassword, newPassword }),
+        body: JSON.stringify(result.data),
       });
       const json = await res.json();
       if (!json.success) throw new Error(json.message);

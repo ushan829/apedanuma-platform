@@ -4,6 +4,7 @@ import User from "@/models/User";
 import { checkRateLimit, getClientIp } from "@/lib/rateLimit";
 import crypto from "crypto";
 import { Resend } from "resend";
+import { registerSchema } from "@/lib/validations/user";
 
 /* ─────────────────────────────────────────
    POST /api/auth/register
@@ -24,9 +25,9 @@ export async function POST(req: NextRequest) {
     }
 
     /* 2. Parse & validate the request body ───────────────────────────── */
-    let body: unknown;
+    let jsonBody: unknown;
     try {
-      body = await req.json();
+      jsonBody = await req.json();
     } catch {
       return NextResponse.json(
         { success: false, message: "Invalid JSON body." },
@@ -34,44 +35,26 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    const { name, email, password } = body as Record<string, unknown>;
+    const result = registerSchema.safeParse(jsonBody);
 
-    if (!name || typeof name !== "string" || name.trim().length < 2) {
+    if (!result.success) {
       return NextResponse.json(
-        { success: false, message: "Name must be at least 2 characters." },
+        { 
+          success: false, 
+          message: result.error.errors[0].message,
+          errors: result.error.flatten().fieldErrors 
+        },
         { status: 400 }
       );
     }
 
-    if (!email || typeof email !== "string") {
-      return NextResponse.json(
-        { success: false, message: "A valid email address is required." },
-        { status: 400 }
-      );
-    }
-
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    if (!emailRegex.test(email.trim())) {
-      return NextResponse.json(
-        { success: false, message: "Please provide a valid email address." },
-        { status: 400 }
-      );
-    }
-
-    if (!password || typeof password !== "string" || password.length < 8) {
-      return NextResponse.json(
-        { success: false, message: "Password must be at least 8 characters." },
-        { status: 400 }
-      );
-    }
+    const { name, email, password } = result.data;
 
     /* 2. Connect to the database ─────────────────────────────────────── */
     await connectToDatabase();
 
     /* 3. Check for duplicate email ───────────────────────────────────── */
-    const existingUser = await User.findOne({
-      email: email.trim().toLowerCase(),
-    }).lean();
+    const existingUser = await User.findOne({ email }).lean();
 
     if (existingUser) {
       return NextResponse.json(

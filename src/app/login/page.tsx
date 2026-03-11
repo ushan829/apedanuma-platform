@@ -5,6 +5,8 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { signIn } from "next-auth/react";
 
+import { loginSchema } from "@/lib/validations/user";
+
 export default function LoginPage() {
   const router = useRouter();
 
@@ -15,18 +17,19 @@ export default function LoginPage() {
   /* ── UI state ── */
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [fieldErrors, setFieldErrors] = useState<Record<string, string[]>>({});
 
   /* ── Submit handler ── */
   async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
     setError(null);
+    setFieldErrors({});
 
-    if (!email.trim()) {
-      setError("Please enter your email address.");
-      return;
-    }
-    if (!password) {
-      setError("Please enter your password.");
+    const result = loginSchema.safeParse({ email, password });
+
+    if (!result.success) {
+      setFieldErrors(result.error.flatten().fieldErrors);
+      setError(result.error.errors[0].message);
       return;
     }
 
@@ -36,17 +39,19 @@ export default function LoginPage() {
       const res = await fetch("/api/auth/login", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email: email.trim(), password }),
+        body: JSON.stringify(result.data),
       });
 
       const data: {
         success: boolean;
         message: string;
         user?: { id: string; name: string; email: string; role: string };
+        errors?: Record<string, string[]>;
       } = await res.json();
 
       if (!res.ok) {
         setError(data.message ?? "Sign in failed. Please try again.");
+        if (data.errors) setFieldErrors(data.errors);
         return;
       }
 

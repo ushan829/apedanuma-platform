@@ -1,20 +1,31 @@
 import { NextRequest, NextResponse } from "next/server";
 import connectToDatabase from "@/lib/mongodb";
 import Subscriber from "@/models/Subscriber";
+import { subscribeSchema } from "@/lib/validations/user";
 
 /** POST /api/subscribe — add an email to the newsletter list */
 export async function POST(req: NextRequest) {
-  let body: { email?: string };
+  let jsonBody: unknown;
   try {
-    body = await req.json();
+    jsonBody = await req.json();
   } catch {
     return NextResponse.json({ success: false, message: "Invalid request body." }, { status: 400 });
   }
 
-  const email = body.email?.trim().toLowerCase();
-  if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
-    return NextResponse.json({ success: false, message: "Please provide a valid email address." }, { status: 400 });
+  const result = subscribeSchema.safeParse(jsonBody);
+
+  if (!result.success) {
+    return NextResponse.json(
+      { 
+        success: false, 
+        message: result.error.errors[0].message,
+        errors: result.error.flatten().fieldErrors 
+      },
+      { status: 400 }
+    );
   }
+
+  const { email } = result.data;
 
   try {
     await connectToDatabase();

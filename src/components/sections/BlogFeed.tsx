@@ -163,6 +163,8 @@ function PostCard({ post }: { post: PostSummary }) {
   );
 }
 
+import { subscribeSchema } from "@/lib/validations/user";
+
 /* ── Newsletter block ── */
 function NewsletterBlock() {
   const [email, setEmail] = useState("");
@@ -171,13 +173,21 @@ function NewsletterBlock() {
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
-    if (!email.trim()) return;
+
+    const result = subscribeSchema.safeParse({ email });
+
+    if (!result.success) {
+      setStatus("error");
+      setMsg(result.error.errors[0].message);
+      return;
+    }
+
     setStatus("loading");
     try {
       const res = await fetch("/api/subscribe", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email: email.trim() }),
+        body: JSON.stringify(result.data),
       });
       const json = await res.json();
       if (json.success) {
@@ -190,7 +200,7 @@ function NewsletterBlock() {
       }
     } catch {
       setStatus("error");
-      setMsg("Could not subscribe. Please try again.");
+      setMsg("Connection error.");
     }
   }
 
