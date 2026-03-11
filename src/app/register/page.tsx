@@ -19,20 +19,17 @@ export default function RegisterPage() {
   /* ── UI state ── */
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const [fieldErrors, setFieldErrors] = useState<Record<string, string[]>>({});
   const [success, setSuccess] = useState(false);
 
   /* ── Submit handler ── */
   async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
     setError(null);
-    setFieldErrors({});
 
     // Client-side validation with Zod
     const result = registerSchema.safeParse({ name, email, password });
     
     if (!result.success) {
-      setFieldErrors(result.error.flatten().fieldErrors);
       setError(result.error.errors[0].message);
       return;
     }
@@ -55,7 +52,6 @@ export default function RegisterPage() {
 
       if (!res.ok) {
         setError(data.message ?? "Registration failed. Please try again.");
-        if (data.errors) setFieldErrors(data.errors);
         return;
       }
 

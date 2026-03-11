@@ -17,18 +17,15 @@ export default function LoginPage() {
   /* ── UI state ── */
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const [fieldErrors, setFieldErrors] = useState<Record<string, string[]>>({});
 
   /* ── Submit handler ── */
   async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
     setError(null);
-    setFieldErrors({});
 
     const result = loginSchema.safeParse({ email, password });
 
     if (!result.success) {
-      setFieldErrors(result.error.flatten().fieldErrors);
       setError(result.error.errors[0].message);
       return;
     }
@@ -51,7 +48,6 @@ export default function LoginPage() {
 
       if (!res.ok) {
         setError(data.message ?? "Sign in failed. Please try again.");
-        if (data.errors) setFieldErrors(data.errors);
         return;
       }
 
