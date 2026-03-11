@@ -80,8 +80,6 @@ export default function BuySection({ resourceId, price }: BuySectionProps) {
         merchantId, 
         currency, 
         environment, 
-        return_url,
-        cancel_url,
         notify_url,
         user, 
         itemTitle 
