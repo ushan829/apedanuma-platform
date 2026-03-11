@@ -87,12 +87,14 @@ export default function BuySection({ resourceId, price }: BuySectionProps) {
         itemTitle 
       } = await res.json();
 
+      const currentOrigin = window.location.origin.replace(/\/$/, "");
+
       const payment: PayHerePayment = {
         sandbox: environment === "sandbox",
         merchant_id: merchantId,
-        return_url: return_url,
-        cancel_url: cancel_url,
-        notify_url: notify_url,
+        return_url: `${currentOrigin}/dashboard`,
+        cancel_url: `${currentOrigin}/premium-store`,
+        notify_url: notify_url, // Keep from API as it must be a public URL
         order_id: orderId,
         items: itemTitle || "Premium Resource",
         amount: amount,

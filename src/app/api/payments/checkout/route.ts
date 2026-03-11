@@ -90,9 +90,14 @@ export async function POST(req: NextRequest) {
 
     const nameParts = user.name.split(" ");
     
-    // Domain matching: Fallback to apedanuma.lk if no environment variable is provided,
-    // as the PayHere sandbox dashboard is configured with that domain.
-    const baseUrl = (process.env.NEXTAUTH_URL || process.env.NEXT_PUBLIC_APP_URL || "https://apedanuma.lk").trim().replace(/\/$/, "");
+    // Domain matching: Use NEXT_PUBLIC_APP_URL if available, 
+    // otherwise fallback to the current request's origin (dynamic) or the new production domain.
+    const baseUrl = (
+      process.env.NEXT_PUBLIC_APP_URL || 
+      process.env.NEXTAUTH_URL || 
+      req.nextUrl.origin || 
+      "https://em.apedanuma.lk"
+    ).trim().replace(/\/$/, "");
     
     return NextResponse.json({
       success: true,
