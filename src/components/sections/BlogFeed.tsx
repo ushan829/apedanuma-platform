@@ -178,7 +178,7 @@ function NewsletterBlock() {
 
     if (!result.success) {
       setStatus("error");
-      setMsg(result.error.errors[0].message);
+      setMsg(result.error.issues[0].message);
       return;
     }
 

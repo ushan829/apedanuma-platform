@@ -92,7 +92,7 @@ export default function ProfileForms({ initialName }: { initialName: string }) {
     const result = updateProfileSchema.safeParse({ name });
     
     if (!result.success) {
-      toast.error(result.error.errors[0].message);
+      toast.error(result.error.issues[0].message);
       return;
     }
 
@@ -122,7 +122,7 @@ export default function ProfileForms({ initialName }: { initialName: string }) {
     const result = updateProfileSchema.safeParse({ currentPassword, newPassword });
 
     if (!result.success) {
-      toast.error(result.error.errors[0].message);
+      toast.error(result.error.issues[0].message);
       return;
     }
 

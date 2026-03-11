@@ -25,7 +25,7 @@ export async function POST(req: NextRequest) {
       return NextResponse.json(
         { 
           success: false, 
-          message: result.error.errors[0].message,
+          message: result.error.issues[0].message,
           errors: result.error.flatten().fieldErrors 
         },
         { status: 400 }
