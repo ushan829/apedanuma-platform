@@ -101,11 +101,11 @@ export default async function DashboardLayout({ children }: { children: React.Re
       </aside>
 
       {/* ── Main content ── */}
-      <div className="flex-1 min-w-0">
+      <div className="flex-1 min-w-0 overflow-y-auto">
         {/* Mobile tab bar Client Component */}
         <SidebarNav type="mobile" />
 
-        <div className="px-6 lg:px-10 py-8 max-w-5xl">
+        <div className="px-6 lg:px-12 py-8 xl:py-10 max-w-6xl mx-auto">
           {children}
         </div>
       </div>

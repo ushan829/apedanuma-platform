@@ -24,7 +24,7 @@ export default async function ProfilePage() {
     : "—";
 
   return (
-    <div className="space-y-8 max-w-lg">
+    <div className="space-y-8 max-w-2xl">
       {/* Header */}
       <div>
         <span className="text-[0.7rem] font-bold uppercase tracking-widest" style={{ color: "#9455ff" }}>Account</span>
