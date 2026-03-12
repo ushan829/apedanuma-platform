@@ -4,6 +4,16 @@ import { useState, useEffect } from "react";
 import Link from "next/link";
 import { toast } from "sonner";
 import { useRouter, usePathname } from "next/navigation";
+import { 
+  Check, 
+  Download, 
+  Lock, 
+  ShieldCheck, 
+  ArrowLeft, 
+  ShoppingCart,
+  Zap,
+  CreditCard
+} from "lucide-react";
 
 interface BuySectionProps {
   resourceId: string;
@@ -66,7 +76,6 @@ export default function BuySection({ resourceId, price }: BuySectionProps) {
           setState("not-purchased");
           return;
         }
-
         const data = await res.json().catch(() => ({}));
         toast.error("Checkout Failed", { description: data.message || "Could not initiate payment." });
         setState("not-purchased");
@@ -92,7 +101,7 @@ export default function BuySection({ resourceId, price }: BuySectionProps) {
         merchant_id: merchantId,
         return_url: `${currentOrigin}/dashboard`,
         cancel_url: `${currentOrigin}/premium-store`,
-        notify_url: notify_url, // Keep from API as it must be a public URL
+        notify_url: notify_url,
         order_id: orderId,
         items: itemTitle || "Premium Resource",
         amount: amount,
@@ -117,7 +126,6 @@ export default function BuySection({ resourceId, price }: BuySectionProps) {
         toast.info("Payment received! Verifying...", { description: "Please wait a moment while we confirm the transaction." });
         setState("pending");
         
-        // Poll backend to verify webhook completion
         let attempts = 0;
         const interval = setInterval(async () => {
           attempts++;
@@ -135,8 +143,6 @@ export default function BuySection({ resourceId, price }: BuySectionProps) {
               setState(data.status === "failed" ? "failed" : "pending");
               if (data.status === "failed") {
                 toast.error("Payment Failed", { description: "The transaction was declined by the gateway." });
-              } else {
-                toast.info("Verification taking longer than usual.", { description: "Please refresh the page in a minute." });
               }
             }
           } catch {
@@ -145,17 +151,12 @@ export default function BuySection({ resourceId, price }: BuySectionProps) {
         }, 3000);
       };
 
-      window.payhere.onDismissed = function onDismissed() {
-        setState("not-purchased");
-      };
-
-      window.payhere.onError = function onError(error: string) {
+      window.payhere.onDismissed = () => setState("not-purchased");
+      window.payhere.onError = (error: string) => {
         toast.error("Payment Error", { description: error });
         setState("failed");
       };
 
-      // Set state back to not-purchased before opening the modal
-      // so if the user closes the modal without onDismissed firing, it isn't stuck.
       setState("not-purchased");
       window.payhere.startPayment(payment);
     } catch (err: unknown) {
@@ -168,17 +169,12 @@ export default function BuySection({ resourceId, price }: BuySectionProps) {
   async function handleDownload() {
     setDownloadState("downloading");
     try {
-      // The session cookie is sent automatically by the browser.
       const res = await fetch(`/api/download/premium/${resourceId}`);
-
       if (!res.ok) {
-        const data = await res.json().catch(() => ({}));
-        console.error("[Download] Failed:", data.message ?? res.statusText);
         setDownloadState("error");
         setTimeout(() => setDownloadState("idle"), 4000);
         return;
       }
-
       const blob = await res.blob();
       const url = URL.createObjectURL(blob);
       const a = document.createElement("a");
@@ -189,20 +185,16 @@ export default function BuySection({ resourceId, price }: BuySectionProps) {
       document.body.removeChild(a);
       URL.revokeObjectURL(url);
       setDownloadState("idle");
-    } catch (err) {
-      console.error("[Download] Network error:", err);
+    } catch {
       setDownloadState("error");
       setTimeout(() => setDownloadState("idle"), 4000);
     }
   }
 
   useEffect(() => {
-    // Session cookie is sent automatically — no manual token needed.
     fetch(`/api/user/has-purchased/${resourceId}`)
       .then((r) => r.json())
       .then((data: { status: string }) => {
-        // Treat "pending" database status as "not-purchased" in the UI 
-        // to allow users to click the purchase button again if they previously abandoned a checkout.
         if (data.status === "completed") setState("completed");
         else if (data.status === "failed") setState("failed");
         else setState("not-purchased");
@@ -212,235 +204,205 @@ export default function BuySection({ resourceId, price }: BuySectionProps) {
 
   return (
     <div
-      className="flex flex-col sm:flex-row sm:items-center gap-5 p-6 rounded-2xl"
+      className="relative overflow-hidden rounded-[2.5rem] p-8 lg:p-10 border border-white/10 shadow-2xl"
       style={{
         background: "rgba(255,255,255,0.03)",
-        border: "1px solid rgba(255,255,255,0.08)",
+        backdropFilter: "blur(24px)",
       }}
     >
-      {/* Price column */}
-      <div className="flex-1">
-        {state === "completed" ? (
-          <>
-            <p className="text-xs mb-1 flex items-center gap-1.5" style={{ color: "#34d399" }}>
-              <svg width="12" height="12" viewBox="0 0 12 12" fill="none" aria-hidden="true">
-                <circle cx="6" cy="6" r="5" stroke="#34d399" strokeWidth="1.2" />
-                <path d="M3.5 6l2 2 3-3" stroke="#34d399" strokeWidth="1.3" strokeLinecap="round" strokeLinejoin="round" />
-              </svg>
-              Already purchased · Ready to download
+      {/* Background Decorative Glow */}
+      <div className="absolute -top-24 -right-24 w-48 h-48 bg-purple-600/10 blur-[80px] pointer-events-none" />
+      
+      <div className="relative z-10 flex flex-col gap-8">
+        
+        {/* ── Price Header ── */}
+        <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4">
+          <div className="space-y-1">
+            <p className="text-[0.7rem] font-bold uppercase tracking-[0.2em]" style={{ color: "var(--foreground-muted)" }}>
+              {state === "completed" ? "Order Status" : "One-Time Purchase"}
             </p>
-            <p className="text-sm" style={{ color: "var(--foreground-muted)" }}>
-              PDF will be downloaded to your device.
-            </p>
-          </>
-        ) : (
-          <>
-            <p className="text-xs mb-1" style={{ color: "var(--foreground-muted)" }}>
-              One-time purchase · Instant download
-            </p>
-            <div className="flex items-end gap-1.5">
-              <span className="text-sm font-semibold" style={{ color: "var(--foreground-muted)" }}>LKR</span>
-              <span className="font-display font-bold text-4xl leading-none" style={{ color: "var(--foreground)" }}>
-                {price.toLocaleString()}
-              </span>
-            </div>
-          </>
-        )}
-      </div>
-
-      {/* CTA column */}
-      <div className="flex flex-col sm:flex-row gap-3 sm:shrink-0">
-        <Link
-          href="/premium-store"
-          className="flex items-center justify-center gap-2 rounded-xl px-5 py-3 text-sm font-semibold transition-all duration-200 hover:-translate-y-px"
-          style={{
-            background: "rgba(255,255,255,0.05)",
-            border: "1px solid rgba(255,255,255,0.1)",
-            color: "var(--foreground-secondary)",
-          }}
-        >
-          <svg width="14" height="14" viewBox="0 0 14 14" fill="none" aria-hidden="true">
-            <path d="M9 3L4 7l5 4" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
-          </svg>
-          Back to Store
-        </Link>
-
-        {state === "loading" && (
-          <div
-            className="flex items-center justify-center gap-2 rounded-xl px-7 py-3 text-sm font-bold"
-            style={{
-              background: "rgba(124,31,255,0.15)",
-              border: "1px solid rgba(124,31,255,0.25)",
-              color: "#9455ff",
-              minWidth: 180,
-            }}
-          >
-            <svg className="animate-spin" width="14" height="14" viewBox="0 0 14 14" fill="none" aria-hidden="true">
-              <circle cx="7" cy="7" r="5.5" stroke="currentColor" strokeWidth="1.5" strokeDasharray="8 8" />
-            </svg>
-            Checking…
-          </div>
-        )}
-
-        {(state === "not-purchased" || state === "failed") && (
-          <button
-            id="buy-button-main"
-            type="button"
-            onClick={handlePurchase}
-            className="flex items-center justify-center gap-2 rounded-xl px-7 py-3 text-sm font-bold transition-all duration-300 hover:-translate-y-1"
-            style={{
-              background: "linear-gradient(135deg, #7c1fff 0%, #9455ff 60%, #7c1fff 100%)",
-              backgroundSize: "200% auto",
-              boxShadow: "0 0 24px rgba(124,31,255,0.45), 0 4px 12px rgba(0,0,0,0.3)",
-              color: "#fff",
-            }}
-          >
-            {state === "failed" ? "Retry Purchase" : "Purchase & Download"}
-            <svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true">
-              <path d="M8 2v8M4 7l4 4 4-4M2 13h12" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" />
-            </svg>
-          </button>
-        )}
-
-        {state === "pending" && (
-          <button
-            type="button"
-            disabled
-            className="flex items-center justify-center gap-2 rounded-xl px-7 py-3 text-sm font-bold transition-all duration-300 disabled:opacity-80"
-            style={{
-              background: "linear-gradient(135deg, #f59e0b 0%, #fbbf24 60%, #f59e0b 100%)",
-              backgroundSize: "200% auto",
-              boxShadow: "0 0 24px rgba(245,158,11,0.3), 0 4px 12px rgba(0,0,0,0.2)",
-              color: "#fff",
-            }}
-          >
-            <svg className="animate-spin" width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true">
-              <circle cx="8" cy="8" r="6" stroke="currentColor" strokeWidth="1.6" strokeDasharray="10 10" />
-            </svg>
-            Verifying Payment...
-          </button>
-        )}
-
-        {state === "completed" && (
-          <button
-            type="button"
-            onClick={handleDownload}
-            disabled={downloadState === "downloading"}
-            className="flex items-center justify-center gap-2 rounded-xl px-7 py-3 text-sm font-bold transition-all duration-300 hover:-translate-y-1 disabled:opacity-70 disabled:cursor-not-allowed disabled:hover:translate-y-0"
-            style={{
-              background: downloadState === "error"
-                ? "linear-gradient(135deg, #dc2626 0%, #ef4444 60%, #dc2626 100%)"
-                : "linear-gradient(135deg, #059669 0%, #34d399 60%, #059669 100%)",
-              backgroundSize: "200% auto",
-              boxShadow: downloadState === "error"
-                ? "0 0 24px rgba(220,38,38,0.4), 0 4px 12px rgba(0,0,0,0.3)"
-                : "0 0 24px rgba(16,185,129,0.4), 0 4px 12px rgba(0,0,0,0.3)",
-              color: "#fff",
-            }}
-          >
-            {downloadState === "downloading" ? (
-              <>
-                <svg className="animate-spin" width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true">
-                  <circle cx="8" cy="8" r="6" stroke="currentColor" strokeWidth="1.6" strokeDasharray="10 10" />
-                </svg>
-                Fetching securely…
-              </>
-            ) : downloadState === "error" ? (
-              <>
-                <svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true">
-                  <path d="M8 5v4M8 11h.01M3 13h10l-5-9-5 9z" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" />
-                </svg>
-                Download Failed — Retry
-              </>
+            {state === "completed" ? (
+              <div className="flex items-center gap-2 text-[#34d399]">
+                <ShieldCheck size={24} />
+                <span className="font-display font-black text-2xl tracking-tight">Unlocked</span>
+              </div>
             ) : (
-              <>
-                <svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true">
-                  <path d="M8 2v8M4 7l4 4 4-4M2 13h12" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" />
-                </svg>
-                Download PDF
-              </>
+              <div className="flex items-baseline gap-2">
+                <span className="text-base font-bold text-slate-400">LKR</span>
+                <span className="font-display font-black text-5xl leading-none text-white tracking-tighter">
+                  {price.toLocaleString()}
+                </span>
+              </div>
             )}
-          </button>
-        )}
+          </div>
+          <div className="flex items-center gap-2 px-3 py-1.5 rounded-full bg-white/5 border border-white/5 text-[0.65rem] font-bold uppercase tracking-wider text-slate-400">
+            <Zap size={12} className="text-amber-400" />
+            Instant Delivery
+          </div>
+        </div>
+
+        {/* ── Feature List ── */}
+        <div className="space-y-3.5">
+          <div className="flex items-center gap-3 text-[0.9rem] text-slate-300">
+            <div className="flex-shrink-0 w-5 h-5 rounded-full bg-green-500/10 border border-green-500/20 flex items-center justify-center">
+              <Check size={12} className="text-green-400" />
+            </div>
+            Full PDF Access (Lifetime)
+          </div>
+          <div className="flex items-center gap-3 text-[0.9rem] text-slate-300">
+            <div className="flex-shrink-0 w-5 h-5 rounded-full bg-green-500/10 border border-green-500/20 flex items-center justify-center">
+              <Check size={12} className="text-green-400" />
+            </div>
+            Expert-Crafted Study Notes
+          </div>
+          <div className="flex items-center gap-3 text-[0.9rem] text-slate-300">
+            <div className="flex-shrink-0 w-5 h-5 rounded-full bg-green-500/10 border border-green-500/20 flex items-center justify-center">
+              <Check size={12} className="text-green-400" />
+            </div>
+            Secure Checkout via PayHere
+          </div>
+        </div>
+
+        {/* ── CTA Buttons ── */}
+        <div className="flex flex-col gap-4">
+          {state === "loading" ? (
+            <div className="w-full py-4 rounded-2xl flex items-center justify-center gap-3 bg-white/5 border border-white/10 text-slate-400 font-bold">
+              <RefreshCcw size={18} className="animate-spin" />
+              Initializing...
+            </div>
+          ) : state === "completed" ? (
+            <button
+              onClick={handleDownload}
+              disabled={downloadState === "downloading"}
+              className="w-full group relative py-4 rounded-2xl flex items-center justify-center gap-3 font-display font-black text-lg transition-all duration-300 hover:-translate-y-1"
+              style={{
+                background: "linear-gradient(135deg, #059669 0%, #34d399 60%, #059669 100%)",
+                boxShadow: "0 0 30px rgba(16,185,129,0.3)",
+                color: "#fff"
+              }}
+            >
+              {downloadState === "downloading" ? (
+                <>
+                  <RefreshCcw size={20} className="animate-spin" />
+                  Downloading...
+                </>
+              ) : (
+                <>
+                  <Download size={20} className="group-hover:bounce" />
+                  Download PDF
+                </>
+              )}
+            </button>
+          ) : (
+            <button
+              id="buy-button-main"
+              onClick={handlePurchase}
+              disabled={state === "pending"}
+              className="w-full group relative py-4 rounded-2xl flex items-center justify-center gap-3 font-display font-black text-lg transition-all duration-300 hover:-translate-y-1 active:scale-[0.98]"
+              style={{
+                background: "linear-gradient(135deg, #7c1fff 0%, #9455ff 60%, #7c1fff 100%)",
+                boxShadow: "0 0 35px rgba(124,31,255,0.4), 0 8px 24px rgba(0,0,0,0.3)",
+                color: "#fff"
+              }}
+            >
+              {state === "pending" ? (
+                <>
+                  <RefreshCcw size={20} className="animate-spin" />
+                  Verifying Payment...
+                </>
+              ) : (
+                <>
+                  <CreditCard size={20} />
+                  Purchase & Unlock
+                </>
+              )}
+              {/* Glow Overlay */}
+              <div className="absolute inset-0 rounded-2xl bg-white/10 opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none" />
+            </button>
+          )}
+
+          <Link
+            href="/premium-store"
+            className="flex items-center justify-center gap-2 py-3 text-sm font-semibold transition-all duration-200 text-slate-500 hover:text-white"
+          >
+            <ArrowLeft size={14} />
+            Explore Other Packs
+          </Link>
+        </div>
+
+        {/* ── Security Trust Note ── */}
+        <div className="pt-6 border-t border-white/5 flex items-center justify-center gap-4">
+          <div className="flex items-center gap-1.5 text-[0.7rem] font-medium text-slate-500">
+            <ShieldCheck size={14} className="text-[#34d399]" />
+            Secure Payment
+          </div>
+          <div className="w-1 h-1 rounded-full bg-white/10" />
+          <div className="flex items-center gap-1.5 text-[0.7rem] font-medium text-slate-500">
+            <Download size={14} className="text-blue-400" />
+            Instant Download
+          </div>
+        </div>
+
       </div>
 
-      {/* Auth Modal */}
+      {/* Auth Modal remains the same but with refined styles */}
       {showAuthModal && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4" style={{ background: "rgba(0,0,0,0.6)", backdropFilter: "blur(8px)" }}>
-          <div
-            className="relative w-full max-w-md p-8 overflow-hidden rounded-2xl"
-            style={{
-              background: "rgba(255,255,255,0.04)",
-              backdropFilter: "blur(24px) saturate(150%)",
-              border: "1px solid rgba(255,255,255,0.08)",
-              boxShadow: "0 0 0 1px rgba(124,31,255,0.05) inset, 0 8px 40px rgba(0,0,0,0.5), inset 0 1px 0 rgba(255,255,255,0.06)",
-            }}
-          >
-            {/* Top-edge highlight */}
-            <div
-              className="absolute top-0 left-0 right-0 h-px pointer-events-none"
-              style={{
-                background: "linear-gradient(90deg, transparent, rgba(124,31,255,0.45) 35%, rgba(148,85,255,0.25) 65%, transparent)",
-              }}
-            />
-            
+        <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/60 backdrop-blur-md">
+          <div className="relative w-full max-w-md p-10 rounded-[2.5rem] border border-white/10 bg-[#0a0a0c] shadow-2xl">
             <button 
               onClick={() => setShowAuthModal(false)}
-              className="absolute top-4 right-4 p-2 rounded-full transition-colors hover:bg-white/5"
-              style={{ color: "var(--foreground-muted)" }}
+              className="absolute top-6 right-6 p-2 text-slate-500 hover:text-white transition-colors"
             >
-              <svg width="14" height="14" viewBox="0 0 14 14" fill="none" aria-hidden="true">
-                <path d="M1 1l12 12M13 1L1 13" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
-              </svg>
+              <ArrowLeft size={20} className="rotate-90" />
             </button>
-
-            <div className="flex flex-col items-center text-center mt-2 mb-6">
-              <div 
-                className="flex items-center justify-center w-12 h-12 rounded-2xl mb-4"
-                style={{
-                  background: "linear-gradient(135deg, rgba(124,31,255,0.2), rgba(87,0,190,0.3))",
-                  border: "1px solid rgba(124,31,255,0.3)",
-                  color: "#c4a0ff",
-                }}
-              >
-                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" aria-hidden="true">
-                  <path d="M12 11c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v3h16v-3c0-2.66-5.33-4-8-4z" fill="currentColor" opacity="0.8" />
-                </svg>
+            <div className="text-center space-y-4 mb-10">
+              <div className="w-16 h-16 mx-auto rounded-3xl bg-purple-500/10 border border-purple-500/20 flex items-center justify-center">
+                <Lock size={28} className="text-purple-400" />
               </div>
-              <h3 className="font-display font-bold text-xl mb-2" style={{ color: "var(--foreground)" }}>Join Ape Danuma to Continue</h3>
-              <p className="text-sm leading-relaxed" style={{ color: "var(--foreground-muted)" }}>
-                Please create a free account to purchase this resource and access it anytime from your library.
+              <h3 className="text-2xl font-display font-black text-white">Join Ape Danuma</h3>
+              <p className="text-slate-400 text-[0.95rem] leading-relaxed">
+                Create a free account to purchase materials and access them permanently in your library.
               </p>
             </div>
-
-            <div className="flex flex-col gap-3">
-              <Link
-                href={`/register?from=${encodeURIComponent(pathname)}`}
-                className="flex items-center justify-center w-full py-3 rounded-xl text-sm font-bold transition-all duration-300 hover:-translate-y-0.5"
-                style={{
-                  background: "linear-gradient(135deg, #7c1fff 0%, #9455ff 60%, #7c1fff 100%)",
-                  backgroundSize: "200% auto",
-                  boxShadow: "0 0 20px rgba(124,31,255,0.3), 0 4px 12px rgba(0,0,0,0.3)",
-                  color: "#fff",
-                }}
+            <div className="flex flex-col gap-4">
+              <Link 
+                href={`/register?from=${encodeURIComponent(pathname)}`} 
+                className="w-full py-4 rounded-2xl bg-white text-black font-black text-center transition-transform hover:-translate-y-1 shadow-xl"
               >
-                Sign Up Now
+                Get Started — It's Free
               </Link>
-              <Link
+              <Link 
                 href={`/login?from=${encodeURIComponent(pathname)}`}
-                className="flex items-center justify-center w-full py-3 rounded-xl text-sm font-semibold transition-all duration-200 hover:-translate-y-0.5"
-                style={{
-                  background: "rgba(255,255,255,0.05)",
-                  border: "1px solid rgba(255,255,255,0.1)",
-                  color: "var(--foreground)",
-                }}
+                className="w-full py-4 rounded-2xl bg-white/5 border border-white/10 text-white font-bold text-center transition-colors hover:bg-white/10"
               >
-                Login
+                Login to Account
               </Link>
             </div>
           </div>
         </div>
       )}
     </div>
+  );
+}
+
+function RefreshCcw(props: any) {
+  return (
+    <svg
+      {...props}
+      xmlns="http://www.w3.org/2000/svg"
+      width="24"
+      height="24"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="2"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    >
+      <path d="M21 12a9 9 0 0 0-9-9 9.75 9.75 0 0 0-6.74 2.74L3 8" />
+      <path d="M3 3v5h5" />
+      <path d="M3 12a9 9 0 0 0 9 9 9.75 9.75 0 0 0 6.74-2.74L21 16" />
+      <path d="M16 16h5v5" />
+    </svg>
   );
 }

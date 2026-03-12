@@ -77,49 +77,52 @@ export default function PDFViewer({
         
         {showBlur && (
           <div 
-            className="absolute inset-0 z-20 backdrop-blur-xl bg-black/40 flex items-center justify-center p-6 text-center transition-all duration-700"
+            className="absolute inset-0 z-20 backdrop-blur-[40px] bg-black/60 flex items-center justify-center p-6 text-center transition-all duration-700"
             style={{ pointerEvents: "auto" }}
           >
             {/* We only show the CTA on the first blurred page (index 3) to avoid redundancy */}
             {props.pageIndex === 3 && (
               <div 
-                className="max-w-sm w-full p-8 rounded-3xl border border-white/10 shadow-2xl animate-in fade-in zoom-in slide-in-from-bottom-8 duration-700"
+                className="max-w-sm w-full p-10 rounded-[2.5rem] border border-white/10 shadow-[0_32px_64px_rgba(0,0,0,0.8)] animate-in fade-in zoom-in slide-in-from-bottom-12 duration-1000"
                 style={{ 
-                  background: "rgba(10, 10, 10, 0.9)",
-                  backdropFilter: "blur(32px)",
+                  background: "rgba(10, 10, 10, 0.95)",
+                  backdropFilter: "blur(24px)",
                 }}
               >
-                <div className="flex justify-center mb-6">
-                  <div className="p-4 rounded-2xl bg-purple-500/10 border border-purple-500/20 shadow-[0_0_20px_rgba(148,85,255,0.1)]">
-                    <Lock className="text-purple-400" size={32} />
+                <div className="flex justify-center mb-8">
+                  <div className="relative">
+                    <div className="absolute inset-0 bg-purple-500/20 blur-2xl rounded-full" />
+                    <div className="relative p-5 rounded-3xl bg-purple-500/10 border border-purple-500/20 shadow-[0_0_20px_rgba(148,85,255,0.15)]">
+                      <Lock className="text-purple-400" size={40} />
+                    </div>
                   </div>
                 </div>
-                <h3 className="text-xl font-display font-black mb-3 text-white tracking-tight">Full Document Locked</h3>
-                <p className="text-slate-400 text-sm mb-8 leading-relaxed">
-                  You are viewing a teaser. Purchase this premium resource to unlock all pages and download the high-quality PDF.
+                <h3 className="text-2xl font-display font-black mb-4 text-white tracking-tight">Document Locked</h3>
+                <p className="text-slate-400 text-[0.95rem] mb-10 leading-relaxed">
+                  You are viewing a limited teaser. Purchase this premium resource to unlock all <span className="text-white font-bold">pages</span> and download the high-quality PDF.
                 </p>
                 
-                <div className="flex flex-col gap-3">
+                <div className="flex flex-col gap-4">
                   <button
                     onClick={() => {
                       const buyBtn = document.getElementById("buy-button-main");
                       if (buyBtn) buyBtn.scrollIntoView({ behavior: "smooth", block: "center" });
                     }}
-                    className="flex items-center justify-center gap-2 w-full py-3.5 rounded-xl text-sm font-bold transition-all duration-300 hover:-translate-y-1 active:scale-[0.98]"
+                    className="flex items-center justify-center gap-3 w-full py-4 rounded-2xl text-base font-display font-black transition-all duration-300 hover:-translate-y-1 active:scale-[0.98]"
                     style={{
                       background: "linear-gradient(135deg, #7c1fff 0%, #9455ff 60%, #7c1fff 100%)",
-                      boxShadow: "0 0 24px rgba(124,31,255,0.4), 0 4px 12px rgba(0,0,0,0.3)",
+                      boxShadow: "0 0 30px rgba(124,31,255,0.45), 0 8px 24px rgba(0,0,0,0.3)",
                       color: "#fff"
                     }}
                   >
-                    <ShoppingCart size={18} />
-                    Buy Now — LKR {price.toLocaleString()}
+                    <ShoppingCart size={20} />
+                    Unlock Full Access
                   </button>
                   <Link
                     href="/premium-store"
-                    className="text-xs font-semibold text-slate-500 hover:text-white transition-colors py-2"
+                    className="text-xs font-bold uppercase tracking-widest text-slate-500 hover:text-white transition-colors py-2"
                   >
-                    View more premium packs
+                    Explore Premium Store
                   </Link>
                 </div>
               </div>
