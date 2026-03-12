@@ -3,7 +3,7 @@ import { revalidatePath } from "next/cache";
 import { PutObjectCommand } from "@aws-sdk/client-s3";
 import slugify from "slugify";
 import { verifyAdminToken, authError } from "@/lib/admin-auth";
-import { getS3Client, getR2Bucket, buildPublicUrl } from "@/lib/s3";
+import { getS3Client, getR2Bucket, buildPublicUrl, formatFileSize } from "@/lib/s3";
 import connectToDatabase from "@/lib/mongodb";
 import Resource, { type IResource } from "@/models/Resource";
 import { SUBJECT_VALUES, MATERIAL_TYPE_VALUES } from "@/lib/resource-constants";
