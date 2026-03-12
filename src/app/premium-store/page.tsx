@@ -17,7 +17,7 @@ async function getPremiumProducts(): Promise<LiveResource[]> {
   try {
     await connectToDatabase();
     const docs = await Resource.find({ isPremium: true, isPublished: true })
-      .select("title description grade subject materialType term year price pageCount fileSize downloadCount")
+      .select("title description grade subject materialType term year price pageCount fileSize downloadCount pdfUrl")
       .sort({ createdAt: -1 })
       .lean();
 
@@ -34,6 +34,7 @@ async function getPremiumProducts(): Promise<LiveResource[]> {
       pageCount: d.pageCount,
       fileSize: d.fileSize,
       downloadCount: d.downloadCount,
+      pdfUrl: d.pdfUrl,
     }));
   } catch (err) {
     console.error("[premium-store] Failed to fetch from MongoDB:", err);

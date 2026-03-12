@@ -112,4 +112,6 @@ export interface LiveResource {
   downloadCount: number;
   /** Populated only for isPremium resources (LKR). */
   price?: number;
+  /** Publicly accessible URL to the full PDF (stored in cloud storage). */
+  pdfUrl: string;
 }
