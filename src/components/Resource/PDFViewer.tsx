@@ -168,7 +168,8 @@ export default function PDFViewer({
               fileUrl={fileUrl}
               plugins={isTeaser ? [] : [defaultLayoutPluginInstance]}
               renderPage={renderPage}
-              {...({ onDocumentLoadError: handleDocumentError } as any)}
+              // eslint-disable-next-line @typescript-eslint/no-explicit-any
+              onDocumentLoadError={handleDocumentError as any}
               scrollMode={ScrollMode.Vertical}
               defaultScale={SpecialZoomLevel.PageFit}
             />
