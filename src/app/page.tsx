@@ -102,8 +102,8 @@ export default function HomePage() {
                 careers, and confidence with Ape Danuma EM.
               </p>
               <div className="flex flex-wrap justify-center gap-4 pt-2">
-                <a href="#" className="btn-primary px-10 py-3.5 text-base">Claim Your Spot</a>
-                <a href="#" className="btn-outline-accent px-10 py-3.5 text-base">View Curriculum</a>
+                <Link href="/premium-store" className="btn-primary px-10 py-3.5 text-base">Claim Your Spot</Link>
+                <Link href="/free-resources" className="btn-outline-accent px-10 py-3.5 text-base">View Curriculum</Link>
               </div>
             </div>
           </div>
