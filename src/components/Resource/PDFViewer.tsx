@@ -168,7 +168,7 @@ export default function PDFViewer({
               fileUrl={fileUrl}
               plugins={isTeaser ? [] : [defaultLayoutPluginInstance]}
               renderPage={renderPage}
-              onDocumentLoadError={handleDocumentError}
+              {...({ onDocumentLoadError: handleDocumentError } as any)}
               scrollMode={ScrollMode.Vertical}
               defaultScale={SpecialZoomLevel.PageFit}
             />
