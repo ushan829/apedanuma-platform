@@ -31,7 +31,6 @@ export default function PDFViewer({
   isPremium = false, 
   hasPurchased = false,
   price = 0,
-  resourceId: _resourceId
 }: PDFViewerProps) {
   const [isMobile, setIsMobile] = useState(false);
   const [isLoaded, setIsLoaded] = useState(false);
