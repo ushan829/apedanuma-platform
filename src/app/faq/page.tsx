@@ -242,7 +242,7 @@ export default function FAQPage() {
                       <h2 className="text-2xl font-bold font-display">{category}</h2>
                     </div>
                     <div className="flex flex-col gap-4">
-                      {categoryItems.map((item, idx) => {
+                      {categoryItems.map((item) => {
                         const globalIdx = FAQ_DATA.findIndex(i => i.question === item.question);
                         return (
                           <AccordionItem 
@@ -278,8 +278,8 @@ export default function FAQPage() {
           <div className="relative z-10 max-w-2xl mx-auto">
             <h2 className="text-3xl font-display font-black mb-4">Still have questions?</h2>
             <p className="text-slate-400 mb-10 text-lg">
-              Can't find the answer you're looking for? Reach out to our dedicated support team 
-              and we'll get back to you within 24 hours.
+              Can&apos;t find the answer you&apos;re looking for? Reach out to our dedicated support team 
+              and we&apos;ll get back to you within 24 hours.
             </p>
             
             <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
