@@ -4,6 +4,7 @@ import Script from "next/script";
 import { Toaster } from "sonner";
 import "./globals.css";
 import Navbar from "@/components/layout/Navbar";
+import Footer from "@/components/layout/Footer";
 
 const inter = Inter({
   subsets: ["latin"],
@@ -78,7 +79,10 @@ export default function RootLayout({
         
         <Navbar />
         <div className="pt-[68px] min-h-screen flex flex-col">
-          {children}
+          <div className="flex-1">
+            {children}
+          </div>
+          <Footer />
         </div>
         <Toaster
           theme="dark"

@@ -109,33 +109,6 @@ export default function HomePage() {
           </div>
         </div>
       </section>
-
-      {/* ── Footer ── */}
-      <footer className="border-t py-10 z-10 relative" style={{ borderColor: "var(--border)" }}>
-        <div
-          className="container-xl flex flex-col sm:flex-row items-center justify-between gap-4 text-sm"
-          style={{ color: "var(--foreground-muted)" }}
-        >
-          <span className="font-display font-semibold flex items-baseline gap-1.5">
-            <span style={{ color: "var(--foreground)" }}>Ape Danuma</span>
-            <span
-              style={{
-                background: "linear-gradient(135deg, #9455ff, #7c1fff)",
-                WebkitBackgroundClip: "text",
-                WebkitTextFillColor: "transparent",
-              }}
-            >
-              EM
-            </span>
-          </span>
-          <span>© {new Date().getFullYear()} Ape Danuma EM. All rights reserved.</span>
-          <div className="flex gap-5">
-            <Link href="/privacy" className="hover:text-white transition-colors" style={{ color: "var(--foreground-muted)" }}>Privacy</Link>
-            <Link href="/terms" className="hover:text-white transition-colors" style={{ color: "var(--foreground-muted)" }}>Terms</Link>
-            <Link href="/contact" className="hover:text-white transition-colors" style={{ color: "var(--foreground-muted)" }}>Contact</Link>
-          </div>
-        </div>
-      </footer>
     </main>
   );
 }
