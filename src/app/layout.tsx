@@ -2,6 +2,7 @@ import type { Metadata, Viewport } from "next";
 import { Inter, Poppins } from "next/font/google";
 import Script from "next/script";
 import { Toaster } from "sonner";
+import { GoogleAnalytics } from "@next/third-parties/google";
 import "./globals.css";
 import Navbar from "@/components/layout/Navbar";
 import Footer from "@/components/layout/Footer";
@@ -22,34 +23,46 @@ const poppins = Poppins({
 
 export const metadata: Metadata = {
   title: {
-    default: "Ape Danuma EM — O/L Study Platform for Sri Lanka",
+    default: "Ape Danuma EM | Premium English Medium Study Materials",
     template: "%s | Ape Danuma EM",
   },
   description:
-    "Sri Lanka's premier O/L English Medium study platform. Exam-ready past papers, premium short notes, and expert study guides for Grade 10 & 11 students.",
+    "Empowering Sri Lankan students with the most comprehensive O/L and A/L English Medium study materials, past papers, and expert guidance.",
   keywords: [
-    "O/L study materials",
-    "English Medium Sri Lanka",
-    "past papers grade 10 11",
-    "Ape Danuma EM",
-    "O/L short notes",
-    "Sri Lanka exam preparation",
+    "O/L English Medium",
+    "Sri Lanka",
+    "Past Papers",
+    "Short Notes",
+    "Ape Danuma",
+    "Science",
+    "Mathematics",
   ],
   authors: [{ name: "Ape Danuma EM" }],
   creator: "Ape Danuma EM",
+  metadataBase: new URL("https://em.apedanuma.lk"),
   openGraph: {
     type: "website",
-    locale: "en_US",
-    title: "Ape Danuma EM — O/L Study Platform for Sri Lanka",
+    locale: "en_LK",
+    url: "https://em.apedanuma.lk",
+    title: "Ape Danuma EM | Premium English Medium Study Materials",
     description:
-      "Sri Lanka's premier O/L English Medium study platform. Exam-ready past papers, premium notes, and expert guides for Grade 10 & 11.",
+      "Empowering Sri Lankan students with the most comprehensive O/L and A/L English Medium study materials, past papers, and expert guidance.",
     siteName: "Ape Danuma EM",
+    images: [
+      {
+        url: "/og-image.jpg",
+        width: 1200,
+        height: 630,
+        alt: "Ape Danuma EM",
+      },
+    ],
   },
   twitter: {
     card: "summary_large_image",
-    title: "Ape Danuma EM — O/L Study Platform for Sri Lanka",
+    title: "Ape Danuma EM | Premium English Medium Study Materials",
     description:
-      "Sri Lanka's premier O/L English Medium study platform. Exam-ready past papers, premium notes, and expert guides for Grade 10 & 11.",
+      "Empowering Sri Lankan students with the most comprehensive O/L and A/L English Medium study materials, past papers, and expert guidance.",
+    images: ["/og-image.jpg"],
   },
   robots: {
     index: true,
@@ -69,9 +82,12 @@ export default function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  const gaId = process.env.NEXT_PUBLIC_GA_ID;
+
   return (
     <html lang="en" className={`${inter.variable} ${poppins.variable}`}>
       <body className="antialiased">
+        {gaId && <GoogleAnalytics gaId={gaId} />}
         {/* Ghibli Touches: Background Clouds */}
         <div className="ghibli-cloud" style={{ top: '15%', width: '300px', height: '150px', animationDelay: '0s' }} />
         <div className="ghibli-cloud" style={{ top: '45%', width: '450px', height: '200px', animationDelay: '-20s' }} />
