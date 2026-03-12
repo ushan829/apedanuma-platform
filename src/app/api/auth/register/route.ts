@@ -83,7 +83,8 @@ export async function POST(req: NextRequest) {
 
     /* 4.5. Send verification email ───────────────────────────────────── */
     const apiKey = process.env.RESEND_API_KEY;
-    const verifyUrl = `https://english-apedanuma.vercel.app/api/auth/verify?token=${verificationToken}`;
+    const baseUrl = (process.env.NEXT_PUBLIC_APP_URL || process.env.NEXTAUTH_URL || req.nextUrl.origin).replace(/\/$/, "");
+    const verifyUrl = `${baseUrl}/api/auth/verify?token=${verificationToken}`;
 
     const emailHtml = `
       <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px; border: 1px solid #1f1f22; border-radius: 10px; background-color: #09090b;">

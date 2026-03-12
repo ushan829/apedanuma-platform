@@ -3,7 +3,7 @@ import connectToDatabase from "@/lib/mongodb";
 import Resource from "@/models/Resource";
 import BlogPost from "@/models/BlogPost";
 
-const BASE_URL = "https://apedanuma.lk";
+const BASE_URL = (process.env.NEXT_PUBLIC_APP_URL || process.env.NEXTAUTH_URL || "https://em.apedanuma.lk").replace(/\/$/, "");
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const now = new Date();

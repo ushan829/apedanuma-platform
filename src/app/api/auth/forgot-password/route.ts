@@ -1,10 +1,10 @@
-import { NextResponse } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
 import crypto from "crypto";
 import dbConnect from "@/lib/mongodb";
 import User from "@/models/User";
 import { Resend } from "resend";
 
-export async function POST(req: Request) {
+export async function POST(req: NextRequest) {
   try {
     const { email } = await req.json();
     const apiKey = process.env.RESEND_API_KEY;
@@ -36,7 +36,8 @@ export async function POST(req: Request) {
     await user.save({ validateBeforeSave: false });
 
     // Send email via Resend
-    const resetUrl = `https://english-apedanuma.vercel.app/auth/reset-password/${resetToken}`;
+    const baseUrl = (process.env.NEXT_PUBLIC_APP_URL || process.env.NEXTAUTH_URL || req.nextUrl.origin).replace(/\/$/, "");
+    const resetUrl = `${baseUrl}/auth/reset-password/${resetToken}`;
 
     const emailHtml = `
       <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px; border: 1px solid #eaeaec; border-radius: 10px;">

@@ -77,7 +77,7 @@ function getTypeMeta(materialType: string) {
 /* ─────────────────────────────────────────
    Dynamic metadata
    ───────────────────────────────────────── */
-const BASE_URL = "https://apedanuma.lk";
+const BASE_URL = (process.env.NEXT_PUBLIC_APP_URL || process.env.NEXTAUTH_URL || "https://em.apedanuma.lk").replace(/\/$/, "");
 const OG_PLACEHOLDER = `${BASE_URL}/og-default.jpg`;
 
 export async function generateMetadata({ params }: { params: { id: string } }): Promise<Metadata> {

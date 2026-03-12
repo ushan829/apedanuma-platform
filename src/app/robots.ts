@@ -9,6 +9,6 @@ export default function robots(): MetadataRoute.Robots {
         disallow: ["/api/", "/admin/", "/dashboard/"],
       },
     ],
-    sitemap: "https://apedanuma.lk/sitemap.xml",
+    sitemap: `${(process.env.NEXT_PUBLIC_APP_URL || process.env.NEXTAUTH_URL || "https://em.apedanuma.lk").replace(/\/$/, "")}/sitemap.xml`,
   };
 }

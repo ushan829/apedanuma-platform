@@ -91,12 +91,12 @@ export async function POST(req: NextRequest) {
     const nameParts = user.name.split(" ");
     
     // Domain matching: Use NEXT_PUBLIC_APP_URL if available, 
-    // otherwise fallback to the current request's origin (dynamic) or the new production domain.
+    // otherwise fallback to NEXTAUTH_URL or the current request's origin.
     const baseUrl = (
       process.env.NEXT_PUBLIC_APP_URL || 
       process.env.NEXTAUTH_URL || 
       req.nextUrl.origin || 
-      "https://em.apedanuma.lk"
+      ""
     ).trim().replace(/\/$/, "");
     
     return NextResponse.json({
