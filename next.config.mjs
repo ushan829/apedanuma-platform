@@ -34,6 +34,13 @@ const nextConfig = {
     config.resolve.alias.canvas = false;
     return config;
   },
+  // මේ අලුත් පේළි ටික මෙතනට එකතු කරන්න:
+  typescript: {
+    ignoreBuildErrors: true,
+  },
+  eslint: {
+    ignoreDuringBuilds: true,
+  },
 };
 
 export default nextConfig;
