@@ -12,7 +12,7 @@ export default function Footer() {
         <div className="flex flex-col gap-12 lg:flex-row lg:items-start lg:justify-between mb-16 lg:mb-20">
           
           {/* ── Brand & Tagline ── */}
-          <div className="flex flex-col gap-5 max-w-sm">
+          <div className="flex flex-col items-center lg:items-start gap-5 max-w-sm mx-auto lg:mx-0 text-center lg:text-left">
             <Link href="/" className="flex items-center gap-2 group">
               <span className="font-display font-black text-2xl tracking-tight">
                 <span style={{ color: "var(--foreground)" }}>Ape Danuma</span>
@@ -34,7 +34,7 @@ export default function Footer() {
           </div>
 
           {/* ── Quick Links ── */}
-          <div className="grid grid-cols-2 sm:grid-cols-3 gap-x-8 gap-y-10 lg:gap-x-16 items-start">
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-x-8 gap-y-10 lg:gap-x-16 items-start text-center sm:text-left">
             <div className="flex flex-col gap-5">
               <h4 className="text-xs font-bold uppercase tracking-[0.2em] text-white">Platform</h4>
               <nav className="flex flex-col gap-3 text-[0.9375rem]">
@@ -51,7 +51,7 @@ export default function Footer() {
                 <Link href="/faq" className="hover:text-white transition-colors whitespace-nowrap" style={{ color: "var(--foreground-muted)" }}>FAQs</Link>
               </nav>
             </div>
-            <div className="flex flex-col gap-5 col-span-2 sm:col-span-1">
+            <div className="flex flex-col gap-5">
               <h4 className="text-xs font-bold uppercase tracking-[0.2em] text-white">Legal</h4>
               <nav className="flex flex-col gap-3 text-[0.9375rem]">
                 <Link href="/privacy" className="hover:text-white transition-colors whitespace-nowrap" style={{ color: "var(--foreground-muted)" }}>Privacy Policy</Link>
@@ -61,9 +61,9 @@ export default function Footer() {
           </div>
 
           {/* ── Social Media ── */}
-          <div className="flex flex-col gap-6 lg:items-end lg:text-right">
+          <div className="flex flex-col gap-6 items-center lg:items-end lg:text-right">
             <h4 className="text-xs font-bold uppercase tracking-[0.2em] text-white">Follow Us</h4>
-            <div className="flex items-center gap-3.5">
+            <div className="flex items-center justify-center lg:justify-end gap-3.5">
               <a href="#" className="p-2.5 rounded-xl border border-white/5 bg-white/5 hover:bg-white/10 hover:border-white/20 transition-all group" aria-label="WhatsApp">
                 <MessageCircle size={18} className="text-gray-400 group-hover:text-green-400 transition-colors" />
               </a>
@@ -81,12 +81,12 @@ export default function Footer() {
         </div>
 
         {/* ── Bottom Bar ── */}
-        <div className="pt-8 border-t border-white/5 flex flex-col sm:flex-row justify-between items-center gap-4">
+        <div className="pt-8 border-t border-white/5 flex flex-col sm:flex-row justify-between items-center gap-6 text-center sm:text-left">
           <p className="text-[0.8125rem] whitespace-nowrap" style={{ color: "var(--foreground-disabled)" }}>
             © {currentYear} Ape Danuma EM. All rights reserved.
           </p>
           <div className="flex items-center gap-6 text-[0.8125rem]" style={{ color: "var(--foreground-disabled)" }}>
-            <span className="flex items-center gap-1.5">
+            <span className="flex items-center justify-center sm:justify-start gap-1.5">
               <span className="w-1 h-1 rounded-full bg-green-500/50"></span>
               Platform Status: Online
             </span>
