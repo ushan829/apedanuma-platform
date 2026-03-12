@@ -49,6 +49,7 @@ export default function PDFViewer({
     return () => window.removeEventListener("resize", checkMobile);
   }, []);
 
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const handleDocumentError = (e: any) => {
     console.error("PDF Load Error:", e);
     setError(e.message || "Failed to load document.");
