@@ -23,6 +23,7 @@ interface PDFViewerProps {
   isPremium?: boolean;
   hasPurchased?: boolean;
   price?: number;
+  resourceId?: string;
 }
 
 export default function PDFViewer({ 
@@ -30,6 +31,7 @@ export default function PDFViewer({
   isPremium = false, 
   hasPurchased = false,
   price = 0,
+  resourceId
 }: PDFViewerProps) {
   const [isMobile, setIsMobile] = useState(false);
   const [isLoaded, setIsLoaded] = useState(false);
