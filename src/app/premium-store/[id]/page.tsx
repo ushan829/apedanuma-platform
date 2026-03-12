@@ -3,8 +3,12 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import connectToDatabase from "@/lib/mongodb";
 import Resource from "@/models/Resource";
+import User from "@/models/User";
 import { getSubjectStyle } from "@/lib/free-resources";
+import { getServerSession } from "@/lib/auth-cookie";
+import { getPresignedUrl } from "@/lib/s3";
 import BuySection from "@/components/sections/BuySection";
+import PDFViewer from "@/components/Resource/PDFViewer";
 import type { LiveResource } from "@/lib/resource-constants";
 
 /* ─────────────────────────────────────────
@@ -14,7 +18,7 @@ async function getProduct(id: string): Promise<LiveResource | null> {
   try {
     await connectToDatabase();
     const doc = await Resource.findOne({ _id: id, isPremium: true, isPublished: true })
-      .select("title description grade subject materialType term year price pageCount fileSize downloadCount")
+      .select("title description grade subject materialType term year price pageCount fileSize downloadCount pdfUrl")
       .lean();
     if (!doc) return null;
     return {
@@ -30,9 +34,38 @@ async function getProduct(id: string): Promise<LiveResource | null> {
       pageCount: doc.pageCount,
       fileSize: doc.fileSize,
       downloadCount: doc.downloadCount,
+      pdfUrl: doc.pdfUrl,
     };
   } catch {
     return null;
+  }
+}
+
+/* ─────────────────────────────────────────
+   Helper to get presigned URL from public URL
+   ───────────────────────────────────────── */
+async function getSecurePdfUrl(publicUrl: string) {
+  try {
+    const url = new URL(publicUrl);
+    const key = decodeURIComponent(url.pathname.startsWith("/") ? url.pathname.slice(1) : url.pathname);
+    return await getPresignedUrl(key);
+  } catch {
+    return publicUrl;
+  }
+}
+
+/* ─────────────────────────────────────────
+   Helper to check if user has purchased
+   ───────────────────────────────────────── */
+async function checkPurchase(userId: string, resourceId: string): Promise<boolean> {
+  try {
+    await connectToDatabase();
+    const user = await User.findById(userId).select("purchasedResources role").lean();
+    if (!user) return false;
+    if (user.role === "admin") return true;
+    return user.purchasedResources.some(id => id.toString() === resourceId);
+  } catch {
+    return false;
   }
 }
 
@@ -155,6 +188,10 @@ export default async function ProductPreviewPage({ params }: { params: { id: str
   const product = await getProduct(params.id);
   if (!product) notFound();
 
+  const session = getServerSession();
+  const hasPurchased = session ? await checkPurchase(session.sub, product._id) : false;
+  const secureUrl = await getSecurePdfUrl(product.pdfUrl || "");
+
   const cover = getCoverStyle(product.subject);
   const typeLabel = product.term
     ? `${product.materialType} · Term ${product.term}`
@@ -206,11 +243,17 @@ export default async function ProductPreviewPage({ params }: { params: { id: str
         </nav>
 
         {/* Main layout */}
-        <div className="grid grid-cols-1 lg:grid-cols-[340px_1fr] gap-12 xl:gap-16 items-start">
+        <div className="grid grid-cols-1 lg:grid-cols-[1fr_360px] xl:grid-cols-[1fr_380px] gap-12 xl:gap-16 items-start">
 
-          {/* Left — cover (sticky on desktop) */}
-          <div className="flex justify-center lg:justify-start lg:sticky lg:top-24">
-            <LargeCover product={product} />
+          {/* Left — PDF Viewer (sticky on desktop) */}
+          <div className="flex flex-col gap-6 lg:sticky lg:top-24">
+            <PDFViewer 
+              fileUrl={secureUrl} 
+              isPremium={true} 
+              hasPurchased={hasPurchased} 
+              price={product.price}
+              resourceId={product._id}
+            />
           </div>
 
           {/* Right — details */}

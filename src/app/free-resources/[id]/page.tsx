@@ -4,6 +4,8 @@ import { notFound } from "next/navigation";
 import connectToDatabase from "@/lib/mongodb";
 import Resource from "@/models/Resource";
 import { getSubjectStyle } from "@/lib/free-resources";
+import { getPresignedUrl } from "@/lib/s3";
+import PDFViewer from "@/components/Resource/PDFViewer";
 import type { LiveResource } from "@/lib/resource-constants";
 
 /* ─────────────────────────────────────────
@@ -13,7 +15,7 @@ async function getResource(id: string): Promise<LiveResource | null> {
   try {
     await connectToDatabase();
     const doc = await Resource.findOne({ _id: id, isPremium: false, isPublished: true })
-      .select("title description grade subject materialType term year pageCount fileSize downloadCount")
+      .select("title description grade subject materialType term year pageCount fileSize downloadCount pdfUrl")
       .lean();
     if (!doc) return null;
     return {
@@ -28,9 +30,23 @@ async function getResource(id: string): Promise<LiveResource | null> {
       pageCount: doc.pageCount,
       fileSize: doc.fileSize,
       downloadCount: doc.downloadCount,
+      pdfUrl: doc.pdfUrl,
     };
   } catch {
     return null;
+  }
+}
+
+/* ─────────────────────────────────────────
+   Helper to get presigned URL from public URL
+   ───────────────────────────────────────── */
+async function getSecurePdfUrl(publicUrl: string) {
+  try {
+    const url = new URL(publicUrl);
+    const key = decodeURIComponent(url.pathname.startsWith("/") ? url.pathname.slice(1) : url.pathname);
+    return await getPresignedUrl(key);
+  } catch {
+    return publicUrl;
   }
 }
 
@@ -270,6 +286,8 @@ export default async function ResourcePreviewPage({ params }: { params: { id: st
   const resource = await getResource(params.id);
   if (!resource) notFound();
 
+  const secureUrl = await getSecurePdfUrl(resource.pdfUrl || "");
+
   const subjectStyle = getSubjectStyle(resource.subject);
   const typeMeta = getTypeMeta(resource.materialType);
   const typeLabel = resource.term
@@ -330,9 +348,9 @@ export default async function ResourcePreviewPage({ params }: { params: { id: st
         {/* ── Two-column layout ── */}
         <div className="grid grid-cols-1 lg:grid-cols-[1fr_360px] xl:grid-cols-[1fr_380px] gap-8 xl:gap-12 items-start">
 
-          {/* ── Left column: document cover + ad ── */}
+          {/* ── Left column: PDF Viewer + ad ── */}
           <div className="flex flex-col gap-6">
-            <DocumentCover resource={resource} />
+            <PDFViewer fileUrl={secureUrl} />
             <div className="flex justify-center">
               <AdSpace label="728 × 90 · Leaderboard" width="100%" height="90px" />
             </div>

@@ -1,4 +1,5 @@
-import { S3Client } from "@aws-sdk/client-s3";
+import { S3Client, GetObjectCommand } from "@aws-sdk/client-s3";
+import { getSignedUrl } from "@aws-sdk/s3-request-presigner";
 
 /* ─────────────────────────────────────────
    Lazy initialisation — only runs on first API call at runtime,
@@ -48,6 +49,19 @@ export function getS3Client(): S3Client {
 export function getR2Bucket(): string {
   ensureInit();
   return _bucket;
+}
+
+/**
+ * Generates a presigned URL for secure document viewing.
+ * Defaults to 1 hour (3600 seconds) expiry.
+ */
+export async function getPresignedUrl(key: string, expiresIn = 3600): Promise<string> {
+  ensureInit();
+  const command = new GetObjectCommand({
+    Bucket: _bucket,
+    Key: key,
+  });
+  return getSignedUrl(_client!, command, { expiresIn });
 }
 
 /**

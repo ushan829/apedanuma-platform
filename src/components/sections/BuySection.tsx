@@ -284,6 +284,7 @@ export default function BuySection({ resourceId, price }: BuySectionProps) {
 
         {(state === "not-purchased" || state === "failed") && (
           <button
+            id="buy-button-main"
             type="button"
             onClick={handlePurchase}
             className="flex items-center justify-center gap-2 rounded-xl px-7 py-3 text-sm font-bold transition-all duration-300 hover:-translate-y-1"
