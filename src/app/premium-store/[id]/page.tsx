@@ -117,56 +117,6 @@ export async function generateMetadata({ params }: { params: { id: string } }): 
 }
 
 /* ─────────────────────────────────────────
-   Large cover placeholder
-   ───────────────────────────────────────── */
-function LargeCover({ product }: { product: LiveResource }) {
-  const cover = getCoverStyle(product.subject);
-  return (
-    <div
-      className="relative w-full rounded-2xl overflow-hidden"
-      style={{ aspectRatio: "3/4", background: cover.gradient, maxWidth: 340 }}
-      aria-hidden="true"
-    >
-      <div className="absolute inset-0" style={{ background: `radial-gradient(ellipse at 50% 40%, ${cover.accent} 0%, transparent 60%)` }} />
-      <svg className="absolute inset-0 w-full h-full opacity-[0.15]" xmlns="http://www.w3.org/2000/svg">
-        <defs>
-          <pattern id={`lc-${product._id}`} x="0" y="0" width="20" height="20" patternUnits="userSpaceOnUse">
-            <circle cx="1" cy="1" r="1" fill="rgba(255,255,255,0.6)" />
-          </pattern>
-        </defs>
-        <rect width="100%" height="100%" fill={`url(#lc-${product._id})`} />
-      </svg>
-      {/* PDF icon */}
-      <div className="absolute inset-0 flex flex-col items-center justify-center gap-4 pointer-events-none">
-        <svg width="72" height="72" viewBox="0 0 72 72" fill="none" style={{ opacity: 0.18 }}>
-          <rect x="8" y="4" width="44" height="56" rx="5" stroke="white" strokeWidth="2" />
-          <path d="M8 18h44" stroke="white" strokeWidth="1.5" />
-          <path d="M18 28h36M18 36h28M18 44h32" stroke="white" strokeWidth="1.5" strokeLinecap="round" />
-        </svg>
-        <span className="font-display font-black text-2xl tracking-widest" style={{ color: "rgba(255,255,255,0.12)" }}>
-          PDF
-        </span>
-      </div>
-      {/* Type badge */}
-      <div className="absolute top-4 right-4">
-        <span
-          className="text-xs font-bold uppercase tracking-wider px-2.5 py-1 rounded-lg"
-          style={{ background: "rgba(0,0,0,0.6)", color: cover.color, border: `1px solid ${cover.color}55`, backdropFilter: "blur(8px)" }}
-        >
-          {product.materialType}
-        </span>
-      </div>
-      <div className="absolute bottom-0 left-0 right-0 h-1/3" style={{ background: "linear-gradient(to top, rgba(10,10,10,0.8), transparent)" }} />
-      <div className="absolute bottom-4 left-0 right-0 flex justify-center">
-        <span className="text-[0.6rem] font-semibold tracking-widest uppercase" style={{ color: "rgba(255,255,255,0.2)" }}>
-          English Medium
-        </span>
-      </div>
-    </div>
-  );
-}
-
-/* ─────────────────────────────────────────
    Stat pill
    ───────────────────────────────────────── */
 function StatPill({ label, value }: { label: string; value: string }) {

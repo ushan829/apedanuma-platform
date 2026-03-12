@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useEffect, useMemo } from "react";
+import React, { useState, useEffect } from "react";
 import { 
   Worker, 
   Viewer, 
@@ -23,7 +23,6 @@ interface PDFViewerProps {
   isPremium?: boolean;
   hasPurchased?: boolean;
   price?: number;
-  resourceId?: string;
 }
 
 export default function PDFViewer({ 
@@ -31,14 +30,13 @@ export default function PDFViewer({
   isPremium = false, 
   hasPurchased = false,
   price = 0,
-  resourceId
 }: PDFViewerProps) {
   const [isMobile, setIsMobile] = useState(false);
   const [isLoaded, setIsLoaded] = useState(false);
 
   // Initialize plugins
   const defaultLayoutPluginInstance = defaultLayoutPlugin({
-    sidebarTabs: (defaultTabs) => [], // Hide sidebar to keep it clean
+    sidebarTabs: () => [], // Hide sidebar to keep it clean
   });
 
   useEffect(() => {
