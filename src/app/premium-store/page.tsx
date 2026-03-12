@@ -24,7 +24,7 @@ async function getPremiumProducts(): Promise<LiveResource[]> {
     return docs.map((d) => ({
       _id: String(d._id),
       title: d.title,
-      slug: d.slug,
+      slug: d.slug || String(d._id),
       description: d.description,
       grade: d.grade as 10 | 11,
       subject: d.subject,

@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
+import { revalidatePath } from "next/cache";
 import { DeleteObjectCommand } from "@aws-sdk/client-s3";
 import slugify from "slugify";
 import { verifyAdminToken, authError } from "@/lib/admin-auth";
@@ -119,6 +120,9 @@ export async function PATCH(req: NextRequest, { params }: Ctx) {
       return NextResponse.json({ success: false, message: "Resource not found." }, { status: 404 });
     }
 
+    revalidatePath("/free-resources");
+    revalidatePath("/premium-store");
+
     return NextResponse.json({
       success: true,
       message: "Resource updated successfully.",
@@ -183,6 +187,9 @@ export async function DELETE(req: NextRequest, { params }: Ctx) {
     /* Step D — delete from MongoDB */
     await Resource.findByIdAndDelete(params.id);
     console.log("[DELETE /api/admin/resources/:id] MongoDB record deleted:", params.id);
+
+    revalidatePath("/free-resources");
+    revalidatePath("/premium-store");
 
     return NextResponse.json({ success: true, message: `"${resource.title}" deleted successfully.` });
   } catch (err) {

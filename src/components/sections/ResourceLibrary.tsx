@@ -191,7 +191,7 @@ function LiveResourceCard({ resource }: { resource: LiveResource }) {
           Free
         </span>
       </div>
-      <Link href={`/free-resources/${resource.slug}`} className="btn-download w-full mt-auto text-center">
+      <Link href={`/free-resources/${resource.slug || resource._id}`} className="btn-download w-full mt-auto text-center">
         <svg width="14" height="14" viewBox="0 0 14 14" fill="none" aria-hidden="true">
           <circle cx="7" cy="7" r="5.5" stroke="currentColor" strokeWidth="1.4" />
           <path d="M5 7h4M7 5l2 2-2 2" stroke="currentColor" strokeWidth="1.3" strokeLinecap="round" strokeLinejoin="round" />

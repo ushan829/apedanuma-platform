@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
+import { revalidatePath } from "next/cache";
 import { PutObjectCommand } from "@aws-sdk/client-s3";
 import slugify from "slugify";
 import { verifyAdminToken, authError } from "@/lib/admin-auth";
@@ -216,13 +217,19 @@ export async function POST(req: NextRequest) {
     const savedId  = (resource as IResource & { _id: unknown })._id;
     console.log(`${LOG} ✓ MongoDB save succeeded — _id: ${savedId}`);
 
+    // ── Invalidate caches ──────────────────────────────────────────────────
+    revalidatePath("/free-resources");
+    revalidatePath("/premium-store");
+
     return NextResponse.json(
+
       {
         success:  true,
         message:  "Resource uploaded and published successfully.",
         resource: {
           id:           savedId,
           title:        resource.title,
+          slug:         resource.slug,
           subject:      resource.subject,
           grade:        resource.grade,
           materialType: resource.materialType,

@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
+import mongoose from "mongoose";
 import connectToDatabase from "@/lib/mongodb";
 import Resource from "@/models/Resource";
 import { getSubjectStyle } from "@/lib/free-resources";
@@ -14,14 +15,28 @@ import type { LiveResource } from "@/lib/resource-constants";
 async function getResource(slug: string): Promise<LiveResource | null> {
   try {
     await connectToDatabase();
-    const doc = await Resource.findOne({ slug, isPremium: false, isPublished: true })
+    
+    // Check if we should try searching by _id as a fallback
+    const query: any = { 
+      isPremium: false, 
+      isPublished: true,
+      $or: [
+        { slug: slug },
+      ]
+    };
+    
+    if (mongoose.isValidObjectId(slug)) {
+      query.$or.push({ _id: slug });
+    }
+
+    const doc = await Resource.findOne(query)
       .select("title slug description grade subject materialType term year pageCount fileSize downloadCount pdfUrl")
       .lean();
     if (!doc) return null;
     return {
       _id: String(doc._id),
       title: doc.title,
-      slug: doc.slug,
+      slug: doc.slug || String(doc._id),
       description: doc.description,
       grade: doc.grade as 10 | 11,
       subject: doc.subject,

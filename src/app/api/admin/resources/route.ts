@@ -43,7 +43,7 @@ export async function GET(req: NextRequest) {
     const serialised = resources.map((r) => ({
       _id:           String(r._id),
       title:         r.title,
-      slug:          r.slug,
+      slug:          r.slug || String(r._id),
       description:   r.description,
       grade:         r.grade,
       subject:       r.subject,
