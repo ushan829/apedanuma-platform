@@ -11,16 +11,17 @@ import type { LiveResource } from "@/lib/resource-constants";
 /* ─────────────────────────────────────────
    DB fetch helper
    ───────────────────────────────────────── */
-async function getResource(id: string): Promise<LiveResource | null> {
+async function getResource(slug: string): Promise<LiveResource | null> {
   try {
     await connectToDatabase();
-    const doc = await Resource.findOne({ _id: id, isPremium: false, isPublished: true })
-      .select("title description grade subject materialType term year pageCount fileSize downloadCount pdfUrl")
+    const doc = await Resource.findOne({ slug, isPremium: false, isPublished: true })
+      .select("title slug description grade subject materialType term year pageCount fileSize downloadCount pdfUrl")
       .lean();
     if (!doc) return null;
     return {
       _id: String(doc._id),
       title: doc.title,
+      slug: doc.slug,
       description: doc.description,
       grade: doc.grade as 10 | 11,
       subject: doc.subject,
@@ -80,10 +81,10 @@ function getTypeMeta(materialType: string) {
 const BASE_URL = (process.env.NEXT_PUBLIC_APP_URL || process.env.NEXTAUTH_URL || "https://em.apedanuma.lk").replace(/\/$/, "");
 const OG_PLACEHOLDER = `${BASE_URL}/og-default.jpg`;
 
-export async function generateMetadata({ params }: { params: { id: string } }): Promise<Metadata> {
-  const r = await getResource(params.id);
+export async function generateMetadata({ params }: { params: { slug: string } }): Promise<Metadata> {
+  const r = await getResource(params.slug);
   if (!r) return { title: "Resource Not Found" };
-  const canonical = `${BASE_URL}/free-resources/${params.id}`;
+  const canonical = `${BASE_URL}/free-resources/${params.slug}`;
   const title = `${r.title} — Free ${r.materialType} | Ape Danuma EM`;
   const description = r.description || `Download this free ${r.subject} ${r.materialType} for Grade ${r.grade} O/L students.`;
   return {
@@ -155,8 +156,8 @@ function StatPill({ label, value, color }: { label: string; value: string; color
 /* ─────────────────────────────────────────
    Page
    ───────────────────────────────────────── */
-export default async function ResourcePreviewPage({ params }: { params: { id: string } }) {
-  const resource = await getResource(params.id);
+export default async function ResourcePreviewPage({ params }: { params: { slug: string } }) {
+  const resource = await getResource(params.slug);
   if (!resource) notFound();
 
   const secureUrl = await getSecurePdfUrl(resource.pdfUrl || "");
@@ -179,7 +180,7 @@ export default async function ResourcePreviewPage({ params }: { params: { id: st
       priceCurrency: "LKR",
       price: "0",
       availability: "https://schema.org/InStock",
-      url: `${BASE_URL}/free-resources/${resource._id}`,
+      url: `${BASE_URL}/free-resources/${resource.slug}`,
     },
   };
 

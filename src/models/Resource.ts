@@ -24,6 +24,8 @@ export { SUBJECT_VALUES, MATERIAL_TYPE_VALUES } from "@/lib/resource-constants";
    ───────────────────────────────────────── */
 export interface IResource extends Document {
   title: string;
+  /** URL-friendly identifier, e.g. "grade-10-science-2023-term-1". Must be unique. */
+  slug: string;
   description: string;
   grade: Grade;
   subject: Subject;
@@ -61,6 +63,19 @@ const ResourceSchema = new Schema<IResource>(
       required: [true, "Resource title is required."],
       trim: true,
       maxlength: [200, "Title cannot exceed 200 characters."],
+    },
+
+    slug: {
+      type: String,
+      required: [true, "Slug is required."],
+      unique: true,
+      lowercase: true,
+      trim: true,
+      match: [
+        /^[a-z0-9]+(?:-[a-z0-9]+)*$/,
+        "Slug must be lowercase letters, numbers, and hyphens only.",
+      ],
+      maxlength: [250, "Slug cannot exceed 250 characters."],
     },
 
     description: {
@@ -176,6 +191,8 @@ const ResourceSchema = new Schema<IResource>(
    ───────────────────────────────────────── */
 // Primary listing query: grade + subject + materialType
 ResourceSchema.index({ grade: 1, subject: 1, materialType: 1 });
+// Slug lookup for individual resource pages
+ResourceSchema.index({ slug: 1 }, { unique: true });
 // Free vs. premium filtering
 ResourceSchema.index({ isPremium: 1, isPublished: 1 });
 // Text search across title and description

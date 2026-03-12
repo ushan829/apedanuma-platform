@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { DeleteObjectCommand } from "@aws-sdk/client-s3";
+import slugify from "slugify";
 import { verifyAdminToken, authError } from "@/lib/admin-auth";
 import { getS3Client, getR2Bucket } from "@/lib/s3";
 import connectToDatabase from "@/lib/mongodb";
@@ -94,6 +95,20 @@ export async function PATCH(req: NextRequest, { params }: Ctx) {
 
   try {
     await connectToDatabase();
+
+    /* If title is changing, we should ideally update the slug for SEO. */
+    if (update.title) {
+      const newTitle = String(update.title);
+      let newSlug = slugify(newTitle, { lower: true, strict: true });
+      
+      // Check if this slug is already taken by ANOTHER resource
+      const existing = await Resource.findOne({ slug: newSlug, _id: { $ne: params.id } });
+      if (existing) {
+        newSlug = `${newSlug}-${Math.random().toString(36).substring(2, 7)}`;
+      }
+      update.slug = newSlug;
+    }
+
     const resource = await Resource.findByIdAndUpdate(
       params.id,
       { $set: update },

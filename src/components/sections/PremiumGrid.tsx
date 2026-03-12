@@ -134,7 +134,7 @@ function ProductCard({ resource }: { resource: LiveResource }) {
 
       {/* CTA */}
       <Link
-        href={`/premium-store/${resource._id}`}
+        href={`/premium-store/${resource.slug}`}
         className="w-full mt-auto flex items-center justify-center gap-2 rounded-xl py-2.5 text-xs font-bold transition-all duration-200 hover:-translate-y-px"
         style={{
           background: "linear-gradient(135deg, #7c1fff 0%, #9455ff 100%)",

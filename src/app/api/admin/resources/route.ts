@@ -32,7 +32,7 @@ export async function GET(req: NextRequest) {
       Resource.countDocuments({ isPremium: true }),
       Resource.find({})
         .select(
-          "title description grade subject materialType term year isPremium price pageCount fileSize downloadCount isPublished pdfUrl createdAt"
+          "title slug description grade subject materialType term year isPremium price pageCount fileSize downloadCount isPublished pdfUrl createdAt"
         )
         .sort({ createdAt: -1 })
         .skip(skip)
@@ -43,6 +43,7 @@ export async function GET(req: NextRequest) {
     const serialised = resources.map((r) => ({
       _id:           String(r._id),
       title:         r.title,
+      slug:          r.slug,
       description:   r.description,
       grade:         r.grade,
       subject:       r.subject,

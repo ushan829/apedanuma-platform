@@ -101,6 +101,7 @@ export type MaterialType = (typeof MATERIAL_TYPE_VALUES)[number];
 export interface LiveResource {
   _id: string;
   title: string;
+  slug: string;
   description: string;
   grade: 10 | 11;
   subject: string;

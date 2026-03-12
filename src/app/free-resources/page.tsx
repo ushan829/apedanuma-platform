@@ -17,13 +17,14 @@ async function getFreeResources(): Promise<LiveResource[]> {
   try {
     await connectToDatabase();
     const docs = await Resource.find({ isPremium: false, isPublished: true })
-      .select("title description grade subject materialType term year pageCount fileSize downloadCount pdfUrl")
+      .select("title slug description grade subject materialType term year pageCount fileSize downloadCount pdfUrl")
       .sort({ createdAt: -1 })
       .lean();
 
     return docs.map((d) => ({
       _id: String(d._id),
       title: d.title,
+      slug: d.slug,
       description: d.description,
       grade: d.grade as 10 | 11,
       subject: d.subject,

@@ -1,10 +1,12 @@
 import { NextRequest, NextResponse } from "next/server";
 import { PutObjectCommand } from "@aws-sdk/client-s3";
-import { verifyAdminToken, type AdminJwtPayload } from "@/lib/admin-auth";
-import { getS3Client, getR2Bucket, buildPublicUrl, formatFileSize } from "@/lib/s3";
+import slugify from "slugify";
+import { verifyAdminToken, authError } from "@/lib/admin-auth";
+import { getS3Client, getR2Bucket, buildPublicUrl } from "@/lib/s3";
 import connectToDatabase from "@/lib/mongodb";
 import Resource, { type IResource } from "@/models/Resource";
 import { SUBJECT_VALUES, MATERIAL_TYPE_VALUES } from "@/lib/resource-constants";
+
 
 const LOG = "[POST /api/admin/upload]";
 
@@ -186,8 +188,16 @@ export async function POST(req: NextRequest) {
     await connectToDatabase();
     console.log(`${LOG}   DB connected`);
 
+    // ── Generate unique slug ────────────────────────────────────────────────
+    let slug = slugify(title, { lower: true, strict: true });
+    const exists = await Resource.exists({ slug });
+    if (exists) {
+      slug = `${slug}-${Math.random().toString(36).substring(2, 7)}`;
+    }
+
     const doc: Partial<IResource> = {
       title,
+      slug,
       description,
       grade,
       subject:      subject     as IResource["subject"],

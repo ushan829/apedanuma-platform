@@ -14,16 +14,17 @@ import type { LiveResource } from "@/lib/resource-constants";
 /* ─────────────────────────────────────────
    DB fetch helper
    ───────────────────────────────────────── */
-async function getProduct(id: string): Promise<LiveResource | null> {
+async function getProduct(slug: string): Promise<LiveResource | null> {
   try {
     await connectToDatabase();
-    const doc = await Resource.findOne({ _id: id, isPremium: true, isPublished: true })
-      .select("title description grade subject materialType term year price pageCount fileSize downloadCount pdfUrl")
+    const doc = await Resource.findOne({ slug, isPremium: true, isPublished: true })
+      .select("title slug description grade subject materialType term year price pageCount fileSize downloadCount pdfUrl")
       .lean();
     if (!doc) return null;
     return {
       _id: String(doc._id),
       title: doc.title,
+      slug: doc.slug,
       description: doc.description,
       grade: doc.grade as 10 | 11,
       subject: doc.subject,
@@ -89,10 +90,10 @@ const OG_PLACEHOLDER = `${BASE_URL}/og-default.jpg`;
 /* ─────────────────────────────────────────
    Dynamic metadata
    ───────────────────────────────────────── */
-export async function generateMetadata({ params }: { params: { id: string } }): Promise<Metadata> {
-  const p = await getProduct(params.id);
+export async function generateMetadata({ params }: { params: { slug: string } }): Promise<Metadata> {
+  const p = await getProduct(params.slug);
   if (!p) return { title: "Product Not Found" };
-  const canonical = `${BASE_URL}/premium-store/${params.id}`;
+  const canonical = `${BASE_URL}/premium-store/${params.slug}`;
   const title = `${p.title} — ${p.subject} Premium ${p.materialType} | Ape Danuma EM`;
   const description = p.description || `Buy this premium ${p.subject} ${p.materialType} for Grade ${p.grade} O/L students. Instant PDF download.`;
   return {
@@ -134,8 +135,8 @@ function StatPill({ label, value }: { label: string; value: string }) {
 /* ─────────────────────────────────────────
    Page
    ───────────────────────────────────────── */
-export default async function ProductPreviewPage({ params }: { params: { id: string } }) {
-  const product = await getProduct(params.id);
+export default async function ProductPreviewPage({ params }: { params: { slug: string } }) {
+  const product = await getProduct(params.slug);
   if (!product) notFound();
 
   const session = getServerSession();
@@ -158,7 +159,7 @@ export default async function ProductPreviewPage({ params }: { params: { id: str
       priceCurrency: "LKR",
       price: String(product.price ?? 0),
       availability: "https://schema.org/InStock",
-      url: `${BASE_URL}/premium-store/${product._id}`,
+      url: `${BASE_URL}/premium-store/${product.slug}`,
     },
   };
 
