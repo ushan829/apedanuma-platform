@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useMemo } from "react";
+import { Search, X } from "lucide-react";
 
 /* ─────────────────────────────────────────────────────────────
    Types & constants
@@ -272,29 +273,15 @@ function SearchBar({
   onChange: (v: string) => void;
 }) {
   return (
-    <div className="resources-search-wrap">
-      {/* Search icon */}
-      <span
-        className="absolute left-4 top-1/2 -translate-y-1/2 pointer-events-none"
-        aria-hidden="true"
-      >
-        <svg
-          className="w-5 h-5"
-          fill="none" viewBox="0 0 24 24"
-          stroke="currentColor" strokeWidth={2}
-          style={{ color: "var(--foreground-muted)" }}
-        >
-          <circle cx="11" cy="11" r="8" />
-          <path strokeLinecap="round" d="M21 21l-4.35-4.35" />
-        </svg>
-      </span>
+    <div className="relative">
+      <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 w-5 h-5" />
 
       <input
         type="text"
         value={value}
         onChange={(e) => onChange(e.target.value)}
         placeholder="Search by title, subject, or topic…"
-        className="resources-search"
+        className="w-full pl-12 pr-12 py-3.5 bg-slate-800 border border-slate-600 rounded-xl text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all shadow-lg shadow-black/20"
         aria-label="Search free resources"
         spellCheck={false}
         autoComplete="off"
@@ -305,12 +292,9 @@ function SearchBar({
         <button
           onClick={() => onChange("")}
           aria-label="Clear search"
-          className="absolute right-3.5 top-1/2 -translate-y-1/2 flex h-7 w-7 items-center justify-center rounded-full transition-all duration-150"
-          style={{ color: "var(--foreground-muted)", background: "rgba(255,255,255,0.07)" }}
+          className="absolute right-4 top-1/2 -translate-y-1/2 flex h-7 w-7 items-center justify-center rounded-full transition-all duration-150 hover:bg-white/10 text-gray-400"
         >
-          <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
-            <path strokeLinecap="round" d="M6 18L18 6M6 6l12 12" />
-          </svg>
+          <X size={16} strokeWidth={2.5} />
         </button>
       )}
     </div>

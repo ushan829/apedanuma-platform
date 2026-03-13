@@ -2,6 +2,8 @@
 
 import { useState, useMemo } from "react";
 import Link from "next/link";
+import { X } from "lucide-react";
+import AnimatedSearchBar from "@/components/AnimatedSearchBar";
 import {
   SUBJECT_CATEGORIES,
   getSubjectStyle, TYPE_META,
@@ -683,20 +685,18 @@ export default function ResourceLibrary({ resources }: { resources?: LiveResourc
         {/* Content area */}
         <div className="flex-1 min-w-0">
           {/* Search */}
-          <div className="resources-search-wrap mb-5">
-            <svg className="absolute left-4 top-1/2 -translate-y-1/2 pointer-events-none" width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true" style={{ color: "var(--foreground-muted)" }}>
-              <circle cx="7" cy="7" r="4.5" stroke="currentColor" strokeWidth="1.4" />
-              <path d="M10.5 10.5l3 3" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round" />
-            </svg>
-            <input
-              type="search" value={searchQuery} onChange={(e) => setSearchQuery(e.target.value)}
-              placeholder="Search resources..." className="resources-search" aria-label="Search resources"
+          <div className="mb-6">
+            <AnimatedSearchBar 
+              value={searchQuery} 
+              onChange={setSearchQuery}
+              placeholders={[
+                "Search for O/L Science...",
+                "Find Grade 11 Past Papers...",
+                "Search for Short Notes...",
+                "Look for Marking Schemes...",
+                "Search by subject or topic..."
+              ]}
             />
-            {searchQuery && (
-              <button type="button" onClick={() => setSearchQuery("")} className="absolute right-3 top-1/2 -translate-y-1/2 flex items-center justify-center w-5 h-5 rounded-full transition-all duration-150 hover:scale-110" style={{ background: "rgba(255,255,255,0.1)", color: "var(--foreground-muted)" }} aria-label="Clear search">
-                <svg width="8" height="8" viewBox="0 0 8 8" fill="none"><path d="M1 1l6 6M7 1L1 7" stroke="currentColor" strokeWidth="1.3" strokeLinecap="round" /></svg>
-              </button>
-            )}
           </div>
 
           {/* Results info */}
