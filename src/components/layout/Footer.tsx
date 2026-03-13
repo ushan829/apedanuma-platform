@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { Facebook, Instagram, Youtube, MessageCircle } from "lucide-react";
+import { Facebook, Instagram, Youtube, MessageCircle, Send, Linkedin } from "lucide-react";
 
 export default function Footer() {
   const currentYear = new Date().getFullYear();
@@ -64,18 +64,26 @@ export default function Footer() {
           {/* ── Social Media ── */}
           <div className="flex flex-col gap-6 items-center lg:items-end lg:text-right">
             <h4 className="text-xs font-bold uppercase tracking-[0.2em] text-white">Follow Us</h4>
-            <div className="flex items-center justify-center lg:justify-end gap-3.5">
-              <a href="#" className="p-2.5 rounded-xl border border-white/5 bg-white/5 hover:bg-white/10 hover:border-white/20 transition-all group" aria-label="WhatsApp">
+            <div className="grid grid-cols-3 gap-3.5">
+              <a href="https://whatsapp.com/channel/0029VacAw2rHwXb5SN6oqI0N" target="_blank" rel="noopener noreferrer" className="p-2.5 rounded-xl border border-white/5 bg-white/5 hover:bg-white/10 hover:border-white/20 transition-all group" aria-label="WhatsApp">
                 <MessageCircle size={18} className="text-gray-400 group-hover:text-green-400 transition-colors" />
               </a>
-              <a href="#" className="p-2.5 rounded-xl border border-white/5 bg-white/5 hover:bg-white/10 hover:border-white/20 transition-all group" aria-label="YouTube">
+              <a href="https://t.me/ApeDanumaOfficial" target="_blank" rel="noopener noreferrer" className="p-2.5 rounded-xl border border-white/5 bg-white/5 hover:bg-white/10 hover:border-white/20 transition-all group" aria-label="Telegram">
+                <Send size={18} className="text-gray-400 group-hover:text-blue-400 transition-colors" />
+              </a>
+              <a href="https://www.youtube.com/@Ape_Danuma" target="_blank" rel="noopener noreferrer" className="p-2.5 rounded-xl border border-white/5 bg-white/5 hover:bg-white/10 hover:border-white/20 transition-all group" aria-label="YouTube">
                 <Youtube size={18} className="text-gray-400 group-hover:text-red-500 transition-colors" />
               </a>
-              <a href="#" className="p-2.5 rounded-xl border border-white/5 bg-white/5 hover:bg-white/10 hover:border-white/20 transition-all group" aria-label="Facebook">
+              <a href="https://www.tiktok.com/@ape_danuma" target="_blank" rel="noopener noreferrer" className="p-2.5 rounded-xl border border-white/5 bg-white/5 hover:bg-white/10 hover:border-white/20 transition-all group flex items-center justify-center" aria-label="TikTok">
+                <svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor" className="text-gray-400 group-hover:text-white transition-colors">
+                  <path d="M12.525.02c1.31-.02 2.61-.01 3.91-.02.08 1.53.63 3.09 1.75 4.17 1.12 1.11 2.7 1.62 4.24 1.79v4.03c-1.44-.17-2.89-.6-4.13-1.47-.13 3.23-.2 6.45-.42 9.67-.22 2.14-1.12 4.31-2.9 5.61-2.01 1.54-4.88 1.83-7.15 1.05-2.18-.74-3.99-2.61-4.48-4.89-.59-2.31-.05-4.99 1.54-6.83 1.62-1.92 4.23-2.73 6.64-2.19v4.11c-1.32-.42-2.87-.21-3.95.73-1.07.91-1.39 2.52-1 3.86.35 1.34 1.63 2.37 3.01 2.39 1.55.03 2.94-1.01 3.21-2.52.27-1.47.16-2.96.16-4.44V.02z"/>
+                </svg>
+              </a>
+              <a href="https://facebook.com/ApeDanuma" target="_blank" rel="noopener noreferrer" className="p-2.5 rounded-xl border border-white/5 bg-white/5 hover:bg-white/10 hover:border-white/20 transition-all group" aria-label="Facebook">
                 <Facebook size={18} className="text-gray-400 group-hover:text-blue-500 transition-colors" />
               </a>
-              <a href="#" className="p-2.5 rounded-xl border border-white/5 bg-white/5 hover:bg-white/10 hover:border-white/20 transition-all group" aria-label="Instagram">
-                <Instagram size={18} className="text-gray-400 group-hover:text-pink-500 transition-colors" />
+              <a href="https://www.linkedin.com/company/ape-danuma/" target="_blank" rel="noopener noreferrer" className="p-2.5 rounded-xl border border-white/5 bg-white/5 hover:bg-white/10 hover:border-white/20 transition-all group" aria-label="LinkedIn">
+                <Linkedin size={18} className="text-gray-400 group-hover:text-blue-400 transition-colors" />
               </a>
             </div>
           </div>
