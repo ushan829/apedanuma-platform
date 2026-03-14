@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import Link from "next/link";
+import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { signIn } from "next-auth/react";
 
@@ -94,16 +95,14 @@ export default function LoginPage() {
         {/* ── Logo mark ── */}
         <div className="flex flex-col items-center mb-8 gap-3">
           <Link href="/" aria-label="Go to homepage">
-            <span
-              className="flex items-center justify-center w-12 h-12 rounded-2xl transition-transform duration-200 hover:scale-105"
-              style={{
-                background: "linear-gradient(135deg, rgba(124,31,255,0.3), rgba(87,0,190,0.45))",
-                border: "1px solid rgba(124,31,255,0.45)",
-                boxShadow: "0 0 24px rgba(124,31,255,0.25), inset 0 1px 0 rgba(255,255,255,0.1)",
-              }}
-            >
-              <span className="font-display font-black text-base text-gradient-arcane">AD</span>
-            </span>
+            <Image 
+              src="/logo.webp" 
+              alt="Ape Danuma Logo" 
+              width={48} 
+              height={48} 
+              className="rounded-2xl transition-transform duration-200 hover:scale-105 shadow-md"
+              priority
+            />
           </Link>
           <div className="text-center">
             <h1 className="font-display font-bold text-2xl" style={{ color: "var(--foreground)" }}>

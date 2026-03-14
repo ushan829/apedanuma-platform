@@ -2,6 +2,7 @@
 
 import { useState, useEffect, useRef, useCallback } from "react";
 import Link from "next/link";
+import Image from "next/image";
 import { usePathname, useRouter } from "next/navigation";
 
 /* ─────────────────────────────────────────
@@ -27,40 +28,17 @@ const NAV_LINKS: NavItem[] = [
 function Logo() {
   return (
     <Link href="/" className="flex items-center gap-3 group shrink-0" aria-label="Ape Danuma EM home">
-      {/* Icon — layered glow box with "AD" initials */}
-      <span
-        className="relative flex h-9 w-9 items-center justify-center rounded-[11px] transition-all duration-300 group-hover:scale-110 shrink-0"
-        style={{
-          background: "linear-gradient(145deg, rgba(124,31,255,0.32) 0%, rgba(60,0,160,0.45) 100%)",
-          border: "1px solid rgba(148,85,255,0.55)",
-          boxShadow:
-            "0 0 0 1px rgba(124,31,255,0.12), 0 0 18px rgba(124,31,255,0.3), inset 0 1px 0 rgba(255,255,255,0.12)",
-        }}
-      >
-        {/* Radial hover glow */}
-        <span
-          className="absolute inset-0 rounded-[11px] opacity-0 group-hover:opacity-100 transition-opacity duration-400"
-          style={{ background: "radial-gradient(circle at 50% 40%, rgba(148,85,255,0.4), transparent 68%)" }}
+      {/* Icon — Actual brand logo image */}
+      <div className="relative transition-all duration-300 group-hover:scale-105 shrink-0">
+        <Image 
+          src="/logo.webp" 
+          alt="Ape Danuma Logo" 
+          width={40} 
+          height={40} 
+          className="rounded-xl object-contain shadow-sm"
+          priority
         />
-        {/* Corner sparkle top-right */}
-        <span
-          className="absolute top-1 right-1 w-1 h-1 rounded-full opacity-60"
-          style={{ background: "#c4a0ff" }}
-          aria-hidden="true"
-        />
-        {/* AD letters */}
-        <span
-          className="font-display font-black text-[0.8rem] tracking-tighter relative z-10 leading-none"
-          style={{
-            background: "linear-gradient(135deg, #ffffff 15%, #c4a0ff 55%, #9455ff 100%)",
-            WebkitBackgroundClip: "text",
-            WebkitTextFillColor: "transparent",
-            letterSpacing: "-0.02em",
-          }}
-        >
-          AD
-        </span>
-      </span>
+      </div>
 
       {/* Wordmark */}
       <span className="flex flex-col leading-none select-none">

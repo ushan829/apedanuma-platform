@@ -40,6 +40,14 @@ export const metadata: Metadata = {
   authors: [{ name: "Ape Danuma EM" }],
   creator: "Ape Danuma EM",
   metadataBase: new URL("https://em.apedanuma.lk"),
+  icons: {
+    icon: [
+      { url: "/logo.webp", type: "image/webp" },
+    ],
+    apple: [
+      { url: "/logo.webp", type: "image/webp" },
+    ],
+  },
   openGraph: {
     type: "website",
     locale: "en_LK",
