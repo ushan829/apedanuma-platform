@@ -2,7 +2,6 @@
 
 import { useState, useMemo } from "react";
 import Link from "next/link";
-import { X } from "lucide-react";
 import AnimatedSearchBar from "@/components/AnimatedSearchBar";
 import {
   SUBJECT_CATEGORIES,

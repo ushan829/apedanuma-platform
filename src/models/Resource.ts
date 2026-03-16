@@ -190,8 +190,6 @@ const ResourceSchema = new Schema<IResource>(
    ───────────────────────────────────────── */
 // Primary listing query: grade + subject + materialType
 ResourceSchema.index({ grade: 1, subject: 1, materialType: 1 });
-// Slug lookup for individual resource pages
-ResourceSchema.index({ slug: 1 }, { unique: true, sparse: true });
 // Free vs. premium filtering
 ResourceSchema.index({ isPremium: 1, isPublished: 1 });
 // Text search across title and description

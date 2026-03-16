@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { revalidatePath } from "next/cache";
 import { PutObjectCommand } from "@aws-sdk/client-s3";
 import slugify from "slugify";
-import { verifyAdminToken, authError } from "@/lib/admin-auth";
+import { verifyAdminToken, type AdminJwtPayload } from "@/lib/admin-auth";
 import { getS3Client, getR2Bucket, buildPublicUrl, formatFileSize } from "@/lib/s3";
 import connectToDatabase from "@/lib/mongodb";
 import Resource, { type IResource } from "@/models/Resource";

@@ -40,6 +40,9 @@ export const metadata: Metadata = {
   authors: [{ name: "Ape Danuma EM" }],
   creator: "Ape Danuma EM",
   metadataBase: new URL("https://em.apedanuma.lk"),
+  alternates: {
+    canonical: "/",
+  },
   icons: {
     icon: [
       { url: "/logo.webp", type: "image/webp" },
@@ -83,6 +86,7 @@ export const viewport: Viewport = {
   colorScheme: "dark",
   width: "device-width",
   initialScale: 1,
+  maximumScale: 5, // Accessibility: allow users to zoom
 };
 
 export default function RootLayout({
@@ -93,24 +97,33 @@ export default function RootLayout({
   const gaId = process.env.NEXT_PUBLIC_GA_ID;
 
   return (
-    <html lang="en" className={`${inter.variable} ${poppins.variable}`}>
-      <body className="antialiased">
+    // suppressHydrationWarning added to html to prevent mismatches from browser extensions and GA injections
+    <html lang="en" className={`${inter.variable} ${poppins.variable}`} suppressHydrationWarning>
+      <body className="antialiased selection:bg-purple-500/30 selection:text-white">
         {gaId && <GoogleAnalytics gaId={gaId} />}
-        {/* Ghibli Touches: Background Clouds */}
-        <div className="ghibli-cloud" style={{ top: '15%', width: '300px', height: '150px', animationDelay: '0s' }} />
-        <div className="ghibli-cloud" style={{ top: '45%', width: '450px', height: '200px', animationDelay: '-20s' }} />
-        <div className="ghibli-cloud" style={{ top: '75%', width: '250px', height: '120px', animationDelay: '-40s' }} />
+        
+        {/* Audit: Background Clouds (Client-side decorative) */}
+        <div aria-hidden="true" className="pointer-events-none fixed inset-0 overflow-hidden -z-10">
+          <div className="ghibli-cloud" style={{ top: '15%', width: '300px', height: '150px', animationDelay: '0s' }} />
+          <div className="ghibli-cloud" style={{ top: '45%', width: '450px', height: '200px', animationDelay: '-20s' }} />
+          <div className="ghibli-cloud" style={{ top: '75%', width: '250px', height: '120px', animationDelay: '-40s' }} />
+        </div>
         
         <Navbar />
-        <div className="pt-[68px] min-h-screen flex flex-col">
-          <div className="flex-1">
+        
+        {/* Audit: min-h-screen replaced with min-h-dvh for better mobile viewport (iOS Safari fix) */}
+        <div className="pt-[68px] min-h-dvh flex flex-col">
+          <main className="flex-1">
             {children}
-          </div>
+          </main>
           <Footer />
         </div>
+
         <Toaster
           theme="dark"
           position="bottom-right"
+          richColors
+          closeButton
           toastOptions={{
             style: {
               background: "rgba(10,8,18,0.97)",
@@ -125,6 +138,8 @@ export default function RootLayout({
             },
           }}
         />
+        
+        {/* Audit: PayHere script uses lazyOnload to improve Initial Page Load performance */}
         <Script src="https://www.payhere.lk/lib/payhere.js" strategy="lazyOnload" />
       </body>
     </html>

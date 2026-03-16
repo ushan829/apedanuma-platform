@@ -30,7 +30,6 @@ export default function PDFViewer({
   fileUrl, 
   isPremium = false, 
   hasPurchased = false,
-  price = 0,
 }: PDFViewerProps) {
   const [isMobile, setIsMobile] = useState(false);
   const [isLoaded, setIsLoaded] = useState(false);
@@ -48,12 +47,6 @@ export default function PDFViewer({
     setIsLoaded(true);
     return () => window.removeEventListener("resize", checkMobile);
   }, []);
-
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const handleDocumentError = (e: any) => {
-    console.error("PDF Load Error:", e);
-    setError(e.message || "Failed to load document.");
-  };
 
   // Teaser logic: Only show first 3 pages if premium and not purchased
   const isTeaser = isPremium && !hasPurchased;
@@ -159,7 +152,7 @@ export default function PDFViewer({
               onClick={() => window.location.reload()}
               className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-white/5 border border-white/10 text-white text-sm font-semibold hover:bg-white/10 transition-colors"
             >
-              <RefreshCcw size={16} />
+              <RefreshCcw width={16} height={16} />
               Retry Loading
             </button>
           </div>
@@ -171,8 +164,6 @@ export default function PDFViewer({
               fileUrl={fileUrl}
               plugins={isTeaser ? [] : [defaultLayoutPluginInstance]}
               renderPage={renderPage}
-              // eslint-disable-next-line @typescript-eslint/no-explicit-any
-              onDocumentLoadError={handleDocumentError as any}
               scrollMode={ScrollMode.Vertical}
               defaultScale={SpecialZoomLevel.PageFit}
             />

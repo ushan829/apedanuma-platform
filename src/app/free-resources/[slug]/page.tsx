@@ -17,7 +17,7 @@ async function getResource(slug: string): Promise<LiveResource | null> {
     await connectToDatabase();
     
     // Check if we should try searching by _id as a fallback
-    const query: any = { 
+    const query: { isPremium: boolean; isPublished: boolean; $or: { slug?: string; _id?: string }[] } = { 
       isPremium: false, 
       isPublished: true,
       $or: [

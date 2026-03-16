@@ -3,7 +3,7 @@
 import { useState, useEffect } from "react";
 import Link from "next/link";
 import { motion, AnimatePresence } from "framer-motion";
-import { FlaskConical, Pi, Languages, Monitor, Activity, Zap } from "lucide-react";
+import { FlaskConical, Pi, Languages, Monitor, Zap } from "lucide-react";
 
 /* ─────────────────────────────────────────────────────────────
    Rotating Stats Component
@@ -52,8 +52,8 @@ function RotatingStats() {
             transition={{ duration: 0.5, ease: "easeOut" }}
             className="flex items-center gap-8 md:gap-12"
           >
-            {currentStats.map((stat, i) => (
-              <div key={i} className="flex items-center gap-3 group">
+            {currentStats.map((stat, _idx) => (
+              <div key={_idx} className="flex items-center gap-3 group">
                 <span 
                   className="text-xl font-black tracking-tight"
                   style={{ 
@@ -292,7 +292,7 @@ function UltraPremiumDashboard() {
 
         {/* Isometric Subject Grid */}
         <div className="grid grid-cols-2 gap-6 mb-4">
-          {subjects.map((s, idx) => (
+          {subjects.map((s) => (
             <Link key={s.name} href={s.href} className="group outline-none">
               <motion.div
                 whileHover={{ y: -8, scale: 1.02 }}

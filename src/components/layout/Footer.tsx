@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { Facebook, Instagram, Youtube, MessageCircle, Send, Linkedin } from "lucide-react";
+import { Facebook, Youtube, MessageCircle, Send, Linkedin } from "lucide-react";
 
 export default function Footer() {
   const currentYear = new Date().getFullYear();

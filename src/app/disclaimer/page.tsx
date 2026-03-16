@@ -9,8 +9,7 @@ import {
   Mail, 
   ChevronRight,
   ExternalLink,
-  BookOpen,
-  FileText
+  BookOpen
 } from "lucide-react";
 
 export const metadata: Metadata = {
@@ -72,7 +71,7 @@ export default function DisclaimerPage() {
                   
                   <div className="prose prose-invert max-w-none space-y-4 text-slate-300">
                     <p>
-                      At <strong>Ape Danuma EM</strong>, we respect the intellectual property of others and are committed to legal transparency. Our platform hosts a repository of official educational materials categorized under "Free Resources."
+                      At <strong>Ape Danuma EM</strong>, we respect the intellectual property of others and are committed to legal transparency. Our platform hosts a repository of official educational materials categorized under &quot;Free Resources.&quot;
                     </p>
                     
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-6">
@@ -180,7 +179,7 @@ export default function DisclaimerPage() {
                   
                   <div className="prose prose-invert max-w-none space-y-4 text-slate-400 text-sm leading-relaxed">
                     <p>
-                      The information and materials provided on <strong>Ape Danuma EM</strong> are intended for general educational assistance only. While we strive for accuracy, all free materials are provided <span className="text-white">"as is"</span> without any warranties, express or implied.
+                      The information and materials provided on <strong>Ape Danuma EM</strong> are intended for general educational assistance only. While we strive for accuracy, all free materials are provided <span className="text-white">&quot;as is&quot;</span> without any warranties, express or implied.
                     </p>
                     
                     <div className="p-4 rounded-xl bg-white/5 border border-white/5 flex gap-4">
