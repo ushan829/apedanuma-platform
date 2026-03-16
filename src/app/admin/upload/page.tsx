@@ -4,6 +4,7 @@ import { useState, useRef, useCallback } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { SUBJECT_VALUES, MATERIAL_TYPE_VALUES } from "@/lib/resource-constants";
+import RichTextEditor from "@/components/RichTextEditor";
 
 /* ─────────────────────────────────────────
    Constants
@@ -34,16 +35,12 @@ function SelectField({ children, ...props }: React.SelectHTMLAttributes<HTMLSele
   return (
     <select
       {...props}
-      className="input appearance-none cursor-pointer"
+      className="input appearance-none cursor-pointer bg-slate-900 text-white"
       style={{ backgroundImage: "none" }}
     >
       {children}
     </select>
   );
-}
-
-function TextAreaField(props: React.TextareaHTMLAttributes<HTMLTextAreaElement>) {
-  return <textarea {...props} className="input resize-none" style={{ lineHeight: "1.6" }} />;
 }
 
 /* ─────────────────────────────────────────
@@ -410,18 +407,14 @@ export default function AdminUploadPage() {
             {/* ── Description ── */}
             <div>
               <FieldLabel htmlFor="description" required>Description</FieldLabel>
-              <TextAreaField
-                id="description"
-                rows={3}
-                placeholder="A brief description shown to students on the resource card and preview page…"
+              <RichTextEditor
                 value={description}
-                onChange={(e) => setDescription(e.target.value)}
+                onChange={setDescription}
+                placeholder="A detailed description shown to students on the resource card and preview page…"
                 disabled={loading}
-                maxLength={1000}
-                required
               />
               <p className="text-[0.7rem] mt-1.5" style={{ color: "var(--foreground-disabled)" }}>
-                {description.length} / 1000
+                {description.replace(/<[^>]*>/g, "").length} / 1000 characters (plain text)
               </p>
             </div>
 

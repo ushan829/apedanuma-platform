@@ -279,13 +279,14 @@ export default async function ProductPreviewPage({ params }: { params: { slug: s
             <div className="h-px w-full" style={{ background: "linear-gradient(90deg, transparent, rgba(255,255,255,0.08) 40%, transparent)" }} />
 
             {/* Description */}
-            <div>
+            <div className="mb-6 w-full overflow-hidden">
               <h2 className="font-display font-semibold text-base mb-3" style={{ color: "var(--foreground)" }}>
                 About this document
               </h2>
-              <p className="text-[0.9375rem] leading-relaxed" style={{ color: "var(--foreground-secondary)" }}>
-                {product.description}
-              </p>
+              <div
+                className="prose prose-invert prose-slate prose-sm max-w-none rich-text-content break-words"
+                dangerouslySetInnerHTML={{ __html: product.description }}
+              />
             </div>
 
             {/* Divider */}

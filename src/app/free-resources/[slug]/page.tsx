@@ -311,9 +311,10 @@ export default async function ResourcePreviewPage({ params }: { params: { slug: 
               </div>
 
               {/* Description */}
-              <p className="text-sm leading-relaxed mb-5" style={{ color: "var(--foreground-secondary)" }}>
-                {resource.description}
-              </p>
+              <div
+                className="prose prose-invert prose-slate prose-sm max-w-none mb-6 rich-text-content break-words overflow-hidden w-full"
+                dangerouslySetInnerHTML={{ __html: resource.description }}
+              />
 
               {/* Free badge */}
               <div

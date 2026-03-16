@@ -4,6 +4,7 @@ import { useState, useEffect, useMemo, useCallback } from "react";
 import Link from "next/link";
 import { SUBJECT_VALUES, MATERIAL_TYPE_VALUES } from "@/lib/resource-constants";
 import { getSubjectStyle } from "@/lib/free-resources";
+import RichTextEditor from "@/components/RichTextEditor";
 
 /* ─────────────────────────────────────────
    Types
@@ -238,7 +239,7 @@ function EditModal({
   }
 
   const inputStyle: React.CSSProperties = {
-    background: "rgba(255,255,255,0.05)",
+    background: "rgba(10,10,10,0.95)",
     border: "1px solid rgba(255,255,255,0.1)",
     borderRadius: "0.6rem",
     color: "var(--foreground)",
@@ -259,16 +260,20 @@ function EditModal({
   };
 
   return (
-    <div
-      className="fixed inset-0 z-50 flex items-start justify-end p-4 sm:p-6 overflow-y-auto"
-      style={{ background: "rgba(0,0,0,0.7)", backdropFilter: "blur(6px)" }}
-    >
+    <div className="fixed inset-0 z-[1000] flex justify-end">
+      {/* Backdrop */}
+      <div 
+        className="fixed inset-0 bg-black/60 backdrop-blur-sm z-[90]" 
+        onClick={onClose}
+      />
+
+      {/* Drawer Container */}
       <div
-        className="relative w-full max-w-lg rounded-2xl"
+        className="relative w-full max-w-lg h-screen overflow-y-auto z-[100] shadow-2xl flex flex-col"
         style={{
           background: "rgba(10,6,20,0.98)",
-          border: "1px solid rgba(245,158,11,0.2)",
-          boxShadow: "0 24px 60px rgba(0,0,0,0.6), 0 0 40px rgba(124,31,255,0.08)",
+          borderLeft: "1px solid rgba(245,158,11,0.2)",
+          boxShadow: "-10px 0 60px rgba(0,0,0,0.8), 0 0 40px rgba(124,31,255,0.08)",
         }}
       >
         {/* Header */}
@@ -308,12 +313,10 @@ function EditModal({
           {/* Description */}
           <div>
             <label style={labelStyle}>Description *</label>
-            <textarea
-              style={{ ...inputStyle, resize: "none", lineHeight: "1.55" }}
-              rows={3}
+            <RichTextEditor
               value={form.description}
-              onChange={(e) => set("description", e.target.value)}
-              required
+              onChange={(val) => set("description", val)}
+              disabled={loading}
             />
           </div>
 
@@ -725,12 +728,12 @@ export default function ManageContentPage() {
         </div>
 
         {/* Grade filter */}
-        <select
-          value={filterGrade}
-          onChange={(e) => setGrade(e.target.value as "" | "10" | "11")}
-          className="rounded-xl px-3 py-2.5 text-sm cursor-pointer outline-none"
-          style={{ background: "rgba(255,255,255,0.04)", border: "1px solid rgba(255,255,255,0.09)", color: "var(--foreground)", minWidth: 110 }}
-        >
+          <select
+            value={filterGrade}
+            onChange={(e) => setGrade(e.target.value as "" | "10" | "11")}
+            className="rounded-xl px-3 py-2.5 text-sm cursor-pointer outline-none bg-slate-900"
+            style={{ border: "1px solid rgba(255,255,255,0.09)", color: "var(--foreground)", minWidth: 110 }}
+          >
           <option value="">All Grades</option>
           <option value="10">Grade 10</option>
           <option value="11">Grade 11</option>
@@ -740,8 +743,8 @@ export default function ManageContentPage() {
         <select
           value={filterType}
           onChange={(e) => setType(e.target.value)}
-          className="rounded-xl px-3 py-2.5 text-sm cursor-pointer outline-none"
-          style={{ background: "rgba(255,255,255,0.04)", border: "1px solid rgba(255,255,255,0.09)", color: "var(--foreground)", minWidth: 160 }}
+          className="rounded-xl px-3 py-2.5 text-sm cursor-pointer outline-none bg-slate-900"
+          style={{ border: "1px solid rgba(255,255,255,0.09)", color: "var(--foreground)", minWidth: 160 }}
         >
           <option value="">All Types</option>
           {(MATERIAL_TYPE_VALUES as readonly string[]).map((t) => (
@@ -753,8 +756,8 @@ export default function ManageContentPage() {
         <select
           value={filterStatus}
           onChange={(e) => setStatus(e.target.value as "" | "published" | "draft")}
-          className="rounded-xl px-3 py-2.5 text-sm cursor-pointer outline-none"
-          style={{ background: "rgba(255,255,255,0.04)", border: "1px solid rgba(255,255,255,0.09)", color: "var(--foreground)", minWidth: 130 }}
+          className="rounded-xl px-3 py-2.5 text-sm cursor-pointer outline-none bg-slate-900"
+          style={{ border: "1px solid rgba(255,255,255,0.09)", color: "var(--foreground)", minWidth: 130 }}
         >
           <option value="">All Status</option>
           <option value="published">Published</option>

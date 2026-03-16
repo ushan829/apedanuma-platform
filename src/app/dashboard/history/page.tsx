@@ -54,9 +54,10 @@ function ResourceCard({ resource }: { resource: PurchasedResource }) {
           </div>
         </div>
         {resource.description && (
-          <p className="text-xs leading-relaxed line-clamp-2" style={{ color: "var(--foreground-muted)" }}>
-            {resource.description}
-          </p>
+          <div
+            className="prose prose-invert prose-slate prose-sm line-clamp-2 rich-text-content break-words overflow-hidden w-full"
+            dangerouslySetInnerHTML={{ __html: resource.description }}
+          />
         )}
         <a
           href={`/api/download/premium/${resource._id}`}

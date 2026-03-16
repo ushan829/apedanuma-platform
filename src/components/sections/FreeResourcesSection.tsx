@@ -362,12 +362,10 @@ function ResourceCard({ r }: { r: Resource }) {
       </h3>
 
       {/* ── Description ── */}
-      <p
-        className="text-sm leading-relaxed line-clamp-3 flex-1 mb-5"
-        style={{ color: "var(--foreground-muted)" }}
-      >
-        {r.description}
-      </p>
+      <div
+        className="prose prose-invert prose-slate prose-sm line-clamp-3 flex-1 mb-5 rich-text-content break-words overflow-hidden w-full"
+        dangerouslySetInnerHTML={{ __html: r.description }}
+      />
 
       {/* ── File metadata ── */}
       <div

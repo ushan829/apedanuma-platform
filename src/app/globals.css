@@ -795,6 +795,38 @@
     border-color: var(--border-accent);
     color: #b890ff;
   }
+  /* ── Rich Text Content (from Quill) ── */
+  .rich-text-content p {
+    margin-bottom: 0.75rem;
+  }
+  .rich-text-content p:last-child {
+    margin-bottom: 0;
+  }
+  .rich-text-content ul, .rich-text-content ol {
+    margin-bottom: 1rem;
+    padding-left: 1.5rem;
+  }
+  .rich-text-content ul {
+    list-style-type: disc;
+  }
+  .rich-text-content ol {
+    list-style-type: decimal;
+  }
+  .rich-text-content li {
+    margin-bottom: 0.25rem;
+  }
+  .rich-text-content b, .rich-text-content strong {
+    font-weight: 700;
+    color: var(--foreground);
+  }
+  .rich-text-content a {
+    color: var(--accent-secondary);
+    text-decoration: underline;
+  }
+  .rich-text-content h1, .rich-text-content h2, .rich-text-content h3 {
+    margin-top: 1.5rem;
+    margin-bottom: 0.75rem;
+  }
 }
 
 /* ─────────────────────────────────────────
