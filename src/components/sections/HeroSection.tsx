@@ -2,13 +2,12 @@ import Link from "next/link";
 import dynamic from "next/dynamic";
 import { Zap } from "lucide-react";
 import GeometricBackground from "./hero/GeometricBackground";
-import StaticMobileStats from "./hero/StaticMobileStats";
-import StaticMobileDashboard from "./hero/StaticMobileDashboard";
+import StaticMobileHeroContent from "./hero/StaticMobileHeroContent";
 
-// Heavy components are only rendered within DesktopAnimationWrapper below
-const RotatingStats = dynamic(() => import("./hero/RotatingStats"), { ssr: false });
-const UltraPremiumDashboard = dynamic(() => import("./hero/UltraPremiumDashboard"), { ssr: false });
-const DesktopAnimationWrapper = dynamic(() => import("./hero/DesktopAnimationWrapper"), { ssr: false });
+// Desktop visual components are strictly isolated and lazily loaded ONLY for lg screens (1024px+)
+const DesktopHeroVisuals = dynamic(() => import("./hero/DesktopHeroVisuals"), { 
+  ssr: false,
+});
 
 export default function HeroSection() {
   return (
@@ -23,17 +22,12 @@ export default function HeroSection() {
         <div className="grid grid-cols-1 lg:grid-cols-[1fr_480px] xl:grid-cols-[1fr_500px] gap-8 lg:gap-12 xl:gap-20 w-full py-12 lg:py-16">
 
           <div className="flex flex-col justify-center gap-6 lg:gap-8">
-            {/* Eye-brow badge: Static for Mobile, Animated for Desktop (via CSS class, not JS) */}
-            <div
-              className="hero-badge w-fit"
-              style={{ animation: "heroBadgePop 0.4s cubic-bezier(0.34,1.56,0.64,1) both" }}
-            >
+            <div className="hero-badge w-fit lg:animate-heroBadgePop">
               <span
-                className="inline-block w-1.5 h-1.5 rounded-full"
+                className="inline-block w-1.5 h-1.5 rounded-full lg:animate-pulseDot"
                 style={{
                   background: "linear-gradient(135deg, #9455ff, #f59e0b)",
                   boxShadow: "0 0 6px rgba(148,85,255,0.6)",
-                  animation: "pulseDot 2.5s ease-in-out infinite",
                 }}
               />
               <span style={{ color: "var(--foreground-muted)" }}>🇱🇰</span>
@@ -42,8 +36,7 @@ export default function HeroSection() {
               </span>
             </div>
 
-            {/* Static Heading: ZERO Framer Motion */}
-            <div className="flex flex-col gap-1">
+            <div className="flex flex-col gap-1 lg:animate-heroFadeUp">
               <h1
                 className="font-display leading-[1.08] tracking-tight"
                 style={{ fontSize: "clamp(2.4rem, 6.5vw, 4.5rem)" }}
@@ -51,13 +44,13 @@ export default function HeroSection() {
                 <span style={{ color: "var(--foreground)" }}>Master Your</span>
                 <br />
                 <span
+                  className="lg:animate-gradientShift"
                   style={{
                     background: "linear-gradient(135deg, #d4a8ff 0%, #9455ff 35%, #7c1fff 55%, #f59e0b 85%, #fbbf24 100%)",
                     backgroundSize: "200% auto",
                     WebkitBackgroundClip: "text",
                     WebkitTextFillColor: "transparent",
                     backgroundClip: "text",
-                    animation: "gradientShift 5s ease-in-out infinite",
                   }}
                 >
                   O/L Journey.
@@ -66,61 +59,35 @@ export default function HeroSection() {
             </div>
 
             <p
-              className="text-base sm:text-lg leading-[1.75] max-w-[520px]"
-              style={{
-                color: "var(--foreground-secondary)",
-                animation: "heroFadeUp 0.5s 0.1s ease both",
-              }}
+              className="text-base sm:text-lg leading-[1.75] max-w-[520px] lg:animate-heroFadeUp lg:[animation-delay:0.1s]"
+              style={{ color: "var(--foreground-secondary)" }}
             >
               Access <span className="font-medium text-white">elite study materials</span>, comprehensive notes, and expert guidance designed exclusively for <span className="font-bold text-arcane-400">English Medium achievers</span>.
             </p>
 
-            {/* Mobile-Only PURE STATIC Dashboard (HTML/CSS ONLY) */}
-            <div className="lg:hidden">
-              <StaticMobileDashboard />
-            </div>
-
-            <div
-              className="flex flex-col sm:flex-row gap-4"
-              style={{ animation: "heroFadeUp 0.5s 0.2s ease both" }}
-            >
+            {/* CTA Container */}
+            <div className="flex flex-col sm:flex-row gap-4 lg:animate-heroFadeUp lg:[animation-delay:0.2s]">
               <Link href="/premium-store" className="btn-hero-primary group w-full sm:w-auto">
                 <Zap className="w-4 h-4 shrink-0 transition-transform duration-300 group-hover:rotate-12 group-hover:scale-110" />
                 <span>Explore Premium Notes</span>
-                <svg className="hidden sm:block w-4 h-4 shrink-0 transition-transform duration-300 group-hover:translate-x-1" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
-                  <path strokeLinecap="round" strokeLinejoin="round" d="M13 7l5 5-5 5M6 12h12" />
-                </svg>
               </Link>
               <Link href="/free-resources" className="btn-hero-ghost group w-full sm:w-auto">
-                <svg className="w-4 h-4 shrink-0 transition-transform duration-200 group-hover:-translate-y-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                  <path strokeLinecap="round" strokeLinejoin="round" d="M3 7a2 2 0 012-2h4l2 2h8a2 2 0 012 2v8a2 2 0 01-2 2H5a2 2 0 01-2-2V7z" />
-                </svg>
                 <span>Browse Free Resources</span>
               </Link>
             </div>
 
-            <div className="flex flex-col gap-3">
-              {/* Desktop-only animated stats: Zero JS overhead on mobile due to DesktopAnimationWrapper */}
-              <div className="hidden lg:block">
-                <DesktopAnimationWrapper>
-                  <RotatingStats />
-                </DesktopAnimationWrapper>
-              </div>
-              {/* Mobile-only static stats */}
-              <div className="lg:hidden">
-                <StaticMobileStats />
-              </div>
+            {/* ── MOBILE-ONLY STATIC CONTENT (100% JS-FREE) ── */}
+            <StaticMobileHeroContent />
+
+            {/* Desktop-only animated stats wrapper */}
+            <div className="hidden lg:block">
+              <DesktopHeroVisuals type="stats" />
             </div>
           </div>
 
-          <div
-            className="hidden lg:flex items-center justify-center w-full"
-            style={{ animation: "heroScaleIn 0.8s 0.2s cubic-bezier(0.25,0.46,0.45,0.94) both" }}
-          >
-            {/* Desktop-only animated dashboard */}
-            <DesktopAnimationWrapper>
-              <UltraPremiumDashboard />
-            </DesktopAnimationWrapper>
+          <div className="hidden lg:flex items-center justify-center w-full lg:animate-heroScaleIn lg:[animation-delay:0.2s]">
+            {/* Desktop-only: Heavy dashboard logic */}
+            <DesktopHeroVisuals type="dashboard" />
           </div>
 
         </div>
