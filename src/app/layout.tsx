@@ -1,12 +1,17 @@
 import type { Metadata, Viewport } from "next";
 import { Inter, Poppins } from "next/font/google";
 import Script from "next/script";
+import dynamic from "next/dynamic";
 import { Toaster } from "sonner";
 import { GoogleAnalytics } from "@next/third-parties/google";
 import "./globals.css";
 import Navbar from "@/components/layout/Navbar";
 import Footer from "@/components/layout/Footer";
 import { FramerMotionProvider } from "@/components/layout/FramerMotionProvider";
+
+const BackgroundClouds = dynamic(() => import("@/components/layout/BackgroundClouds"), { 
+  ssr: false 
+});
 
 const inter = Inter({
   subsets: ["latin"],
@@ -104,12 +109,7 @@ export default function RootLayout({
         <FramerMotionProvider>
           {gaId && <GoogleAnalytics gaId={gaId} />}
           
-          {/* Audit: Background Clouds (Client-side decorative) */}
-          <div aria-hidden="true" className="pointer-events-none fixed inset-0 overflow-hidden -z-10">
-            <div className="ghibli-cloud" style={{ top: '15%', width: '300px', height: '150px', animationDelay: '0s' }} />
-            <div className="ghibli-cloud" style={{ top: '45%', width: '450px', height: '200px', animationDelay: '-20s' }} />
-            <div className="ghibli-cloud" style={{ top: '75%', width: '250px', height: '120px', animationDelay: '-40s' }} />
-          </div>
+          <BackgroundClouds />
           
           <Navbar />
           

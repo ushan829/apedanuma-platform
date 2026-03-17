@@ -5,7 +5,7 @@ import GeometricBackground from "./hero/GeometricBackground";
 import StaticMobileStats from "./hero/StaticMobileStats";
 import StaticMobileDashboard from "./hero/StaticMobileDashboard";
 
-// Heavy Framer Motion / 3D components are dynamically imported
+// Heavy Framer Motion / 3D components are strictly desktop-only and lazily loaded
 const RotatingStats = dynamic(() => import("./hero/RotatingStats"), { 
   ssr: false,
 });
@@ -14,9 +14,6 @@ const UltraPremiumDashboard = dynamic(() => import("./hero/UltraPremiumDashboard
   ssr: false,
 });
 
-/* ─────────────────────────────────────────────────────────────
-   Main Hero Section (Server Component)
-   ───────────────────────────────────────────────────────────── */
 export default function HeroSection() {
   return (
     <section
@@ -32,7 +29,7 @@ export default function HeroSection() {
           <div className="flex flex-col justify-center gap-6 lg:gap-8">
             <div
               className="hero-badge w-fit"
-              style={{ animation: "heroBadgePop 0.6s 0.1s cubic-bezier(0.34,1.56,0.64,1) both" }}
+              style={{ animation: "heroBadgePop 0.4s cubic-bezier(0.34,1.56,0.64,1) both" }}
             >
               <span
                 className="inline-block w-1.5 h-1.5 rounded-full"
@@ -48,13 +45,13 @@ export default function HeroSection() {
               </span>
             </div>
 
-            <div
-              className="flex flex-col gap-1"
-              style={{ animation: "heroFadeUp 0.7s 0.2s ease both" }}
-            >
+            <div className="flex flex-col gap-1">
               <h1
                 className="font-display leading-[1.08] tracking-tight"
-                style={{ fontSize: "clamp(2.4rem, 6.5vw, 4.5rem)" }}
+                style={{ 
+                  fontSize: "clamp(2.4rem, 6.5vw, 4.5rem)",
+                  /* No animation delay on H1 to optimize LCP */
+                }}
               >
                 <span style={{ color: "var(--foreground)" }}>Master Your</span>
                 <br />
@@ -77,27 +74,28 @@ export default function HeroSection() {
               className="text-base sm:text-lg leading-[1.75] max-w-[520px]"
               style={{
                 color: "var(--foreground-secondary)",
-                animation: "heroFadeUp 0.7s 0.35s ease both",
+                /* Reduced delay for text content */
+                animation: "heroFadeUp 0.5s 0.1s ease both",
               }}
             >
               Access <span className="font-medium text-white">elite study materials</span>, comprehensive notes, and expert guidance designed exclusively for <span className="font-bold text-arcane-400">English Medium achievers</span>.
             </p>
 
-            {/* Mobile Dashboard (Visible ONLY on Mobile) */}
+            {/* Mobile Dashboard (Pure Static Fallback) */}
             <StaticMobileDashboard />
 
             <div
-              className="flex flex-wrap gap-4 items-center"
-              style={{ animation: "heroFadeUp 0.7s 0.5s ease both" }}
+              className="flex flex-col sm:flex-row gap-4"
+              style={{ animation: "heroFadeUp 0.5s 0.2s ease both" }}
             >
-              <Link href="/premium-store" className="btn-hero-primary group flex-1 sm:flex-none">
+              <Link href="/premium-store" className="btn-hero-primary group w-full sm:w-auto">
                 <Zap className="w-4 h-4 shrink-0 transition-transform duration-300 group-hover:rotate-12 group-hover:scale-110" />
                 <span>Explore Premium Notes</span>
                 <svg className="hidden sm:block w-4 h-4 shrink-0 transition-transform duration-300 group-hover:translate-x-1" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
                   <path strokeLinecap="round" strokeLinejoin="round" d="M13 7l5 5-5 5M6 12h12" />
                 </svg>
               </Link>
-              <Link href="/free-resources" className="btn-hero-ghost group flex-1 sm:flex-none">
+              <Link href="/free-resources" className="btn-hero-ghost group w-full sm:w-auto">
                 <svg className="w-4 h-4 shrink-0 transition-transform duration-200 group-hover:-translate-y-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
                   <path strokeLinecap="round" strokeLinejoin="round" d="M3 7a2 2 0 012-2h4l2 2h8a2 2 0 012 2v8a2 2 0 01-2 2H5a2 2 0 01-2-2V7z" />
                 </svg>
@@ -105,10 +103,7 @@ export default function HeroSection() {
               </Link>
             </div>
 
-            <div
-              className="flex flex-col gap-3"
-              style={{ animation: "heroFadeUp 0.7s 0.65s ease both" }}
-            >
+            <div className="flex flex-col gap-3">
               {/* Desktop-only animated stats */}
               <div className="hidden md:block">
                 <RotatingStats />
@@ -120,7 +115,7 @@ export default function HeroSection() {
 
           <div
             className="hidden md:flex items-center justify-center w-full"
-            style={{ animation: "heroScaleIn 0.8s 0.4s cubic-bezier(0.25,0.46,0.45,0.94) both" }}
+            style={{ animation: "heroScaleIn 0.8s 0.2s cubic-bezier(0.25,0.46,0.45,0.94) both" }}
           >
             <UltraPremiumDashboard />
           </div>
