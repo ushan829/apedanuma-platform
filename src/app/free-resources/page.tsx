@@ -1,3 +1,4 @@
+import { Suspense } from "react";
 import type { Metadata } from "next";
 import ResourceLibrary from "@/components/sections/ResourceLibrary";
 import connectToDatabase from "@/lib/mongodb";
@@ -69,7 +70,9 @@ export default async function FreeResourcesPage() {
         />
       </div>
       {/* Pass live data; falls back to static if DB is empty */}
-      <ResourceLibrary resources={resources.length > 0 ? resources : undefined} />
+      <Suspense fallback={<div className="container-xl py-20 text-center">Loading Resources...</div>}>
+        <ResourceLibrary resources={resources.length > 0 ? resources : undefined} />
+      </Suspense>
     </main>
   );
 }

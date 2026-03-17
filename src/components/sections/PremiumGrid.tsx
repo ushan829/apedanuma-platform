@@ -1,7 +1,8 @@
 "use client";
 
-import { useState, useMemo } from "react";
+import { useState, useMemo, useEffect } from "react";
 import Link from "next/link";
+import { useRouter, usePathname, useSearchParams } from "next/navigation";
 import AnimatedSearchBar from "@/components/AnimatedSearchBar";
 import {
   SUBJECT_CATEGORIES,
@@ -464,13 +465,81 @@ function EmptyState({ onReset }: { onReset: () => void }) {
    Main export
    ───────────────────────────────────────── */
 export default function PremiumGrid({ products }: { products: LiveResource[] }) {
-  const [grade, setGrade]                       = useState<Grade>(10);
-  const [materialType, setMaterialType]         = useState<MaterialType>("all");
-  const [termFilter, setTermFilter]             = useState<TermFilter | null>(null);
-  const [selectedSubjects, setSelectedSubjects] = useState<Set<string>>(new Set());
-  const [searchQuery, setSearchQuery]           = useState("");
-  const [year, setYear]                         = useState<number | null>(null);
+  const router = useRouter();
+  const pathname = usePathname();
+  const searchParams = useSearchParams();
+
+  // 1. Initial State from URL
+  const [grade, setGrade] = useState<Grade>(() => {
+    const g = searchParams.get("grade");
+    return (g === "11" ? 11 : 10) as Grade;
+  });
+  const [materialType, setMaterialType] = useState<MaterialType>(() => {
+    return (searchParams.get("type") as MaterialType) || "all";
+  });
+  const [termFilter, setTermFilter] = useState<TermFilter | null>(() => {
+    const t = searchParams.get("term");
+    return t ? (parseInt(t) as TermFilter) : null;
+  });
+  const [selectedSubjects, setSelectedSubjects] = useState<Set<string>>(() => {
+    const s = searchParams.get("subjects");
+    return new Set(s ? s.split(",") : []);
+  });
+  const [searchQuery, setSearchQuery] = useState(() => searchParams.get("q") || "");
+  const [year, setYear] = useState<number | null>(() => {
+    const y = searchParams.get("year");
+    return y ? parseInt(y) : null;
+  });
   const [showMobileFilters, setShowMobileFilters] = useState(false);
+
+  // 2. Sync State -> URL (Update URL when filters change)
+  useEffect(() => {
+    const params = new URLSearchParams();
+    if (grade === 11) params.set("grade", "11");
+    if (materialType !== "all") params.set("type", materialType);
+    if (termFilter !== null) params.set("term", termFilter.toString());
+    if (selectedSubjects.size > 0) {
+      params.set("subjects", Array.from(selectedSubjects).join(","));
+    }
+    if (searchQuery.trim()) params.set("q", searchQuery.trim());
+    if (year !== null) params.set("year", year.toString());
+
+    const query = params.toString();
+    const url = query ? `${pathname}?${query}` : pathname;
+    
+    // Use replace to avoid polluting history with every filter click
+    router.replace(url, { scroll: false });
+  }, [grade, materialType, termFilter, selectedSubjects, searchQuery, year, pathname, router]);
+
+  // 3. Sync URL -> State (Handles Browser Back/Forward buttons)
+  useEffect(() => {
+    const gVal = searchParams.get("grade");
+    const newGrade = (gVal === "11" ? 11 : 10) as Grade;
+    if (grade !== newGrade) setGrade(newGrade);
+
+    const tVal = (searchParams.get("type") as MaterialType) || "all";
+    if (materialType !== tVal) setMaterialType(tVal);
+
+    const termVal = searchParams.get("term");
+    const newTerm = termVal ? (parseInt(termVal) as TermFilter) : null;
+    if (termFilter !== newTerm) setTermFilter(newTerm);
+
+    const subjectsVal = searchParams.get("subjects");
+    const newSubjectsList = subjectsVal ? subjectsVal.split(",") : [];
+    const newSubjectsSet = new Set(newSubjectsList);
+    
+    const isDifferent = selectedSubjects.size !== newSubjectsSet.size || 
+                       ![...selectedSubjects].every(s => newSubjectsSet.has(s));
+    if (isDifferent) setSelectedSubjects(newSubjectsSet);
+
+    const qVal = searchParams.get("q") || "";
+    if (searchQuery !== qVal) setSearchQuery(qVal);
+
+    const yVal = searchParams.get("year");
+    const newYear = yVal ? parseInt(yVal) : null;
+    if (year !== newYear) setYear(newYear);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [searchParams]);
 
   const handleGradeChange = (g: Grade) => {
     setGrade(g);
@@ -489,6 +558,7 @@ export default function PremiumGrid({ products }: { products: LiveResource[] }) 
   };
 
   const clearAll = () => {
+    setGrade(10);
     setMaterialType("all");
     setTermFilter(null);
     setSelectedSubjects(new Set());

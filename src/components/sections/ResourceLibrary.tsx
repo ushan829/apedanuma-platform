@@ -1,7 +1,8 @@
 "use client";
 
-import { useState, useMemo } from "react";
+import { useState, useMemo, useEffect } from "react";
 import Link from "next/link";
+import { useRouter, usePathname, useSearchParams } from "next/navigation";
 import AnimatedSearchBar from "@/components/AnimatedSearchBar";
 import {
   SUBJECT_CATEGORIES,
@@ -518,14 +519,84 @@ function EmptyState({ onReset }: { onReset: () => void }) {
    ───────────────────────────────────────── */
 export default function ResourceLibrary({ resources }: { resources?: LiveResource[] }) {
   const isLive = resources !== undefined;
+  const router = useRouter();
+  const pathname = usePathname();
+  const searchParams = useSearchParams();
 
-  const [grade, setGrade] = useState<Grade>(10);
-  const [materialType, setMaterialType] = useState<MaterialType>("all");
-  const [termFilter, setTermFilter] = useState<TermFilter | null>(null);
-  const [selectedSubjects, setSelectedSubjects] = useState<Set<string>>(new Set());
-  const [searchQuery, setSearchQuery] = useState("");
-  const [year, setYear] = useState<number | null>(null);
+  // 1. Initial State from URL
+  const [grade, setGrade] = useState<Grade>(() => {
+    const g = searchParams.get("grade");
+    return (g === "11" ? 11 : 10) as Grade;
+  });
+  const [materialType, setMaterialType] = useState<MaterialType>(() => {
+    return (searchParams.get("type") as MaterialType) || "all";
+  });
+  const [termFilter, setTermFilter] = useState<TermFilter | null>(() => {
+    const t = searchParams.get("term");
+    return t ? (parseInt(t) as TermFilter) : null;
+  });
+  const [selectedSubjects, setSelectedSubjects] = useState<Set<string>>(() => {
+    const s = searchParams.get("subjects");
+    return new Set(s ? s.split(",") : []);
+  });
+  const [searchQuery, setSearchQuery] = useState(() => searchParams.get("q") || "");
+  const [year, setYear] = useState<number | null>(() => {
+    const y = searchParams.get("year");
+    return y ? parseInt(y) : null;
+  });
   const [showMobileFilters, setShowMobileFilters] = useState(false);
+
+  // 2. Sync State -> URL (Update URL when filters change)
+  useEffect(() => {
+    const params = new URLSearchParams();
+    if (grade === 11) params.set("grade", "11");
+    if (materialType !== "all") params.set("type", materialType);
+    if (termFilter !== null) params.set("term", termFilter.toString());
+    if (selectedSubjects.size > 0) {
+      params.set("subjects", Array.from(selectedSubjects).join(","));
+    }
+    if (searchQuery.trim()) params.set("q", searchQuery.trim());
+    if (year !== null) params.set("year", year.toString());
+
+    const query = params.toString();
+    const url = query ? `${pathname}?${query}` : pathname;
+    
+    // Use replace to avoid polluting history with every filter click, 
+    // unless you want every filter step to be a back-button step.
+    // User asked for "Back" button to return to listing page, not necessarily 
+    // to every intermediate filter state, but standard UX is usually replace for filters.
+    router.replace(url, { scroll: false });
+  }, [grade, materialType, termFilter, selectedSubjects, searchQuery, year, pathname, router]);
+
+  // 3. Sync URL -> State (Handles Browser Back/Forward buttons)
+  useEffect(() => {
+    const gVal = searchParams.get("grade");
+    const newGrade = (gVal === "11" ? 11 : 10) as Grade;
+    if (grade !== newGrade) setGrade(newGrade);
+
+    const tVal = (searchParams.get("type") as MaterialType) || "all";
+    if (materialType !== tVal) setMaterialType(tVal);
+
+    const termVal = searchParams.get("term");
+    const newTerm = termVal ? (parseInt(termVal) as TermFilter) : null;
+    if (termFilter !== newTerm) setTermFilter(newTerm);
+
+    const subjectsVal = searchParams.get("subjects");
+    const newSubjectsList = subjectsVal ? subjectsVal.split(",") : [];
+    const newSubjectsSet = new Set(newSubjectsList);
+    
+    const isDifferent = selectedSubjects.size !== newSubjectsSet.size || 
+                       ![...selectedSubjects].every(s => newSubjectsSet.has(s));
+    if (isDifferent) setSelectedSubjects(newSubjectsSet);
+
+    const qVal = searchParams.get("q") || "";
+    if (searchQuery !== qVal) setSearchQuery(qVal);
+
+    const yVal = searchParams.get("year");
+    const newYear = yVal ? parseInt(yVal) : null;
+    if (year !== newYear) setYear(newYear);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [searchParams]);
 
   const handleGradeChange = (g: Grade) => {
     setGrade(g);
@@ -544,6 +615,7 @@ export default function ResourceLibrary({ resources }: { resources?: LiveResourc
   };
 
   const clearAll = () => {
+    setGrade(10);
     setMaterialType("all");
     setTermFilter(null);
     setSelectedSubjects(new Set());
@@ -636,26 +708,44 @@ export default function ResourceLibrary({ resources }: { resources?: LiveResourc
               {totalCount}+ resources — Term Tests, Notes, Past Papers &amp; more.
             </p>
           </div>
-          <button
-            type="button"
-            onClick={() => setShowMobileFilters((v) => !v)}
-            className="lg:hidden inline-flex items-center gap-2 rounded-xl px-4 py-2.5 text-sm font-semibold self-start transition-all duration-200"
-            style={{
-              background: showMobileFilters ? "rgba(124,31,255,0.15)" : "rgba(255,255,255,0.05)",
-              border: `1px solid ${showMobileFilters ? "rgba(124,31,255,0.35)" : "rgba(255,255,255,0.09)"}`,
-              color: showMobileFilters ? "#b890ff" : "var(--foreground-secondary)",
-            }}
-          >
-            <svg width="14" height="14" viewBox="0 0 14 14" fill="none" aria-hidden="true">
-              <path d="M1 3h12M3 7h8M5 11h4" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
-            </svg>
-            Filters
-            {activeFilterCount > 0 && (
-              <span className="flex items-center justify-center w-4 h-4 rounded-full text-[0.55rem] font-black" style={{ background: "rgba(124,31,255,0.5)", color: "#e0d0ff" }}>
-                {activeFilterCount}
+          <div className="flex items-center gap-3 lg:hidden self-start">
+            <button
+              type="button"
+              onClick={() => setShowMobileFilters((v) => !v)}
+              className="inline-flex items-center gap-2 rounded-xl px-4 py-2.5 text-sm font-semibold transition-all duration-200 shrink-0"
+              style={{
+                background: showMobileFilters ? "rgba(124,31,255,0.15)" : "rgba(255,255,255,0.05)",
+                border: `1px solid ${showMobileFilters ? "rgba(124,31,255,0.35)" : "rgba(255,255,255,0.09)"}`,
+                color: showMobileFilters ? "#b890ff" : "var(--foreground-secondary)",
+              }}
+            >
+              <svg width="14" height="14" viewBox="0 0 14 14" fill="none" aria-hidden="true">
+                <path d="M1 3h12M3 7h8M5 11h4" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
+              </svg>
+              Filters
+              {activeFilterCount > 0 && (
+                <span className="flex items-center justify-center w-4 h-4 rounded-full text-[0.55rem] font-black" style={{ background: "rgba(124,31,255,0.5)", color: "#e0d0ff" }}>
+                  {activeFilterCount}
+                </span>
+              )}
+            </button>
+            
+            {/* Mobile Helper Badge */}
+            <div 
+              className="flex items-center px-3 py-1.5 rounded-full animate-pulse shadow-[0_0_15px_rgba(245,158,11,0.15)]"
+              style={{ 
+                background: "rgba(245, 158, 11, 0.08)", 
+                border: "1px solid rgba(245, 158, 11, 0.25)",
+              }}
+            >
+              <span 
+                className="text-[0.62rem] xs:text-[0.68rem] font-bold italic tracking-wide whitespace-nowrap"
+                style={{ color: "#fbbf24" }}
+              >
+                👈 Tap to find materials faster!
               </span>
-            )}
-          </button>
+            </div>
+          </div>
         </div>
       </header>
 

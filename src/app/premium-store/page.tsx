@@ -1,3 +1,4 @@
+import { Suspense } from "react";
 import type { Metadata } from "next";
 import connectToDatabase from "@/lib/mongodb";
 import Resource from "@/models/Resource";
@@ -104,7 +105,9 @@ export default async function PremiumStorePage() {
             </p>
           </div>
         ) : (
-          <PremiumGrid products={products} />
+          <Suspense fallback={<div className="py-20 text-center">Loading Store...</div>}>
+            <PremiumGrid products={products} />
+          </Suspense>
         )}
       </div>
     </main>
