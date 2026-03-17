@@ -13,18 +13,22 @@ const BackgroundClouds = dynamic(() => import("@/components/layout/BackgroundClo
   ssr: false 
 });
 
+const BackgroundEffects = dynamic(() => import("@/components/layout/BackgroundEffects"), { 
+  ssr: false 
+});
+
 const inter = Inter({
   subsets: ["latin"],
   variable: "--font-inter",
   display: "swap",
-  weight: ["300", "400", "500", "600", "700"],
+  weight: ["400", "500", "600", "700"], // Removed 300
 });
 
 const poppins = Poppins({
   subsets: ["latin"],
   variable: "--font-poppins",
   display: "swap",
-  weight: ["400", "500", "600", "700", "800", "900"],
+  weight: ["600", "700", "800"], // Removed 400, 500, 900
 });
 
 export const metadata: Metadata = {
@@ -110,6 +114,7 @@ export default function RootLayout({
           {gaId && <GoogleAnalytics gaId={gaId} />}
           
           <BackgroundClouds />
+          <BackgroundEffects />
           
           <Navbar />
           

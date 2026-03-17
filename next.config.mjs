@@ -41,6 +41,9 @@ const nextConfig = {
   eslint: {
     ignoreDuringBuilds: true,
   },
+  experimental: {
+    optimizePackageImports: ["lucide-react", "framer-motion", "sonner"],
+  },
 };
 
 export default nextConfig;
