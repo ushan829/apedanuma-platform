@@ -17,44 +17,52 @@ const DownloadButton: React.FC<DownloadButtonProps> = ({ resourceId, resourceTit
     setIsDownloading(true);
 
     try {
-      const response = await fetch(`/api/download/${resourceId}`);
+      // Direct Download approach - better for mobile RAM and reliability
+      const downloadUrl = `/api/download/${resourceId}`;
       
-      if (!response.ok) {
-        throw new Error("Failed to download file");
-      }
+      // Detection: mobile or specifically iOS/Safari
+      const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+      const isSafari = /^((?!chrome|android).)*safari/i.test(navigator.userAgent);
 
-      // Extract filename from Content-Disposition header if available
-      const contentDisposition = response.headers.get("content-disposition");
-      let filename = `${resourceTitle.replace(/[^a-z0-9\s-]/gi, "").replace(/\s+/g, "-")}.pdf`;
-      
-      if (contentDisposition && contentDisposition.includes("filename=")) {
-        const match = contentDisposition.match(/filename="?(.+?)"?$/);
-        if (match && match[1]) {
-          filename = decodeURIComponent(match[1]);
+      if (isMobile || isSafari) {
+        // MOBILE STRATEGY: 
+        // Use window.open for iOS/Safari to avoid async download blocks.
+        // This opens the PDF in a new tab where native mobile PDF viewers take over.
+        const newWindow = window.open(downloadUrl, "_blank");
+        
+        // Fallback if window.open is blocked by popup blocker
+        if (!newWindow || newWindow.closed || typeof newWindow.closed === "undefined") {
+          window.location.href = downloadUrl;
         }
+      } else {
+        // PC STRATEGY:
+        // Use a temporary hidden anchor tag for a seamless download experience.
+        const link = document.createElement("a");
+        link.href = downloadUrl;
+        
+        // Generate a clean filename
+        const filename = `${resourceTitle.replace(/[^a-z0-9\s-]/gi, "").replace(/\s+/g, "-")}.pdf`;
+        link.download = filename;
+        
+        document.body.appendChild(link);
+        link.click();
+        
+        // Clean up
+        setTimeout(() => {
+          if (document.body.contains(link)) {
+            document.body.removeChild(link);
+          }
+        }, 100);
       }
 
-      // Convert response to blob
-      const blob = await response.blob();
-      const url = window.URL.createObjectURL(blob);
-      
-      // Create temporary link and trigger download
-      const link = document.createElement("a");
-      link.href = url;
-      link.download = filename;
-      document.body.appendChild(link);
-      link.click();
-      
-      // Cleanup
-      document.body.removeChild(link);
-      window.URL.revokeObjectURL(url);
+      // LOADING STATE TIMING:
+      // Ensure the loading state remains active long enough (2s) to cover 
+      // the browser's internal processing and file handover.
+      await new Promise((resolve) => setTimeout(resolve, 2000));
     } catch (error) {
       console.error("Download error:", error);
-      // Fallback: if fetch fails, try direct link as last resort
-      const link = document.createElement("a");
-      link.href = `/api/download/${resourceId}`;
-      link.download = "";
-      link.click();
+      // Absolute fallback if the above fails
+      window.location.href = `/api/download/${resourceId}`;
     } finally {
       setIsDownloading(false);
     }
