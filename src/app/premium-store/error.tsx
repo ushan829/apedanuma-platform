@@ -25,7 +25,7 @@ export default function Error({
         Oops! Something went wrong.
       </h2>
       <p className="max-w-md mx-auto mb-8 text-sm sm:text-base" style={{ color: "var(--foreground-secondary)" }}>
-        We encountered an error while loading the resources. This might be due to a temporary database timeout or connection issue.
+        We encountered an error while loading the premium resources. This might be due to a temporary database timeout or connection issue.
       </p>
 
       <div className="flex flex-wrap justify-center gap-4">
