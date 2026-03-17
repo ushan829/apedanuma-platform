@@ -6,6 +6,7 @@ import { GoogleAnalytics } from "@next/third-parties/google";
 import "./globals.css";
 import Navbar from "@/components/layout/Navbar";
 import Footer from "@/components/layout/Footer";
+import { FramerMotionProvider } from "@/components/layout/FramerMotionProvider";
 
 const inter = Inter({
   subsets: ["latin"],
@@ -100,47 +101,49 @@ export default function RootLayout({
     // suppressHydrationWarning added to html to prevent mismatches from browser extensions and GA injections
     <html lang="en" className={`${inter.variable} ${poppins.variable}`} suppressHydrationWarning>
       <body className="antialiased selection:bg-purple-500/30 selection:text-white">
-        {gaId && <GoogleAnalytics gaId={gaId} />}
-        
-        {/* Audit: Background Clouds (Client-side decorative) */}
-        <div aria-hidden="true" className="pointer-events-none fixed inset-0 overflow-hidden -z-10">
-          <div className="ghibli-cloud" style={{ top: '15%', width: '300px', height: '150px', animationDelay: '0s' }} />
-          <div className="ghibli-cloud" style={{ top: '45%', width: '450px', height: '200px', animationDelay: '-20s' }} />
-          <div className="ghibli-cloud" style={{ top: '75%', width: '250px', height: '120px', animationDelay: '-40s' }} />
-        </div>
-        
-        <Navbar />
-        
-        {/* Audit: min-h-screen replaced with min-h-dvh for better mobile viewport (iOS Safari fix) */}
-        <div className="pt-[68px] min-h-dvh flex flex-col">
-          <main className="flex-1">
-            {children}
-          </main>
-          <Footer />
-        </div>
+        <FramerMotionProvider>
+          {gaId && <GoogleAnalytics gaId={gaId} />}
+          
+          {/* Audit: Background Clouds (Client-side decorative) */}
+          <div aria-hidden="true" className="pointer-events-none fixed inset-0 overflow-hidden -z-10">
+            <div className="ghibli-cloud" style={{ top: '15%', width: '300px', height: '150px', animationDelay: '0s' }} />
+            <div className="ghibli-cloud" style={{ top: '45%', width: '450px', height: '200px', animationDelay: '-20s' }} />
+            <div className="ghibli-cloud" style={{ top: '75%', width: '250px', height: '120px', animationDelay: '-40s' }} />
+          </div>
+          
+          <Navbar />
+          
+          {/* Audit: min-h-screen replaced with min-h-dvh for better mobile viewport (iOS Safari fix) */}
+          <div className="pt-[68px] min-h-dvh flex flex-col">
+            <main className="flex-1">
+              {children}
+            </main>
+            <Footer />
+          </div>
 
-        <Toaster
-          theme="dark"
-          position="bottom-right"
-          richColors
-          closeButton
-          toastOptions={{
-            style: {
-              background: "rgba(10,8,18,0.97)",
-              backdropFilter: "blur(20px)",
-              border: "1px solid rgba(255,255,255,0.1)",
-              boxShadow: "0 8px 32px rgba(0,0,0,0.6), 0 0 0 1px rgba(124,31,255,0.08)",
-              color: "#e8e2f5",
-              fontFamily: "var(--font-inter)",
-              fontSize: "0.875rem",
-              borderRadius: "14px",
-              padding: "14px 18px",
-            },
-          }}
-        />
-        
-        {/* Audit: PayHere script uses lazyOnload to improve Initial Page Load performance */}
-        <Script src="https://www.payhere.lk/lib/payhere.js" strategy="lazyOnload" />
+          <Toaster
+            theme="dark"
+            position="bottom-right"
+            richColors
+            closeButton
+            toastOptions={{
+              style: {
+                background: "rgba(10,8,18,0.97)",
+                backdropFilter: "blur(20px)",
+                border: "1px solid rgba(255,255,255,0.1)",
+                boxShadow: "0 8px 32px rgba(0,0,0,0.6), 0 0 0 1px rgba(124,31,255,0.08)",
+                color: "#e8e2f5",
+                fontFamily: "var(--font-inter)",
+                fontSize: "0.875rem",
+                borderRadius: "14px",
+                padding: "14px 18px",
+              },
+            }}
+          />
+          
+          {/* Audit: PayHere script uses lazyOnload to improve Initial Page Load performance */}
+          <Script src="https://www.payhere.lk/lib/payhere.js" strategy="lazyOnload" />
+        </FramerMotionProvider>
       </body>
     </html>
   );

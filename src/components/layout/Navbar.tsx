@@ -37,6 +37,7 @@ function Logo() {
           height={40} 
           className="rounded-xl object-contain shadow-sm"
           priority
+          loading="eager"
         />
       </div>
 

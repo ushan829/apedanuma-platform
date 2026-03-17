@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { motion, AnimatePresence } from "framer-motion";
+import { m, AnimatePresence } from "framer-motion";
 import { FlaskConical, Pi, Languages, Monitor, Zap } from "lucide-react";
 
 export default function UltraPremiumDashboard() {
@@ -49,7 +49,7 @@ export default function UltraPremiumDashboard() {
       {/* ── Plasma Energy Background Layer ── */}
       <div className="absolute inset-0 -z-10 rounded-[2.5rem] overflow-hidden opacity-30">
         <div className="absolute inset-0 bg-slate-900" />
-        <motion.div 
+        <m.div 
           animate={{
             x: [0, 40, -40, 0],
             y: [0, -40, 40, 0],
@@ -58,7 +58,7 @@ export default function UltraPremiumDashboard() {
           transition={{ duration: 10, repeat: Infinity, ease: "linear" }}
           className="absolute -top-1/2 -left-1/2 w-full h-full bg-arcane-500/20 blur-[120px] rounded-full"
         />
-        <motion.div 
+        <m.div 
           animate={{
             x: [0, -50, 50, 0],
             y: [0, 50, -50, 0],
@@ -70,7 +70,7 @@ export default function UltraPremiumDashboard() {
       </div>
 
       {/* ── Main Premium Card Container ── */}
-      <motion.div 
+      <m.div 
         initial={{ opacity: 0, scale: 0.95 }}
         animate={{ opacity: 1, scale: 1 }}
         className="relative z-10 backdrop-blur-2xl bg-slate-800/40 border border-slate-700/50 rounded-[2.5rem] p-8 shadow-[0_20px_80px_rgba(0,0,0,0.4)]"
@@ -98,12 +98,12 @@ export default function UltraPremiumDashboard() {
           </div>
           <div className="relative group">
             <div className="absolute inset-0 bg-arcane-500/20 blur-xl rounded-full group-hover:bg-arcane-500/40 transition-colors" />
-            <motion.div 
+            <m.div 
               whileHover={{ rotate: 180 }}
               className="relative h-12 w-12 items-center justify-center rounded-2xl bg-white/5 border border-white/10 flex"
             >
               <Zap className="w-5 h-5 text-arcane-400" fill="currentColor" />
-            </motion.div>
+            </m.div>
           </div>
         </div>
 
@@ -111,7 +111,7 @@ export default function UltraPremiumDashboard() {
         <div className="grid grid-cols-2 gap-6 mb-4">
           {subjects.map((s) => (
             <Link key={s.name} href={s.href} className="group outline-none">
-              <motion.div
+              <m.div
                 whileHover={{ y: -8, scale: 1.02 }}
                 className="relative h-40 rounded-3xl p-6 transition-all duration-500 overflow-hidden"
                 style={{
@@ -133,7 +133,7 @@ export default function UltraPremiumDashboard() {
                 <AnimatePresence>
                   <div className="absolute inset-0 pointer-events-none">
                     {s.particles.map((p, pIdx) => (
-                      <motion.span
+                      <m.span
                         key={pIdx}
                         initial={{ opacity: 0, y: 10 }}
                         animate={{ 
@@ -151,14 +151,14 @@ export default function UltraPremiumDashboard() {
                         style={{ color: s.color }}
                       >
                         {p}
-                      </motion.span>
+                      </m.span>
                     ))}
                   </div>
                 </AnimatePresence>
 
                 {/* Icon Rendering with Isometric Transforms */}
                 <div className="flex flex-col items-center justify-center h-full gap-3 relative z-10">
-                  <motion.div
+                  <m.div
                     animate={s.specialEffect === "bioluminescent" ? {
                       filter: ["brightness(1)", "brightness(1.5)", "brightness(1)"],
                     } : {}}
@@ -173,22 +173,22 @@ export default function UltraPremiumDashboard() {
                       }}
                     />
                     {s.specialEffect === "golden" && (
-                      <motion.div 
+                      <m.div 
                         animate={{ rotate: 360 }}
                         transition={{ duration: 4, repeat: Infinity, ease: "linear" }}
                         className="absolute inset-0 border border-amber-500/20 rounded-full scale-[1.8]"
                       />
                     )}
-                  </motion.div>
+                  </m.div>
                   <span className="text-sm font-black text-slate-300 group-hover:text-white tracking-tight transition-colors">
                     {s.name}
                   </span>
                 </div>
-              </motion.div>
+              </m.div>
             </Link>
           ))}
         </div>
-      </motion.div>
+      </m.div>
     </div>
   );
 }

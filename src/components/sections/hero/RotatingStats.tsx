@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { motion, AnimatePresence } from "framer-motion";
+import { m, AnimatePresence } from "framer-motion";
 
 export default function RotatingStats() {
   const stats = [
@@ -39,7 +39,7 @@ export default function RotatingStats() {
       {/* Animated Stats Display */}
       <div className="h-10 relative overflow-hidden">
         <AnimatePresence mode="wait">
-          <motion.div
+          <m.div
             key={index}
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
@@ -63,7 +63,7 @@ export default function RotatingStats() {
                 </span>
               </div>
             ))}
-          </motion.div>
+          </m.div>
         </AnimatePresence>
       </div>
     </div>
