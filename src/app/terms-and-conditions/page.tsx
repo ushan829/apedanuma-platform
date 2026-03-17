@@ -22,7 +22,7 @@ export const metadata: Metadata = {
 };
 
 const LAST_UPDATED = "March 17, 2026";
-const LEGAL_VERSION = "2.0.0";
+const LEGAL_VERSION = "2.0.1";
 
 /**
  * Premium Terms Section Card
@@ -130,6 +130,7 @@ export default function TermsAndConditionsPage() {
               <ul className="list-disc pl-5 space-y-3">
                 <li><strong>Age Requirement:</strong> Our platform is designed for O/L students. If you are under 18, you must have the explicit permission and supervision of a parent or guardian to create an account and make purchases.</li>
                 <li><strong>Account Responsibility:</strong> You are responsible for maintaining the confidentiality of your login credentials. Any activity occurring under your account is your responsibility.</li>
+                <li><strong>Data Accuracy:</strong> You agree to provide accurate, current, and complete information during the registration and checkout process.</li>
                 <li><strong>No-Sharing Policy:</strong> You are strictly prohibited from sharing your account login details with any other individual. Our system monitors concurrent logins and IP patterns. Accounts found to be shared will be temporarily or permanently suspended without a refund.</li>
               </ul>
             </TermsCard>
@@ -155,6 +156,8 @@ export default function TermsAndConditionsPage() {
               <ul className="list-disc pl-5 space-y-2">
                 <li><strong>Payment Processing:</strong> All payments are processed securely via <strong>PayHere</strong>. By making a purchase, you agree to PayHere's terms of service.</li>
                 <li><strong>Accuracy:</strong> You agree to provide valid and accurate payment information.</li>
+                <li><strong>Right to Refuse:</strong> We reserve the right to refuse or cancel any order or transaction for any reason at our sole discretion, including suspected fraudulent activity or technical errors.</li>
+                <li><strong>Digital Delivery:</strong> Digital products (PDFs, premium access) are delivered immediately via platform access upon successful payment confirmation.</li>
                 <li><strong>Pricing:</strong> We reserve the right to modify prices at any time. Once a purchase is completed, the price is locked for that transaction.</li>
               </ul>
             </TermsCard>
