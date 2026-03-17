@@ -5,14 +5,10 @@ import GeometricBackground from "./hero/GeometricBackground";
 import StaticMobileStats from "./hero/StaticMobileStats";
 import StaticMobileDashboard from "./hero/StaticMobileDashboard";
 
-// Heavy Framer Motion / 3D components are strictly desktop-only and lazily loaded
-const RotatingStats = dynamic(() => import("./hero/RotatingStats"), { 
-  ssr: false,
-});
-
-const UltraPremiumDashboard = dynamic(() => import("./hero/UltraPremiumDashboard"), { 
-  ssr: false,
-});
+// Heavy components are only rendered within DesktopAnimationWrapper below
+const RotatingStats = dynamic(() => import("./hero/RotatingStats"), { ssr: false });
+const UltraPremiumDashboard = dynamic(() => import("./hero/UltraPremiumDashboard"), { ssr: false });
+const DesktopAnimationWrapper = dynamic(() => import("./hero/DesktopAnimationWrapper"), { ssr: false });
 
 export default function HeroSection() {
   return (
@@ -27,6 +23,7 @@ export default function HeroSection() {
         <div className="grid grid-cols-1 lg:grid-cols-[1fr_480px] xl:grid-cols-[1fr_500px] gap-8 lg:gap-12 xl:gap-20 w-full py-12 lg:py-16">
 
           <div className="flex flex-col justify-center gap-6 lg:gap-8">
+            {/* Eye-brow badge: Static for Mobile, Animated for Desktop (via CSS class, not JS) */}
             <div
               className="hero-badge w-fit"
               style={{ animation: "heroBadgePop 0.4s cubic-bezier(0.34,1.56,0.64,1) both" }}
@@ -45,13 +42,11 @@ export default function HeroSection() {
               </span>
             </div>
 
+            {/* Static Heading: ZERO Framer Motion */}
             <div className="flex flex-col gap-1">
               <h1
                 className="font-display leading-[1.08] tracking-tight"
-                style={{ 
-                  fontSize: "clamp(2.4rem, 6.5vw, 4.5rem)",
-                  /* No animation delay on H1 to optimize LCP */
-                }}
+                style={{ fontSize: "clamp(2.4rem, 6.5vw, 4.5rem)" }}
               >
                 <span style={{ color: "var(--foreground)" }}>Master Your</span>
                 <br />
@@ -74,15 +69,16 @@ export default function HeroSection() {
               className="text-base sm:text-lg leading-[1.75] max-w-[520px]"
               style={{
                 color: "var(--foreground-secondary)",
-                /* Reduced delay for text content */
                 animation: "heroFadeUp 0.5s 0.1s ease both",
               }}
             >
               Access <span className="font-medium text-white">elite study materials</span>, comprehensive notes, and expert guidance designed exclusively for <span className="font-bold text-arcane-400">English Medium achievers</span>.
             </p>
 
-            {/* Mobile Dashboard (Pure Static Fallback) */}
-            <StaticMobileDashboard />
+            {/* Mobile-Only PURE STATIC Dashboard (HTML/CSS ONLY) */}
+            <div className="lg:hidden">
+              <StaticMobileDashboard />
+            </div>
 
             <div
               className="flex flex-col sm:flex-row gap-4"
@@ -104,20 +100,27 @@ export default function HeroSection() {
             </div>
 
             <div className="flex flex-col gap-3">
-              {/* Desktop-only animated stats */}
-              <div className="hidden md:block">
-                <RotatingStats />
+              {/* Desktop-only animated stats: Zero JS overhead on mobile due to DesktopAnimationWrapper */}
+              <div className="hidden lg:block">
+                <DesktopAnimationWrapper>
+                  <RotatingStats />
+                </DesktopAnimationWrapper>
               </div>
               {/* Mobile-only static stats */}
-              <StaticMobileStats />
+              <div className="lg:hidden">
+                <StaticMobileStats />
+              </div>
             </div>
           </div>
 
           <div
-            className="hidden md:flex items-center justify-center w-full"
+            className="hidden lg:flex items-center justify-center w-full"
             style={{ animation: "heroScaleIn 0.8s 0.2s cubic-bezier(0.25,0.46,0.45,0.94) both" }}
           >
-            <UltraPremiumDashboard />
+            {/* Desktop-only animated dashboard */}
+            <DesktopAnimationWrapper>
+              <UltraPremiumDashboard />
+            </DesktopAnimationWrapper>
           </div>
 
         </div>
