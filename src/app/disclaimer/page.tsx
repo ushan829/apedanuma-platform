@@ -1,250 +1,183 @@
-import { Metadata } from "next";
+import type { Metadata } from "next";
 import Link from "next/link";
 import { 
-  ShieldCheck, 
-  Lock, 
-  AlertCircle, 
-  Copyright, 
   Scale, 
-  Mail, 
-  ChevronRight,
-  ExternalLink,
-  BookOpen
+  BookOpen, 
+  Server, 
+  AlertCircle, 
+  ShieldCheck, 
+  ExternalLink 
 } from "lucide-react";
 
 export const metadata: Metadata = {
-  title: "Disclaimer & Copyright Policy",
-  description: "Official legal disclosure and intellectual property rights for Ape Danuma EM educational platform.",
+  title: "Disclaimer | Ape Danuma",
+  description: "Official legal disclaimer for Ape Danuma. Ensuring transparency, copyright compliance, and educational integrity.",
 };
+
+const LAST_UPDATED = "March 17, 2026";
+const LEGAL_VERSION = "1.0.0";
+
+/**
+ * Premium Disclaimer Section Card
+ */
+function DisclaimerCard({ 
+  icon: Icon, 
+  title, 
+  children, 
+  delay = "0ms" 
+}: { 
+  icon: any; 
+  title: string; 
+  children: React.ReactNode;
+  delay?: string;
+}) {
+  return (
+    <div 
+      className="group relative overflow-hidden rounded-3xl p-8 transition-all duration-500 hover:translate-y-[-2px] animate-fade-up"
+      style={{
+        background: "rgba(255, 255, 255, 0.03)",
+        border: "1px solid rgba(255, 255, 255, 0.06)",
+        backdropFilter: "blur(16px)",
+        animationDelay: delay
+      }}
+    >
+      {/* Subtle Inner Glow */}
+      <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-700 pointer-events-none"
+        style={{
+          background: "radial-gradient(circle at 20% 0%, rgba(139, 92, 246, 0.08) 0%, transparent 50%)"
+        }}
+      />
+
+      <div className="flex flex-col md:flex-row items-start gap-6 relative z-10">
+        <div className="shrink-0 p-3.5 rounded-2xl bg-arcane-500/10 border border-arcane-500/20 text-arcane-400 group-hover:scale-110 transition-transform duration-500">
+          <Icon size={26} strokeWidth={1.5} />
+        </div>
+        <div className="flex-1">
+          <h2 className="text-2xl font-display font-bold mb-4 tracking-tight" style={{ color: "var(--foreground)" }}>
+            {title}
+          </h2>
+          <div className="text-[1.0625rem] leading-relaxed space-y-4" style={{ color: "var(--foreground-secondary)" }}>
+            {children}
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
 
 export default function DisclaimerPage() {
   return (
-    <main className="relative overflow-hidden min-h-screen">
-      {/* ── Background Elements ── */}
-      <div 
-        className="absolute top-0 left-1/2 -translate-x-1/2 w-full max-w-7xl h-[500px] pointer-events-none opacity-20"
-        style={{
-          background: "radial-gradient(circle, rgba(139, 92, 246, 0.3) 0%, transparent 70%)",
-          filter: "blur(80px)",
-        }}
-      />
-      
-      <section className="section-lg relative z-10">
-        <div className="container-lg">
+    <main className="relative min-h-screen">
+      {/* ── Background: Texture & Ambient Glow ── */}
+      <div aria-hidden="true" className="fixed inset-0 pointer-events-none z-[-1]">
+        {/* SVG Noise Overlay */}
+        <div className="absolute inset-0 opacity-[0.02]" 
+          style={{ backgroundImage: `url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E")` }} 
+        />
+        {/* Large Purple Glow */}
+        <div className="absolute top-[-10%] left-1/2 -translate-x-1/2 w-[120%] h-[60%] rounded-full opacity-20"
+          style={{ background: "radial-gradient(circle, rgba(139,92,246,0.15) 0%, transparent 70%)", filter: "blur(120px)" }}
+        />
+      </div>
+
+      <div className="container-xl pt-20 pb-32 px-6 sm:px-12 md:px-16">
+        
+        {/* ── Breadcrumb ── */}
+        <nav className="flex items-center justify-center gap-2 text-xs mb-16 animate-fade-in" style={{ color: "var(--foreground-muted)" }}>
+          <Link href="/" className="hover:text-white transition-colors">Home</Link>
+          <span className="opacity-30">/</span>
+          <span style={{ color: "var(--foreground-secondary)" }}>Disclaimer</span>
+        </nav>
+
+        <div className="max-w-4xl mx-auto">
+          
           {/* ── Header ── */}
-          <div className="text-center mb-16 space-y-4">
-            <div className="badge-accent mx-auto w-fit">Legal & Compliance</div>
-            <h1 className="text-balance leading-tight">
-              Disclaimer & <span className="text-gradient-premium">Copyright Policy</span>
+          <header className="text-center mb-24 animate-fade-up">
+            <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full text-[0.7rem] font-bold uppercase tracking-[0.2em] mb-8"
+              style={{ background: "rgba(139, 92, 246, 0.08)", color: "#a78bfa", border: "1px solid rgba(139, 92, 246, 0.2)" }}>
+              Compliance & Transparency
+            </div>
+            <h1 className="text-5xl md:text-7xl font-display font-bold tracking-tight mb-10" style={{ color: "var(--foreground)" }}>
+              Legal Disclaimer
             </h1>
-            <p className="max-w-2xl mx-auto text-lg" style={{ color: "var(--foreground-secondary)" }}>
-              Understanding our commitment to intellectual property rights, educational fair use, 
-              and the terms of using our educational materials.
+            
+            <div className="w-24 h-1.5 mx-auto bg-gradient-to-r from-arcane-600 to-arcane-400 rounded-full mb-12 shadow-[0_0_15px_rgba(124,31,255,0.4)]" />
+            
+            <p className="max-w-2xl mx-auto text-xl leading-relaxed" style={{ color: "var(--foreground-secondary)" }}>
+              Ape Danuma provides these educational resources under a strict legal framework designed to protect the rights of our students, the platform, and our content partners.
             </p>
-            <div className="divider-glow max-w-md mx-auto mt-8 opacity-20" />
+          </header>
+
+          {/* ── Disclaimer Cards ── */}
+          <div className="space-y-10">
+            
+            {/* 1. Non-Affiliation */}
+            <DisclaimerCard icon={Scale} title="1. Official Non-Affiliation" delay="100ms">
+              <p>
+                <strong>Ape Danuma</strong> is an independent educational platform and is <strong>not affiliated with, endorsed by, or an official partner</strong> of the Department of Examinations, Sri Lanka, or the Ministry of Education. We operate as a third-party service providing supplementary study aids.
+              </p>
+            </DisclaimerCard>
+
+            {/* 2. Public Domain Resources */}
+            <DisclaimerCard icon={BookOpen} title="2. Public Data Usage" delay="200ms">
+              <p>
+                Government-issued materials, including <strong>Past Examination Papers, Marking Schemes, and Official Syllabuses</strong>, are provided for the convenience of students and are sourced from official public domain outlets.
+              </p>
+              <p>
+                Ape Danuma claims <strong>no copyright or ownership</strong> over these specific documents. They remain the property of the Government of Sri Lanka and are provided on our platform completely free of charge.
+              </p>
+            </DisclaimerCard>
+
+            {/* 3. Academic & Outcome Liability */}
+            <DisclaimerCard icon={AlertCircle} title="3. No Academic Guarantee" delay="300ms">
+              <p>
+                While our materials are designed to maximize student performance and follow the national O/L syllabus accurately, Ape Danuma makes <strong>no warranties or guarantees</strong> regarding specific examination results or grades.
+              </p>
+              <p>
+                Academic success remains the result of a student's individual dedication, effort, and interpretation of the provided educational materials.
+              </p>
+            </DisclaimerCard>
+
+            {/* 4. Accuracy & Content Errors */}
+            <DisclaimerCard icon={ShieldCheck} title="4. Information Accuracy" delay="400ms">
+              <p>
+                Educational content is subject to human error and evolving curricula. Ape Danuma shall not be held liable for any <strong>inaccuracies, typographical errors, or misinterpreted data</strong> within our study guides or notes.
+              </p>
+              <p>
+                Content is provided on an "as-is" and "as-available" basis. We encourage students to cross-reference our materials with official textbooks.
+              </p>
+            </DisclaimerCard>
+
+            {/* 5. Technical Uptime & Access */}
+            <DisclaimerCard icon={Server} title="5. Technical Service Disclaimer" delay="500ms">
+              <p>
+                Access to digital content is subject to server availability and internet infrastructure. We are not liable for any <strong>temporary disruption of service</strong> caused by technical maintenance, power outages, or third-party infrastructure failures beyond our control.
+              </p>
+            </DisclaimerCard>
+
+            {/* 6. External Linkages */}
+            <DisclaimerCard icon={ExternalLink} title="6. Third-Party Links" delay="600ms">
+              <p>
+                Our platform may contain links to external official government portals or educational websites. We do not exercise control over the content, security policies, or availability of these third-party sites and assume no responsibility for them.
+              </p>
+            </DisclaimerCard>
+
           </div>
 
-          <div className="space-y-12">
-            {/* ── Section 1: Third-Party Copyrights ── */}
-            <div className="card-accent group relative overflow-hidden">
-              <div 
-                className="absolute -right-12 -top-12 w-48 h-48 rounded-full opacity-10 blur-3xl transition-opacity group-hover:opacity-20"
-                style={{ background: "var(--accent-primary)" }}
-              />
-              
-              <div className="flex flex-col md:flex-row gap-8 relative z-10">
-                <div className="flex-shrink-0">
-                  <div className="w-14 h-14 rounded-2xl bg-purple-500/10 border border-purple-500/30 flex items-center justify-center text-purple-400">
-                    <Copyright size={28} />
-                  </div>
-                </div>
-                
-                <div className="space-y-5">
-                  <div className="flex flex-col sm:flex-row sm:items-center gap-4 sm:gap-6">
-                    <h3 className="text-2xl sm:text-3xl font-display font-bold">
-                      Acknowledgment of Third-Party Copyrights
-                    </h3>
-                    <span className="badge bg-white/5 border-white/10 text-white/40 font-normal w-fit shrink-0">
-                      Free Resources
-                    </span>
-                  </div>
-                  
-                  <div className="prose prose-invert max-w-none space-y-4 text-slate-300">
-                    <p>
-                      At <strong>Ape Danuma EM</strong>, we respect the intellectual property of others and are committed to legal transparency. Our platform hosts a repository of official educational materials categorized under &quot;Free Resources.&quot;
-                    </p>
-                    
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-6">
-                      <div className="p-4 rounded-xl bg-black/20 border border-white/5 space-y-2">
-                        <div className="flex items-center gap-2 text-white font-medium">
-                          <BookOpen size={16} className="text-purple-400" />
-                          Official Materials
-                        </div>
-                        <p className="text-sm">
-                          Government Past Papers, Marking Schemes, and Zonal/Provincial Office Term Test Papers.
-                        </p>
-                      </div>
-                      <div className="p-4 rounded-xl bg-black/20 border border-white/5 space-y-2">
-                        <div className="flex items-center gap-2 text-white font-medium">
-                          <ShieldCheck size={16} className="text-purple-400" />
-                          Ownership Disclosure
-                        </div>
-                        <p className="text-sm">
-                          These materials belong exclusively to the <strong>Department of Examinations</strong>, <strong>Ministry of Education</strong>, and respective Schools.
-                        </p>
-                      </div>
-                    </div>
-
-                    <ul className="space-y-3 pt-4 list-none pl-0">
-                      {[
-                        "Ape Danuma does NOT claim any copyright or ownership over these official government materials.",
-                        "Materials are provided for non-commercial, educational purposes strictly under the 'Fair Use' doctrine to assist Sri Lankan students.",
-                        "We act as a secondary host and aggregator to ensure easy access to these public educational assets for students nationwide.",
-                        "All official logos, seals, and identifying marks of government entities remain the property of their respective departments."
-                      ].map((item, idx) => (
-                        <li key={idx} className="flex gap-3 items-start">
-                          <ChevronRight size={18} className="text-purple-500 mt-1 flex-shrink-0" />
-                          <span>{item}</span>
-                        </li>
-                      ))}
-                    </ul>
-                  </div>
-                </div>
-              </div>
+          {/* ── Metadata Footer ── */}
+          <footer className="mt-32 pt-12 border-t border-white/5 text-center animate-fade-in" style={{ animationDelay: "800ms" }}>
+            <div className="flex flex-col md:flex-row items-center justify-center gap-4 md:gap-12 text-sm font-medium mb-6" style={{ color: "var(--foreground-muted)" }}>
+              <span>Last Updated: <span className="text-white/60">{LAST_UPDATED}</span></span>
+              <span className="hidden md:block w-1.5 h-1.5 rounded-full bg-white/10" />
+              <span>Legal Version: <span className="text-white/60">{LEGAL_VERSION}</span></span>
             </div>
+            <p className="text-xs max-w-xl mx-auto leading-relaxed" style={{ color: "var(--foreground-disabled)" }}>
+              The legal framework of Ape Danuma is designed to comply with the Electronic Transactions Act of Sri Lanka and international intellectual property standards. For formal inquiries, please contact <Link href="/contact" className="text-arcane-400 hover:text-arcane-300 underline underline-offset-4">support@apedanuma.lk</Link>.
+            </p>
+          </footer>
 
-            {/* ── Section 2: Ape Danuma Exclusive IP ── */}
-            <div className="card group relative overflow-hidden" style={{ borderColor: 'rgba(245,158,11,0.3)' }}>
-              <div 
-                className="absolute -right-12 -top-12 w-48 h-48 rounded-full opacity-5 blur-3xl transition-opacity group-hover:opacity-10"
-                style={{ background: "var(--accent-secondary)" }}
-              />
-              
-              <div className="flex flex-col md:flex-row gap-8 relative z-10">
-                <div className="flex-shrink-0">
-                  <div className="w-14 h-14 rounded-2xl bg-amber-500/10 border border-amber-500/30 flex items-center justify-center text-amber-400">
-                    <Lock size={28} />
-                  </div>
-                </div>
-                
-                <div className="space-y-5">
-                  <div className="flex flex-col sm:flex-row sm:items-center gap-4 sm:gap-6">
-                    <h3 className="text-2xl sm:text-3xl font-display font-bold">
-                      Exclusive Intellectual Property
-                    </h3>
-                    <span className="badge bg-amber-500/10 border-amber-500/20 text-amber-400 font-normal w-fit shrink-0">
-                      Premium Store
-                    </span>
-                  </div>
-                  
-                  <div className="prose prose-invert max-w-none space-y-4 text-slate-300">
-                    <p>
-                      All original content, designs, and curated materials available for purchase in our <Link href="/premium-store" className="text-amber-400 hover:underline">Premium Store</Link> are the exclusive property of <strong>Ape Danuma EM</strong>.
-                    </p>
-
-                    <div className="bg-amber-500/5 border border-amber-500/10 p-5 rounded-2xl border-dashed">
-                      <p className="text-amber-200/90 font-medium mb-3">The following are protected under Intellectual Property Laws:</p>
-                      <div className="flex flex-wrap gap-2">
-                        {["Custom Short Notes", "Proprietary Tutorials", "Ape Danuma Study Guides", "Original Illustrations", "Site Interface Design"].map((tag) => (
-                          <span key={tag} className="px-3 py-1 rounded-full bg-amber-500/10 text-amber-500/80 text-xs border border-amber-500/20">
-                            {tag}
-                          </span>
-                        ))}
-                      </div>
-                    </div>
-
-                    <p className="text-red-400/80 font-medium italic pt-2">
-                      Unauthorized reproduction, distribution, digital sharing, resale, or translation of these premium materials into any other language is strictly prohibited and constitutes a violation of copyright law.
-                    </p>
-                    
-                    <p>
-                      By purchasing or accessing premium materials, you are granted a single-user, non-transferable license for personal study only. We actively monitor for unauthorized distribution and reserve the right to pursue legal action against copyright infringement.
-                    </p>
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            {/* ── Section 3: General Liability Disclaimer ── */}
-            <div className="card group relative overflow-hidden">
-              <div className="flex flex-col md:flex-row gap-8 relative z-10">
-                <div className="flex-shrink-0">
-                  <div className="w-14 h-14 rounded-2xl bg-white/5 border border-white/10 flex items-center justify-center text-slate-400">
-                    <AlertCircle size={28} />
-                  </div>
-                </div>
-                
-                <div className="space-y-5">
-                  <h3 className="text-2xl sm:text-3xl font-display font-bold">General Liability Disclaimer</h3>
-                  
-                  <div className="prose prose-invert max-w-none space-y-4 text-slate-400 text-sm leading-relaxed">
-                    <p>
-                      The information and materials provided on <strong>Ape Danuma EM</strong> are intended for general educational assistance only. While we strive for accuracy, all free materials are provided <span className="text-white">&quot;as is&quot;</span> without any warranties, express or implied.
-                    </p>
-                    
-                    <div className="p-4 rounded-xl bg-white/5 border border-white/5 flex gap-4">
-                      <Scale size={24} className="text-slate-500 flex-shrink-0 mt-1" />
-                      <p>
-                        Students and users are strongly advised to verify exam structures, marking guidelines, and syllabus changes with official school teachers, government circulars, or the official website of the Department of Examinations, Sri Lanka.
-                      </p>
-                    </div>
-                    
-                    <p>
-                      <strong>Ape Danuma EM</strong>, its team members, and creators shall not be held liable for any discrepancies, errors in materials, or any consequences resulting from the use of the information hosted on this platform. Education is an evolving field; always prioritize the latest official government directives.
-                    </p>
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            {/* ── Contact Section ── */}
-            <div className="pt-8">
-              <div 
-                className="rounded-3xl p-8 md:p-12 text-center relative overflow-hidden"
-                style={{
-                  background: "linear-gradient(135deg, rgba(124,31,255,0.08) 0%, rgba(10,10,10,0.5) 100%)",
-                  border: "1px solid rgba(124,31,255,0.15)",
-                }}
-              >
-                <div className="relative z-10 space-y-6">
-                  <div className="w-16 h-16 bg-purple-500/20 rounded-full flex items-center justify-center mx-auto mb-6">
-                    <Mail className="text-purple-400" size={32} />
-                  </div>
-                  <h3 className="text-2xl sm:text-3xl font-display font-bold">Copyright Concerns or Removal Requests?</h3>
-                  <p className="max-w-lg mx-auto text-slate-400">
-                    If you are a copyright owner or an official representative and believe any material 
-                    hosted here infringes your rights, please contact us for immediate review.
-                  </p>
-                  <div className="flex justify-center pt-4">
-                    <a 
-                      href="mailto:contact@apedanuma.lk" 
-                      className="btn-primary px-8 py-3 flex items-center gap-2"
-                    >
-                      <Mail size={18} />
-                      contact@apedanuma.lk
-                    </a>
-                  </div>
-                  
-                  <div className="flex flex-wrap justify-center gap-6 pt-6 text-xs text-slate-500">
-                    <div className="flex items-center gap-2 hover:text-slate-300 transition-colors">
-                      <ExternalLink size={14} />
-                      <a href="https://www.doenets.lk" target="_blank" rel="noopener noreferrer">Department of Examinations</a>
-                    </div>
-                    <div className="flex items-center gap-2 hover:text-slate-300 transition-colors">
-                      <ExternalLink size={14} />
-                      <a href="https://www.moe.gov.lk" target="_blank" rel="noopener noreferrer">Ministry of Education</a>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          <div className="mt-20 text-center text-sm text-slate-500">
-            <p>© {new Date().getFullYear()} Ape Danuma EM. All Rights Reserved. Supporting English Medium students across Sri Lanka.</p>
-          </div>
         </div>
-      </section>
+      </div>
     </main>
   );
 }

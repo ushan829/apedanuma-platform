@@ -52,8 +52,9 @@ export default function Footer() {
             <div className="flex flex-col gap-5">
               <h4 className="text-xs font-bold uppercase tracking-[0.2em] text-white">Legal</h4>
               <nav className="flex flex-col gap-3 text-[0.9375rem]">
-                <Link href="/privacy" className="hover:text-white transition-colors whitespace-nowrap" style={{ color: "var(--foreground-muted)" }}>Privacy Policy</Link>
-                <Link href="/terms" className="hover:text-white transition-colors whitespace-nowrap" style={{ color: "var(--foreground-muted)" }}>Terms of Service</Link>
+                <Link href="/privacy-policy" className="hover:text-white transition-colors whitespace-nowrap" style={{ color: "var(--foreground-muted)" }}>Privacy Policy</Link>
+                <Link href="/terms-and-conditions" className="hover:text-white transition-colors whitespace-nowrap" style={{ color: "var(--foreground-muted)" }}>Terms & Conditions</Link>
+                <Link href="/refund-policy" className="hover:text-white transition-colors whitespace-nowrap" style={{ color: "var(--foreground-muted)" }}>Refund Policy</Link>
                 <Link href="/disclaimer" className="hover:text-white transition-colors whitespace-nowrap" style={{ color: "var(--foreground-muted)" }}>Disclaimer</Link>
               </nav>
             </div>
