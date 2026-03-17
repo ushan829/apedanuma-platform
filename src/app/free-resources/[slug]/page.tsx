@@ -7,6 +7,7 @@ import Resource from "@/models/Resource";
 import { getSubjectStyle } from "@/lib/free-resources";
 import { getPresignedUrl } from "@/lib/s3";
 import PDFViewer from "@/components/Resource/PDFViewer";
+import DownloadButton from "@/components/Resource/DownloadButton";
 import type { LiveResource } from "@/lib/resource-constants";
 
 /* ─────────────────────────────────────────
@@ -329,25 +330,11 @@ export default async function ResourcePreviewPage({ params }: { params: { slug: 
                 </span>
               </div>
 
-              {/* Download button — links to /api/download/[id] for force download */}
-              <a
-                href={`/api/download/${resource._id}`}
-                download
-                className="w-full flex items-center justify-center gap-2.5 rounded-xl py-3.5 font-bold text-sm transition-all duration-300 hover:-translate-y-1"
-                style={{
-                  background: "linear-gradient(135deg, #7c1fff 0%, #9455ff 60%, #7c1fff 100%)",
-                  backgroundSize: "200% auto",
-                  boxShadow: "0 0 28px rgba(124,31,255,0.45), 0 4px 16px rgba(0,0,0,0.35)",
-                  color: "#fff",
-                  textDecoration: "none",
-                  display: "flex",
-                }}
-              >
-                <svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true">
-                  <path d="M8 2v8M5 7l3 4 3-4M2 13h12" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" />
-                </svg>
-                Download PDF — Free
-              </a>
+              {/* Download button — Client component for loading state */}
+              <DownloadButton 
+                resourceId={resource._id} 
+                resourceTitle={resource.title} 
+              />
 
               {/* Trust note */}
               <p className="text-center text-[0.6rem] mt-3 flex items-center justify-center gap-1" style={{ color: "var(--foreground-muted)" }}>
