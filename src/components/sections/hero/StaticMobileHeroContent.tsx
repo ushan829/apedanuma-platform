@@ -72,7 +72,11 @@ export default function StaticMobileHeroContent() {
           </span>
           <p className="text-[0.7rem] text-slate-400">Join 40,000+ learners island-wide.</p>
         </div>
-        <Link href="/premium-store" className="p-2.5 rounded-xl bg-arcane-500 text-white shadow-lg shadow-arcane-500/20">
+        <Link 
+          href="/premium-store" 
+          className="p-2.5 rounded-xl bg-arcane-500 text-white shadow-lg shadow-arcane-500/20"
+          aria-label="Visit Premium Store"
+        >
           <Download className="w-4 h-4" />
         </Link>
       </div>
