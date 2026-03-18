@@ -78,6 +78,25 @@ export const SUBJECT_CATEGORIES: { id: string; label: string; subjects: string[]
 ];
 
 /* ─────────────────────────────────────────
+   DB materialType → sidebar filter category
+   ───────────────────────────────────────── */
+export const FILTER_TO_DB_TYPES: Record<string, string[]> = {
+  "term-test":       ["Term Test Paper"],
+  "short-notes":     ["Short Note"],
+  "unit-test":       ["Model Paper", "Revision Paper", "MCQ Paper", "Essay Guide"],
+  "textbooks":       [],
+  "ol-past-papers":  ["Past Paper"],
+  "marking-schemes": ["Marking Scheme"],
+};
+
+export function getFilterType(materialType: string): string {
+  for (const [key, types] of Object.entries(FILTER_TO_DB_TYPES)) {
+    if (types.includes(materialType)) return key;
+  }
+  return "all";
+}
+
+/* ─────────────────────────────────────────
    Style helpers
    ───────────────────────────────────────── */
 export function getSubjectStyle(subject: string): { color: string; bg: string; border: string } {

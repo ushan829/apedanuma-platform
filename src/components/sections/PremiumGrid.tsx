@@ -2,6 +2,7 @@
 
 import { useState, useMemo, useEffect } from "react";
 import Link from "next/link";
+import Image from "next/image";
 import { useRouter, usePathname, useSearchParams } from "next/navigation";
 import AnimatedSearchBar from "@/components/AnimatedSearchBar";
 import {
@@ -80,7 +81,19 @@ function ProductCard({ resource }: { resource: LiveResource }) {
     <div className="resource-card flex flex-col gap-3">
       {/* Header row: icon + badges */}
       <div className="flex items-start gap-3">
-        <DocIcon subject={resource.subject} />
+        {resource.previewImageUrl ? (
+          <div className="relative w-12 h-14 shrink-0 rounded-xl overflow-hidden border border-white/10">
+            <Image
+              src={resource.previewImageUrl}
+              alt={`${resource.title} - Grade ${resource.grade} ${resource.subject} premium study material`}
+              fill
+              className="object-cover"
+              sizes="48px"
+            />
+          </div>
+        ) : (
+          <DocIcon subject={resource.subject} />
+        )}
         <div className="flex flex-col gap-1.5 min-w-0">
           <div className="flex flex-wrap gap-1">
             <span

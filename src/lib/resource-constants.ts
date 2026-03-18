@@ -113,6 +113,8 @@ export interface LiveResource {
   downloadCount: number;
   /** Populated only for isPremium resources (LKR). */
   price?: number;
+  /** URL for a cover/thumbnail image shown in listing cards. */
+  previewImageUrl?: string;
   /** Publicly accessible URL to the full PDF (stored in cloud storage). */
   pdfUrl: string;
 }

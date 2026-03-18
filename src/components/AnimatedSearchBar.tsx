@@ -96,8 +96,8 @@ export default function AnimatedSearchBar({
         value={value}
         onChange={(e) => onChange(e.target.value)}
         placeholder={placeholder}
-        className="w-full pl-12 pr-16 py-4 bg-slate-800/40 backdrop-blur-md border border-slate-700/50 rounded-2xl text-white placeholder-slate-500/70 focus:outline-none focus:ring-2 focus:ring-purple-500/50 focus:border-purple-500/50 transition-all duration-300 shadow-[0_0_15px_rgba(0,0,0,0.1)] focus:shadow-[0_0_25px_rgba(168,85,247,0.2)]"
-        aria-label="Search"
+        className="w-full pl-12 pr-16 py-4 bg-slate-800/40 backdrop-blur-md border border-slate-700/50 rounded-2xl text-white placeholder-slate-500/70 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:ring-offset-2 focus:ring-offset-[#0B0F19] transition-all duration-300 shadow-[0_0_15px_rgba(0,0,0,0.1)] focus:shadow-[0_0_25px_rgba(168,85,247,0.2)]"
+        aria-label="Search resources"
       />
 
       {/* Right Controls */}
@@ -105,8 +105,9 @@ export default function AnimatedSearchBar({
         {value ? (
           <button
             onClick={() => onChange("")}
-            className="flex items-center justify-center w-7 h-7 rounded-full bg-slate-700/50 hover:bg-slate-600/50 text-slate-300 hover:text-white transition-all duration-200 active:scale-90"
+            className="flex items-center justify-center w-7 h-7 rounded-full bg-slate-700/50 hover:bg-slate-600/50 text-slate-300 hover:text-white transition-all duration-200 active:scale-90 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:ring-offset-2 focus:ring-offset-[#0B0F19]"
             title="Clear Search"
+            aria-label="Clear search query"
           >
             <X size={14} strokeWidth={3} />
           </button>

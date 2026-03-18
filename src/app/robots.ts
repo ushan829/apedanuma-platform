@@ -1,10 +1,11 @@
 import type { MetadataRoute } from "next";
 
 /**
- * Standard Robots.txt Configuration
+ * Technical SEO: robots.txt Optimization
  * 
- * Protects premium content from AI crawlers and standardizes search indexing.
- * Includes specific blocks for industry-known AI scraping bots.
+ * This configuration protects the platform's crawl budget by allowing only 
+ * high-value filtered pages while strictly blocking internal search result 
+ * pages and infinite parameter loops.
  */
 export default function robots(): MetadataRoute.Robots {
   const baseUrl = (process.env.NEXT_PUBLIC_APP_URL || process.env.NEXTAUTH_URL || "https://em.apedanuma.lk").replace(/\/$/, "");
@@ -13,10 +14,29 @@ export default function robots(): MetadataRoute.Robots {
     rules: [
       {
         userAgent: "*",
-        allow: "/",
-        disallow: ["/api/", "/admin/", "/dashboard/", "/login", "/register", "/forgot-password"],
+        // Allow high-value filtered pages for indexing
+        allow: [
+          "/",
+          "/free-resources",
+          "/free-resources?grade=*",
+          "/free-resources?subjects=*",
+        ],
+        // Disallow messy parameter combinations and protected areas
+        disallow: [
+          "/api/",
+          "/admin/",
+          "/dashboard/",
+          "/login",
+          "/register",
+          "/forgot-password",
+          "/*?q=",      // Block internal search query parameter
+          "/*?*q=",     // Block search queries anywhere in the URL
+          "/*?*&*&*",   // Block deep parameter combinations (3+ params) to prevent crawl bloat
+          "/*?*",       // Catch-all: block any other query parameters not explicitly allowed
+        ],
       },
       // ── Block AI Crawlers from Training ──
+      // This protects your educational content from being scraped for LLM training
       {
         userAgent: "GPTBot",
         disallow: "/",
@@ -31,10 +51,6 @@ export default function robots(): MetadataRoute.Robots {
       },
       {
         userAgent: "Anthropic-ai",
-        disallow: "/",
-      },
-      {
-        userAgent: "OmgiliBot",
         disallow: "/",
       },
       {

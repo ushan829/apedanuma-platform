@@ -27,7 +27,11 @@ const NAV_LINKS: NavItem[] = [
    ───────────────────────────────────────── */
 function Logo() {
   return (
-    <Link href="/" className="flex items-center gap-3 group shrink-0" aria-label="Ape Danuma EM home">
+    <Link 
+      href="/" 
+      className="flex items-center gap-3 group shrink-0 rounded-xl focus:outline-none focus:ring-2 focus:ring-purple-500/50 focus:ring-offset-2 focus:ring-offset-[#020617]" 
+      aria-label="Ape Danuma EM home"
+    >
       {/* Icon — Actual brand logo image */}
       <div className="relative transition-all duration-300 group-hover:scale-105 shrink-0">
         <Image 
@@ -82,7 +86,7 @@ function DesktopNavLink({ item, isActive }: { item: NavItem; isActive: boolean }
   return (
     <Link
       href={item.href}
-      className={`nav-link ${isActive ? "nav-link-active" : ""} flex items-center gap-1.5`}
+      className={`nav-link ${isActive ? "nav-link-active" : ""} flex items-center gap-1.5 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500/40 focus:ring-offset-4 focus:ring-offset-[#020617]`}
     >
       {item.label}
       {item.badge && (
@@ -118,7 +122,7 @@ function MobileNavLink({
   return (
     <Link
       href={item.href}
-      className={`nav-link-mobile ${isActive ? "nav-link-mobile-active" : ""}`}
+      className={`nav-link-mobile ${isActive ? "nav-link-mobile-active" : ""} focus:outline-none focus:ring-2 focus:ring-purple-500/40`}
       onClick={onClick}
       style={{ animationDelay: `${index * 45}ms`, animation: "navLinkFadeIn 280ms ease forwards" }}
     >
@@ -336,7 +340,7 @@ export default function NavbarClient({ initialUser }: { initialUser: { name: str
                   /* ── Admin: glowing gold "Admin Dashboard" button ── */
                   <Link
                     href="/admin"
-                    className="relative inline-flex items-center gap-2 rounded-xl px-4 py-2 text-sm font-bold overflow-hidden transition-all duration-300 hover:-translate-y-0.5 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#f59e0b]"
+                    className="relative inline-flex items-center gap-2 rounded-xl px-4 py-2 text-sm font-bold overflow-hidden transition-all duration-300 hover:-translate-y-0.5 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#f59e0b] focus-visible:ring-offset-2 focus-visible:ring-offset-[#020617]"
                     style={{
                       background: "linear-gradient(135deg, #d97706 0%, #f59e0b 55%, #d97706 100%)",
                       backgroundSize: "200% auto",
@@ -347,7 +351,7 @@ export default function NavbarClient({ initialUser }: { initialUser: { name: str
                   >
                     {/* Shimmer */}
                     <span
-                      className="absolute inset-0 pointer-events-none"
+                      className="absolute inset-0 pointer-events-none motion-reduce:hidden"
                       style={{
                         background: "linear-gradient(105deg, transparent 30%, rgba(255,255,255,0.22) 50%, transparent 70%)",
                         backgroundSize: "200% 100%",
@@ -363,7 +367,7 @@ export default function NavbarClient({ initialUser }: { initialUser: { name: str
                   /* ── Student: subtle avatar + "Dashboard" link ── */
                   <Link
                     href="/dashboard"
-                    className="flex items-center gap-2.5 rounded-xl px-3 py-1.5 transition-all duration-200 hover:bg-white/[0.06]"
+                    className="flex items-center gap-2.5 rounded-xl px-3 py-1.5 transition-all duration-200 hover:bg-white/[0.06] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-purple-500/50 focus-visible:ring-offset-2 focus-visible:ring-offset-[#020617]"
                     style={{ border: "1px solid rgba(255,255,255,0.08)" }}
                     aria-label="Go to Dashboard"
                   >
@@ -389,9 +393,9 @@ export default function NavbarClient({ initialUser }: { initialUser: { name: str
                 {/* Logout */}
                 <button
                   onClick={handleLogout}
-                  aria-label="Logout"
+                  aria-label="Log out of your account"
                   title="Logout"
-                  className="flex items-center justify-center w-9 h-9 rounded-xl transition-all duration-200 hover:bg-red-500/10 hover:border-red-500/30 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-red-500/50"
+                  className="flex items-center justify-center w-9 h-9 rounded-xl transition-all duration-200 hover:bg-red-500/10 hover:border-red-500/30 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-red-500/50 focus-visible:ring-offset-2 focus-visible:ring-offset-[#020617]"
                   style={{ border: "1px solid rgba(255,255,255,0.08)", color: "var(--foreground-muted)" }}
                 >
                   <svg width="15" height="15" viewBox="0 0 15 15" fill="none" aria-hidden="true">
@@ -402,7 +406,10 @@ export default function NavbarClient({ initialUser }: { initialUser: { name: str
             ) : (
               <>
                 {/* Sign In */}
-                <Link href="/login" className="nav-signin">
+                <Link 
+                  href="/login" 
+                  className="nav-signin rounded-lg focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-purple-500/40 focus-visible:ring-offset-4 focus-visible:ring-offset-[#020617]"
+                >
                   Sign In
                 </Link>
 
@@ -410,7 +417,10 @@ export default function NavbarClient({ initialUser }: { initialUser: { name: str
                 <span className="h-4 w-px" style={{ background: "var(--border-strong)" }} aria-hidden="true" />
 
                 {/* Register */}
-                <Link href="/register" className="btn-register group">
+                <Link 
+                  href="/register" 
+                  className="btn-register group focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-purple-500/50 focus-visible:ring-offset-2 focus-visible:ring-offset-[#020617]"
+                >
                   <span>Register</span>
                   <svg
                     className="w-3.5 h-3.5 transition-transform duration-200 group-hover:translate-x-0.5"
@@ -430,7 +440,7 @@ export default function NavbarClient({ initialUser }: { initialUser: { name: str
                 {isAdmin ? (
                   <Link
                     href="/admin"
-                    className="relative inline-flex items-center gap-1.5 rounded-xl px-3 py-1.5 text-sm font-bold overflow-hidden transition-all duration-300 hover:-translate-y-0.5"
+                    className="relative inline-flex items-center gap-1.5 rounded-xl px-3 py-1.5 text-sm font-bold overflow-hidden transition-all duration-300 hover:-translate-y-0.5 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#f59e0b] focus-visible:ring-offset-2 focus-visible:ring-offset-[#020617]"
                     style={{
                       background: "linear-gradient(135deg, #d97706 0%, #f59e0b 55%, #d97706 100%)",
                       boxShadow: "0 0 16px rgba(245,158,11,0.3)",
@@ -454,7 +464,7 @@ export default function NavbarClient({ initialUser }: { initialUser: { name: str
                 ) : (
                   <Link
                     href="/dashboard"
-                    className="flex items-center gap-2 rounded-xl px-3 py-1.5 text-sm font-medium transition-all duration-200 hover:bg-white/[0.06]"
+                    className="flex items-center gap-2 rounded-xl px-3 py-1.5 text-sm font-medium transition-all duration-200 hover:bg-white/[0.06] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-purple-500/50 focus-visible:ring-offset-2 focus-visible:ring-offset-[#020617]"
                     style={{ border: "1px solid rgba(255,255,255,0.08)", color: "var(--foreground-secondary)" }}
                   >
                     <span
@@ -472,7 +482,7 @@ export default function NavbarClient({ initialUser }: { initialUser: { name: str
                 )}
                 <button
                   onClick={handleLogout}
-                  className="flex items-center justify-center w-9 h-9 rounded-xl transition-all duration-200 hover:bg-red-500/10"
+                  className="flex items-center justify-center w-9 h-9 rounded-xl transition-all duration-200 hover:bg-red-500/10 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-red-500/50 focus-visible:ring-offset-2 focus-visible:ring-offset-[#020617]"
                   style={{ border: "1px solid rgba(255,255,255,0.08)", color: "var(--foreground-muted)" }}
                   aria-label="Logout"
                 >
@@ -483,8 +493,16 @@ export default function NavbarClient({ initialUser }: { initialUser: { name: str
               </>
             ) : (
               <>
-                <Link href="/login" className="nav-signin">Sign In</Link>
-                <Link href="/register" className="btn-register group">
+                <Link 
+                  href="/login" 
+                  className="nav-signin rounded-lg focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-purple-500/40 focus-visible:ring-offset-4 focus-visible:ring-offset-[#020617]"
+                >
+                  Sign In
+                </Link>
+                <Link 
+                  href="/register" 
+                  className="btn-register group focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-purple-500/50 focus-visible:ring-offset-2 focus-visible:ring-offset-[#020617]"
+                >
                   <span>Register</span>
                   <svg className="w-3.5 h-3.5 transition-transform duration-200 group-hover:translate-x-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
                     <path strokeLinecap="round" strokeLinejoin="round" d="M13 7l5 5-5 5M6 12h12" />
@@ -501,7 +519,7 @@ export default function NavbarClient({ initialUser }: { initialUser: { name: str
             aria-expanded={isOpen}
             aria-controls="mobile-menu"
             aria-label={isOpen ? "Close menu" : "Open menu"}
-            className="lg:hidden flex items-center justify-center w-10 h-10 rounded-xl transition-all duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-arcane-500"
+            className="lg:hidden flex items-center justify-center w-10 h-10 rounded-xl transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-purple-500/50 focus:ring-offset-2 focus:ring-offset-[#020617]"
             style={{
               background: isOpen ? "rgba(124,31,255,0.12)" : "rgba(255,255,255,0.04)",
               border: `1px solid ${isOpen ? "rgba(124,31,255,0.3)" : "rgba(255,255,255,0.08)"}`,
@@ -577,7 +595,7 @@ export default function NavbarClient({ initialUser }: { initialUser: { name: str
                     <Link
                       href="/admin"
                       onClick={closeMenu}
-                      className="relative flex items-center justify-center gap-2 rounded-xl py-3 text-sm font-bold overflow-hidden transition-all duration-200"
+                      className="relative flex items-center justify-center gap-2 rounded-xl py-3 text-sm font-bold overflow-hidden transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-[#f59e0b] focus:ring-offset-2 focus:ring-offset-[#020617]"
                       style={{
                         background: "linear-gradient(135deg, #d97706 0%, #f59e0b 55%, #d97706 100%)",
                         boxShadow: "0 0 22px rgba(245,158,11,0.35)",
@@ -601,7 +619,7 @@ export default function NavbarClient({ initialUser }: { initialUser: { name: str
                     <Link
                       href="/dashboard"
                       onClick={closeMenu}
-                      className="flex items-center justify-center gap-2 rounded-xl py-3 text-sm font-semibold transition-all duration-200"
+                      className="flex items-center justify-center gap-2 rounded-xl py-3 text-sm font-semibold transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-purple-500/50 focus:ring-offset-2 focus:ring-offset-[#020617]"
                       style={{
                         background: "linear-gradient(135deg, #7c1fff 0%, #9455ff 55%, #7c1fff 100%)",
                         boxShadow: "0 0 20px rgba(124,31,255,0.35)",
@@ -621,12 +639,13 @@ export default function NavbarClient({ initialUser }: { initialUser: { name: str
                   {/* Logout */}
                   <button
                     onClick={handleLogout}
-                    className="flex items-center justify-center gap-2 rounded-xl py-3 text-sm font-medium transition-all duration-200"
+                    className="flex items-center justify-center gap-2 rounded-xl py-3 text-sm font-medium transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-red-500/50 focus:ring-offset-2 focus:ring-offset-[#020617]"
                     style={{
                       color: "#f87171",
                       background: "rgba(239,68,68,0.06)",
                       border: "1px solid rgba(239,68,68,0.18)",
                     }}
+                    aria-label="Logout"
                   >
                     <svg className="w-4 h-4" fill="none" viewBox="0 0 15 15" stroke="currentColor" strokeWidth={1.4}>
                       <path strokeLinecap="round" strokeLinejoin="round" d="M5.5 1H2.5A1.5 1.5 0 001 2.5v10A1.5 1.5 0 002.5 14h3M10 10.5l3.5-3L10 4M5 7.5h9" />
@@ -639,7 +658,7 @@ export default function NavbarClient({ initialUser }: { initialUser: { name: str
                   <Link
                     href="/login"
                     onClick={closeMenu}
-                    className="flex items-center justify-center gap-2 rounded-xl py-3 text-sm font-medium transition-all duration-200"
+                    className="flex items-center justify-center gap-2 rounded-xl py-3 text-sm font-medium transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-purple-500/40 focus:ring-offset-2 focus:ring-offset-[#020617]"
                     style={{
                       color: "var(--foreground-secondary)",
                       background: "rgba(255,255,255,0.04)",
@@ -655,7 +674,7 @@ export default function NavbarClient({ initialUser }: { initialUser: { name: str
                   <Link
                     href="/register"
                     onClick={closeMenu}
-                    className="btn-register justify-center py-3.5 rounded-xl text-sm"
+                    className="btn-register justify-center py-3.5 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-purple-500/50 focus:ring-offset-2 focus:ring-offset-[#020617]"
                     style={{ width: "100%" }}
                   >
                     <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>

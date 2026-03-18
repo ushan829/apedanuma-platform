@@ -4,7 +4,7 @@ import { notFound } from "next/navigation";
 import mongoose from "mongoose";
 import connectToDatabase from "@/lib/mongodb";
 import Resource from "@/models/Resource";
-import { getSubjectStyle } from "@/lib/free-resources";
+import { getSubjectStyle, getFilterType } from "@/lib/free-resources";
 import { getPresignedUrl } from "@/lib/s3";
 import PDFViewer from "@/components/Resource/PDFViewer";
 import DownloadButton from "@/components/Resource/DownloadButton";
@@ -184,28 +184,51 @@ export default async function ResourcePreviewPage({ params }: { params: { slug: 
     ? `${typeMeta.label} · Term ${resource.term}`
     : typeMeta.label;
 
-  /* ── Product JSON-LD ── */
-  const productJsonLd = {
+  /* ── Enhanced Educational JSON-LD ── */
+  const jsonLd = {
     "@context": "https://schema.org",
-    "@type": "Product",
+    "@type": "CreativeWork",
     name: resource.title,
     description: resource.description,
-    category: `${resource.subject} ${resource.materialType}`,
+    genre: resource.materialType,
+    educationalLevel: `Grade ${resource.grade}`,
+    inLanguage: "en-LK",
+    author: {
+      "@type": "Organization",
+      name: "Ape Danuma EM"
+    },
     offers: {
       "@type": "Offer",
-      priceCurrency: "LKR",
       price: "0",
+      priceCurrency: "LKR",
       availability: "https://schema.org/InStock",
       url: `${BASE_URL}/free-resources/${resource.slug}`,
     },
   };
 
+  /* ── Breadcrumb JSON-LD ── */
+  const breadcrumbJsonLd = {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    itemListElement: [
+      { "@type": "ListItem", position: 1, name: "Home", item: BASE_URL },
+      { "@type": "ListItem", position: 2, name: "Free Resources", item: `${BASE_URL}/free-resources` },
+      { "@type": "ListItem", position: 3, name: `Grade ${resource.grade}`, item: `${BASE_URL}/free-resources?grade=${resource.grade}` },
+      { "@type": "ListItem", position: 4, name: resource.subject, item: `${BASE_URL}/free-resources?grade=${resource.grade}&subjects=${encodeURIComponent(resource.subject)}` },
+      { "@type": "ListItem", position: 5, name: resource.title, item: `${BASE_URL}/free-resources/${resource.slug}` },
+    ],
+  };
+
   return (
     <main className="relative overflow-hidden">
-      {/* Product JSON-LD */}
+      {/* Structured Data */}
       <script
         type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(productJsonLd) }}
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+      />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbJsonLd) }}
       />
 
       {/* Ambient glow */}
@@ -224,15 +247,37 @@ export default async function ResourcePreviewPage({ params }: { params: { slug: 
 
         {/* ── Breadcrumb ── */}
         <nav className="flex items-center flex-wrap gap-1.5 text-xs mb-8" aria-label="Breadcrumb" style={{ color: "var(--foreground-muted)" }}>
-          <Link href="/" className="hover:text-white transition-colors">Home</Link>
+          <Link href="/" className="hover:text-purple-400 transition-colors">Home</Link>
           <span>/</span>
-          <Link href="/free-resources" className="hover:text-white transition-colors">Free Resources</Link>
+          <Link href="/free-resources" className="hover:text-purple-400 transition-colors">Free Resources</Link>
           <span>/</span>
-          <span style={{ color: "var(--foreground-secondary)" }}>Grade {resource.grade}</span>
+          <Link 
+            href={`/free-resources?grade=${resource.grade}`} 
+            className="hover:text-purple-400 transition-colors"
+            style={{ color: "var(--foreground-secondary)" }}
+          >
+            Grade {resource.grade}
+          </Link>
           <span>/</span>
-          <span style={{ color: subjectStyle.color }}>{resource.subject}</span>
+          <Link 
+            href={`/free-resources?grade=${resource.grade}&subjects=${encodeURIComponent(resource.subject)}`} 
+            className="hover:text-purple-400 transition-colors"
+            style={{ color: subjectStyle.color }}
+          >
+            {resource.subject}
+          </Link>
           <span>/</span>
-          <span style={{ color: typeMeta.color }}>{typeLabel}</span>
+          <Link 
+            href={`/free-resources?grade=${resource.grade}&subjects=${encodeURIComponent(resource.subject)}&type=${getFilterType(resource.materialType)}`} 
+            className="hover:text-purple-400 transition-colors"
+            style={{ color: typeMeta.color }}
+          >
+            {typeLabel}
+          </Link>
+          <span>/</span>
+          <span className="truncate max-w-[200px] sm:max-w-xs opacity-80" style={{ color: "var(--foreground-muted)" }}>
+            {resource.title}
+          </span>
         </nav>
 
         {/* ── Two-column layout ── */}

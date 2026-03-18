@@ -2,6 +2,7 @@
 
 import { useState, useMemo, useEffect } from "react";
 import Link from "next/link";
+import Image from "next/image";
 import { useRouter, usePathname, useSearchParams } from "next/navigation";
 import AnimatedSearchBar from "@/components/AnimatedSearchBar";
 import {
@@ -9,20 +10,9 @@ import {
   getSubjectStyle, TYPE_META,
   type Grade, type MaterialType, type TermFilter, type FreeResource,
   FREE_RESOURCES,
+  FILTER_TO_DB_TYPES,
 } from "@/lib/free-resources";
 import type { LiveResource } from "@/lib/resource-constants";
-
-/* ─────────────────────────────────────────
-   DB materialType → sidebar filter category
-   ───────────────────────────────────────── */
-const FILTER_TO_DB_TYPES: Record<string, string[]> = {
-  "term-test":       ["Term Test Paper"],
-  "short-notes":     ["Short Note"],
-  "unit-test":       ["Model Paper", "Revision Paper", "MCQ Paper", "Essay Guide"],
-  "textbooks":       [],
-  "ol-past-papers":  ["Past Paper"],
-  "marking-schemes": ["Marking Scheme"],
-};
 
 /* Color meta keyed by DB materialType string */
 const DB_TYPE_META: Record<string, { label: string; shortLabel: string; color: string; bg: string; border: string }> = {
@@ -76,7 +66,7 @@ function StaticResourceCard({ resource }: { resource: FreeResource }) {
   const typeMeta = TYPE_META[resource.type];
 
   return (
-    <div className="resource-card flex flex-col gap-3">
+    <article className="resource-card flex flex-col gap-3">
       <div className="flex items-start gap-3">
         <DocIcon subject={resource.subject} />
         <div className="flex flex-col gap-1.5 min-w-0">
@@ -124,14 +114,18 @@ function StaticResourceCard({ resource }: { resource: FreeResource }) {
           Free
         </span>
       </div>
-      <Link href={`/free-resources/${resource.id}`} className="btn-download w-full mt-auto text-center">
+      <Link 
+        href={`/free-resources/${resource.id}`} 
+        className="btn-download w-full mt-auto text-center focus:outline-none focus:ring-2 focus:ring-purple-500/50 focus:ring-offset-2 focus:ring-offset-[#0B0F19]" 
+        aria-label={`View details for ${resource.title}`}
+      >
         <svg width="14" height="14" viewBox="0 0 14 14" fill="none" aria-hidden="true">
           <circle cx="7" cy="7" r="5.5" stroke="currentColor" strokeWidth="1.4" />
           <path d="M5 7h4M7 5l2 2-2 2" stroke="currentColor" strokeWidth="1.3" strokeLinecap="round" strokeLinejoin="round" />
         </svg>
         View Details
       </Link>
-    </div>
+    </article>
   );
 }
 
@@ -143,9 +137,21 @@ function LiveResourceCard({ resource }: { resource: LiveResource }) {
   const typeMeta = getDbTypeMeta(resource.materialType);
 
   return (
-    <div className="resource-card flex flex-col gap-3">
+    <article className="resource-card flex flex-col gap-3">
       <div className="flex items-start gap-3">
-        <DocIcon subject={resource.subject} />
+        {resource.previewImageUrl ? (
+          <div className="relative w-12 h-14 shrink-0 rounded-xl overflow-hidden border border-white/10">
+            <Image
+              src={resource.previewImageUrl}
+              alt={`${resource.title} - Grade ${resource.grade} ${resource.subject} study material`}
+              fill
+              className="object-cover"
+              sizes="48px"
+            />
+          </div>
+        ) : (
+          <DocIcon subject={resource.subject} />
+        )}
         <div className="flex flex-col gap-1.5 min-w-0">
           <div className="flex flex-wrap gap-1">
             <span
@@ -193,14 +199,18 @@ function LiveResourceCard({ resource }: { resource: LiveResource }) {
           Free
         </span>
       </div>
-      <Link href={`/free-resources/${resource.slug || resource._id}`} className="btn-download w-full mt-auto text-center">
+      <Link 
+        href={`/free-resources/${resource.slug || resource._id}`} 
+        className="btn-download w-full mt-auto text-center focus:outline-none focus:ring-2 focus:ring-purple-500/50 focus:ring-offset-2 focus:ring-offset-[#0B0F19]" 
+        aria-label={`View details for ${resource.title}`}
+      >
         <svg width="14" height="14" viewBox="0 0 14 14" fill="none" aria-hidden="true">
           <circle cx="7" cy="7" r="5.5" stroke="currentColor" strokeWidth="1.4" />
           <path d="M5 7h4M7 5l2 2-2 2" stroke="currentColor" strokeWidth="1.3" strokeLinecap="round" strokeLinejoin="round" />
         </svg>
         View Details
       </Link>
-    </div>
+    </article>
   );
 }
 
@@ -223,7 +233,7 @@ function AccordionSection({
       <button
         type="button"
         onClick={() => setIsOpen((v) => !v)}
-        className="w-full flex items-center justify-between py-3 text-left transition-colors duration-150 hover:text-white"
+        className="w-full flex items-center justify-between py-3 text-left transition-colors duration-150 hover:text-white focus:outline-none focus:ring-2 focus:ring-purple-500/30"
         style={{ color: "var(--foreground-secondary)" }}
       >
         <div className="flex items-center gap-2">
@@ -256,7 +266,7 @@ function AccordionSection({
                   key={subject}
                   type="button"
                   onClick={() => onToggleSubject(subject)}
-                  className="flex items-center gap-2 w-full rounded-lg px-2 py-1.5 text-left text-xs transition-all duration-150"
+                  className="flex items-center gap-2 w-full rounded-lg px-2 py-1.5 text-left text-xs transition-all duration-150 focus:outline-none focus:ring-2 focus:ring-purple-500/30"
                   style={{
                     background: isActive ? s.bg : "transparent",
                     color: isActive ? s.color : "var(--foreground-secondary)",
@@ -284,8 +294,8 @@ function AccordionSection({
    Sidebar
    ───────────────────────────────────────── */
 interface SidebarProps {
-  grade: Grade;
-  onGradeChange: (g: Grade) => void;
+  grade: Grade | null;
+  onGradeChange: (g: Grade | null) => void;
   materialType: MaterialType;
   onMaterialTypeChange: (t: MaterialType) => void;
   termFilter: TermFilter | null;
@@ -320,11 +330,16 @@ function Sidebar({
   ];
 
   return (
-    <aside className="scrollbar-hide" style={{ overflowY: "auto" }}>
+    <nav className="scrollbar-hide" style={{ overflowY: "auto" }} aria-label="Resource Filters">
       <div className="flex items-center justify-between mb-5">
-        <span className="text-xs font-bold uppercase tracking-widest" style={{ color: "var(--foreground-muted)" }}>Filters</span>
+        <h2 className="text-xs font-bold uppercase tracking-widest" style={{ color: "var(--foreground-muted)" }}>Filters</h2>
         {activeFilterCount > 0 && (
-          <button type="button" onClick={onClearAll} className="text-[0.65rem] font-semibold transition-colors duration-150 hover:text-white" style={{ color: "#9455ff" }}>
+          <button 
+            type="button" 
+            onClick={onClearAll} 
+            className="text-[0.65rem] font-semibold transition-colors duration-150 hover:text-white focus:outline-none focus:underline" 
+            style={{ color: "#b890ff" }}
+          >
             Clear all ({activeFilterCount})
           </button>
         )}
@@ -334,19 +349,19 @@ function Sidebar({
       <div className="mb-5">
         <p className="text-[0.65rem] font-bold uppercase tracking-widest mb-2.5" style={{ color: "var(--foreground-muted)" }}>Grade</p>
         <div className="flex rounded-xl p-1 gap-1" style={{ background: "rgba(255,255,255,0.04)", border: "1px solid rgba(255,255,255,0.07)" }}>
-          {([10, 11] as const).map((g) => (
+          {([null, 10, 11] as const).map((g) => (
             <button
-              key={g}
+              key={g === null ? "all" : g}
               type="button"
               onClick={() => onGradeChange(g)}
-              className="flex-1 py-2 rounded-lg text-xs font-bold transition-all duration-200"
+              className="flex-1 py-2 rounded-lg text-xs font-bold transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-purple-500/40"
               style={
                 grade === g
                   ? { background: "linear-gradient(135deg, rgba(124,31,255,0.4), rgba(87,0,190,0.5))", color: "#e0d0ff", border: "1px solid rgba(124,31,255,0.4)", boxShadow: "0 0 12px rgba(124,31,255,0.25)" }
                   : { background: "transparent", color: "var(--foreground-muted)", border: "1px solid transparent" }
               }
             >
-              Grade {g}
+              {g === null ? "All" : `Grade ${g}`}
             </button>
           ))}
         </div>
@@ -364,7 +379,7 @@ function Sidebar({
                 <button
                   type="button"
                   onClick={() => { onMaterialTypeChange(t.value); if (t.value !== "term-test") onTermFilterChange(null); }}
-                  className="w-full flex items-center gap-2 rounded-lg px-3 py-2 text-left text-xs font-medium transition-all duration-150"
+                  className="w-full flex items-center gap-2 rounded-lg px-3 py-2 text-left text-xs font-medium transition-all duration-150 focus:outline-none focus:ring-2 focus:ring-purple-500/30"
                   style={{
                     background: isActive ? (meta ? meta.bg : "rgba(255,255,255,0.07)") : "transparent",
                     color: isActive ? (meta ? meta.color : "var(--foreground)") : "var(--foreground-secondary)",
@@ -381,7 +396,7 @@ function Sidebar({
                         key={term}
                         type="button"
                         onClick={() => onTermFilterChange(termFilter === term ? null : term)}
-                        className="flex-1 py-1.5 rounded-lg text-[0.65rem] font-bold transition-all duration-150"
+                        className="flex-1 py-1.5 rounded-lg text-[0.65rem] font-bold transition-all duration-150 focus:outline-none focus:ring-2 focus:ring-blue-500/40"
                         style={
                           termFilter === term
                             ? { background: "rgba(96,165,250,0.2)", color: "#93c5fd", border: "1px solid rgba(96,165,250,0.35)" }
@@ -409,7 +424,7 @@ function Sidebar({
                     key={t.value}
                     type="button"
                     onClick={() => onMaterialTypeChange(t.value)}
-                    className="w-full flex items-center gap-2 rounded-lg px-3 py-2 text-left text-xs font-medium transition-all duration-150"
+                    className="w-full flex items-center gap-2 rounded-lg px-3 py-2 text-left text-xs font-medium transition-all duration-150 focus:outline-none focus:ring-2 focus:ring-purple-500/30"
                     style={{
                       background: isActive ? meta.bg : "transparent",
                       color: isActive ? meta.color : "var(--foreground-secondary)",
@@ -433,12 +448,11 @@ function Sidebar({
           <select
             value={year ?? ""}
             onChange={(e) => onYearChange(e.target.value ? Number(e.target.value) : null)}
-            className="w-full rounded-xl px-3 py-2 text-xs font-medium appearance-none"
+            className="w-full rounded-xl px-3 py-2 text-xs font-medium appearance-none focus:outline-none focus:ring-2 focus:ring-purple-500/40"
             style={{
               background: "rgba(255,255,255,0.05)",
               border: `1px solid ${year ? "rgba(124,31,255,0.3)" : "rgba(255,255,255,0.09)"}`,
               color: year ? "#c4a0ff" : "var(--foreground-muted)",
-              outline: "none",
               cursor: "pointer",
             }}
           >
@@ -454,18 +468,18 @@ function Sidebar({
 
       {/* Subject Accordions */}
       <div>
-        <p className="text-[0.65rem] font-bold uppercase tracking-widest mb-1" style={{ color: "var(--foreground-muted)" }}>Subjects</p>
-        {SUBJECT_CATEGORIES.map((cat, i) => (
-          <AccordionSection
-            key={cat.id}
-            category={cat}
-            selectedSubjects={selectedSubjects}
-            onToggleSubject={onToggleSubject}
-            defaultOpen={i === 0}
-          />
-        ))}
+      <p className="text-[0.65rem] font-bold uppercase tracking-widest mb-1" style={{ color: "var(--foreground-muted)" }}>Subjects</p>
+      {SUBJECT_CATEGORIES.map((cat, i) => (
+        <AccordionSection
+          key={cat.id}
+          category={cat}
+          selectedSubjects={selectedSubjects}
+          onToggleSubject={onToggleSubject}
+          defaultOpen={i === 0}
+        />
+      ))}
       </div>
-    </aside>
+    </nav>
   );
 }
 
@@ -497,7 +511,7 @@ function EmptyState({ onReset }: { onReset: () => void }) {
       <button
         type="button"
         onClick={onReset}
-        className="inline-flex items-center gap-2 rounded-xl px-5 py-2.5 text-sm font-semibold transition-all duration-200 hover:-translate-y-px"
+        className="inline-flex items-center gap-2 rounded-xl px-5 py-2.5 text-sm font-semibold transition-all duration-200 hover:-translate-y-px focus:outline-none focus:ring-2 focus:ring-purple-500/50 focus:ring-offset-2 focus:ring-offset-[#0B0F19]"
         style={{
           background: "linear-gradient(135deg, rgba(124,31,255,0.18) 0%, rgba(87,0,190,0.22) 100%)",
           border: "1px solid rgba(124,31,255,0.35)",
@@ -524,9 +538,11 @@ export default function ResourceLibrary({ resources }: { resources?: LiveResourc
   const searchParams = useSearchParams();
 
   // 1. Initial State from URL
-  const [grade, setGrade] = useState<Grade>(() => {
+  const [grade, setGrade] = useState<Grade | null>(() => {
     const g = searchParams.get("grade");
-    return (g === "11" ? 11 : 10) as Grade;
+    if (g === "11") return 11;
+    if (g === "10") return 10;
+    return null; // Default to All Grades
   });
   const [materialType, setMaterialType] = useState<MaterialType>(() => {
     return (searchParams.get("type") as MaterialType) || "all";
@@ -549,7 +565,7 @@ export default function ResourceLibrary({ resources }: { resources?: LiveResourc
   // 2. Sync State -> URL (Update URL when filters change)
   useEffect(() => {
     const params = new URLSearchParams();
-    if (grade === 11) params.set("grade", "11");
+    if (grade !== null) params.set("grade", grade.toString());
     if (materialType !== "all") params.set("type", materialType);
     if (termFilter !== null) params.set("term", termFilter.toString());
     if (selectedSubjects.size > 0) {
@@ -561,17 +577,13 @@ export default function ResourceLibrary({ resources }: { resources?: LiveResourc
     const query = params.toString();
     const url = query ? `${pathname}?${query}` : pathname;
     
-    // Use replace to avoid polluting history with every filter click, 
-    // unless you want every filter step to be a back-button step.
-    // User asked for "Back" button to return to listing page, not necessarily 
-    // to every intermediate filter state, but standard UX is usually replace for filters.
     router.replace(url, { scroll: false });
   }, [grade, materialType, termFilter, selectedSubjects, searchQuery, year, pathname, router]);
 
   // 3. Sync URL -> State (Handles Browser Back/Forward buttons)
   useEffect(() => {
     const gVal = searchParams.get("grade");
-    const newGrade = (gVal === "11" ? 11 : 10) as Grade;
+    const newGrade = gVal ? (parseInt(gVal) as Grade) : null;
     if (grade !== newGrade) setGrade(newGrade);
 
     const tVal = (searchParams.get("type") as MaterialType) || "all";
@@ -598,9 +610,9 @@ export default function ResourceLibrary({ resources }: { resources?: LiveResourc
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [searchParams]);
 
-  const handleGradeChange = (g: Grade) => {
+  const handleGradeChange = (g: Grade | null) => {
     setGrade(g);
-    if (g === 10 && (materialType === "ol-past-papers" || materialType === "marking-schemes")) {
+    if ((g === 10 || g === null) && (materialType === "ol-past-papers" || materialType === "marking-schemes")) {
       setMaterialType("all");
     }
     setSelectedSubjects(new Set());
@@ -615,7 +627,7 @@ export default function ResourceLibrary({ resources }: { resources?: LiveResourc
   };
 
   const clearAll = () => {
-    setGrade(10);
+    setGrade(null);
     setMaterialType("all");
     setTermFilter(null);
     setSelectedSubjects(new Set());
@@ -627,7 +639,7 @@ export default function ResourceLibrary({ resources }: { resources?: LiveResourc
   const filteredLive = useMemo<LiveResource[]>(() => {
     if (!isLive) return [];
     return resources!.filter((r) => {
-      if (r.grade !== grade) return false;
+      if (grade !== null && r.grade !== grade) return false;
       if (materialType !== "all") {
         const allowed = FILTER_TO_DB_TYPES[materialType] ?? [];
         if (!allowed.includes(r.materialType)) return false;
@@ -651,7 +663,7 @@ export default function ResourceLibrary({ resources }: { resources?: LiveResourc
   const filteredStatic = useMemo<FreeResource[]>(() => {
     if (isLive) return [];
     return FREE_RESOURCES.filter((r) => {
-      if (r.grade !== grade) return false;
+      if (grade !== null && r.grade !== grade) return false;
       if (materialType !== "all") {
         if (r.type !== materialType) return false;
         if (materialType === "term-test" && termFilter !== null && r.term !== termFilter) return false;
@@ -678,6 +690,7 @@ export default function ResourceLibrary({ resources }: { resources?: LiveResourc
   const isEmpty = filteredCount === 0;
 
   const activeFilterCount =
+    (grade !== null ? 1 : 0) +
     (materialType !== "all" ? 1 : 0) +
     (termFilter !== null ? 1 : 0) +
     selectedSubjects.size +
@@ -701,8 +714,8 @@ export default function ResourceLibrary({ resources }: { resources?: LiveResourc
         <div className="badge-gold w-fit">Completely Free</div>
         <div className="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-4">
           <div>
-            <h1 className="font-display font-bold text-3xl sm:text-4xl tracking-tight">
-              Free Study <span className="text-gradient-luminary">Materials</span>
+            <h1 className="font-display font-bold text-3xl sm:text-4xl tracking-tight text-balance">
+              O/L English Medium <span className="text-gradient-luminary">Free Study Materials</span>
             </h1>
             <p className="mt-2 text-sm sm:text-base" style={{ color: "var(--foreground-secondary)" }}>
               {totalCount}+ resources — Term Tests, Notes, Past Papers &amp; more.
@@ -712,12 +725,14 @@ export default function ResourceLibrary({ resources }: { resources?: LiveResourc
             <button
               type="button"
               onClick={() => setShowMobileFilters((v) => !v)}
-              className="inline-flex items-center gap-2 rounded-xl px-4 py-2.5 text-sm font-semibold transition-all duration-200 shrink-0"
+              className="inline-flex items-center gap-2 rounded-xl px-4 py-2.5 text-sm font-semibold transition-all duration-200 shrink-0 focus:outline-none focus:ring-2 focus:ring-purple-500/50 focus:ring-offset-2 focus:ring-offset-[#0B0F19]"
               style={{
                 background: showMobileFilters ? "rgba(124,31,255,0.15)" : "rgba(255,255,255,0.05)",
                 border: `1px solid ${showMobileFilters ? "rgba(124,31,255,0.35)" : "rgba(255,255,255,0.09)"}`,
                 color: showMobileFilters ? "#b890ff" : "var(--foreground-secondary)",
               }}
+              aria-expanded={showMobileFilters}
+              aria-label="Toggle filters menu"
             >
               <svg width="14" height="14" viewBox="0 0 14 14" fill="none" aria-hidden="true">
                 <path d="M1 3h12M3 7h8M5 11h4" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
@@ -773,6 +788,7 @@ export default function ResourceLibrary({ resources }: { resources?: LiveResourc
 
         {/* Content area */}
         <div className="flex-1 min-w-0">
+          <h2 className="sr-only">Resource Results</h2>
           {/* Search */}
           <div className="mb-6">
             <AnimatedSearchBar 
@@ -793,10 +809,15 @@ export default function ResourceLibrary({ resources }: { resources?: LiveResourc
             <p className="text-sm" style={{ color: "var(--foreground-muted)" }}>
               <span style={{ color: "var(--foreground-secondary)", fontWeight: 600 }}>{filteredCount}</span>{" "}
               {filteredCount === 1 ? "resource" : "resources"} for{" "}
-              <span style={{ color: "var(--foreground)" }}>Grade {grade}</span>
+              <span style={{ color: "var(--foreground)" }}>{grade === null ? "All Grades" : `Grade ${grade}`}</span>
             </p>
             {activeFilterCount > 0 && (
-              <button type="button" onClick={clearAll} className="hidden sm:block text-xs font-semibold transition-colors duration-150 hover:text-white" style={{ color: "#9455ff" }}>
+              <button 
+                type="button" 
+                onClick={clearAll} 
+                className="hidden sm:block text-xs font-semibold transition-colors duration-150 hover:text-white focus:outline-none focus:underline" 
+                style={{ color: "#b890ff" }}
+              >
                 Clear filters
               </button>
             )}
@@ -807,7 +828,14 @@ export default function ResourceLibrary({ resources }: { resources?: LiveResourc
               {Array.from(selectedSubjects).map((s) => {
                 const style = getSubjectStyle(s);
                 return (
-                  <button key={s} type="button" onClick={() => toggleSubject(s)} className="inline-flex items-center gap-1 text-[0.65rem] font-semibold px-2 py-1 rounded-full transition-all duration-150 hover:opacity-75" style={{ background: style.bg, color: style.color, border: `1px solid ${style.border}` }}>
+                  <button 
+                    key={s} 
+                    type="button" 
+                    onClick={() => toggleSubject(s)} 
+                    className="inline-flex items-center gap-1 text-[0.65rem] font-semibold px-2 py-1 rounded-full transition-all duration-150 hover:opacity-75 focus:outline-none focus:ring-2 focus:ring-purple-500/40" 
+                    style={{ background: style.bg, color: style.color, border: `1px solid ${style.border}` }} 
+                    aria-label={`Remove filter for ${s}`}
+                  >
                     {s}
                     <svg width="8" height="8" viewBox="0 0 8 8" fill="none" aria-hidden="true"><path d="M1 1l6 6M7 1L1 7" stroke="currentColor" strokeWidth="1.3" strokeLinecap="round" /></svg>
                   </button>

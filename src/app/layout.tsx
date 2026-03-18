@@ -108,10 +108,30 @@ export default function RootLayout({
 }>) {
   const gaId = process.env.NEXT_PUBLIC_GA_ID;
 
+  const jsonLd = {
+    "@context": "https://schema.org",
+    "@type": "Organization",
+    name: "Ape Danuma EM",
+    url: "https://em.apedanuma.lk",
+    logo: "https://em.apedanuma.lk/logo.webp",
+    sameAs: [
+      "https://whatsapp.com/channel/0029VacAw2rHwXb5SN6oqI0N",
+      "https://t.me/ApeDanumaOfficial",
+      "https://www.youtube.com/@Ape_Danuma",
+      "https://www.tiktok.com/@ape_danuma",
+      "https://facebook.com/ApeDanuma",
+      "https://www.linkedin.com/company/ape-danuma/",
+    ],
+  };
+
   return (
     // suppressHydrationWarning added to html to prevent mismatches from browser extensions and GA injections
     <html lang="en" className={`${inter.variable} ${poppins.variable}`} suppressHydrationWarning>
       <body className="antialiased selection:bg-purple-500/30 selection:text-white">
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+        />
         {gaId && <GoogleAnalytics gaId={gaId} />}
         
         <BackgroundClouds />
