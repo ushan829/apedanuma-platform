@@ -349,6 +349,8 @@ export default function NavbarClient({ initialUser }: { initialUser: { name: str
             <button
               ref={toggleRef}
               onClick={toggleMenu}
+              aria-label={isOpen ? "Close main menu" : "Open main menu"}
+              aria-expanded={isOpen}
               className={`flex lg:hidden items-center justify-center w-10 h-10 rounded-xl transition-all duration-200 border ${
                 isOpen ? "bg-purple-500/20 border-purple-500/40" : "bg-white/5 border-white/10"
               }`}

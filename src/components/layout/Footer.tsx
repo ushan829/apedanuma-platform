@@ -34,7 +34,7 @@ export default function Footer() {
           {/* ── Quick Links ── */}
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-x-8 gap-y-10 lg:gap-x-16 items-start text-center sm:text-left">
             <div className="flex flex-col gap-5">
-              <h4 className="text-xs font-bold uppercase tracking-[0.2em] text-white">Platform</h4>
+              <p className="text-xs font-bold uppercase tracking-[0.2em] text-white">Platform</p>
               <nav className="flex flex-col gap-3 text-[0.9375rem]" aria-label="Platform links">
                 <Link href="/free-resources" className="hover:text-white transition-colors whitespace-nowrap rounded focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-purple-500/50" style={{ color: "var(--foreground-muted)" }}>Free Resources</Link>
                 <Link href="/premium-store" className="hover:text-white transition-colors whitespace-nowrap rounded focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-purple-500/50" style={{ color: "var(--foreground-muted)" }}>Premium Store</Link>
@@ -42,7 +42,7 @@ export default function Footer() {
               </nav>
             </div>
             <div className="flex flex-col gap-5">
-              <h4 className="text-xs font-bold uppercase tracking-[0.2em] text-white">Support</h4>
+              <p className="text-xs font-bold uppercase tracking-[0.2em] text-white">Support</p>
               <nav className="flex flex-col gap-3 text-[0.9375rem]" aria-label="Support links">
                 <Link href="/contact" className="hover:text-white transition-colors whitespace-nowrap rounded focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-purple-500/50" style={{ color: "var(--foreground-muted)" }}>Contact Us</Link>
                 <Link href="/about" className="hover:text-white transition-colors whitespace-nowrap rounded focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-purple-500/50" style={{ color: "var(--foreground-muted)" }}>About Us</Link>
@@ -50,7 +50,7 @@ export default function Footer() {
               </nav>
             </div>
             <div className="flex flex-col gap-5">
-              <h4 className="text-xs font-bold uppercase tracking-[0.2em] text-white">Legal</h4>
+              <p className="text-xs font-bold uppercase tracking-[0.2em] text-white">Legal</p>
               <nav className="flex flex-col gap-3 text-[0.9375rem]" aria-label="Legal links">
                 <Link href="/privacy-policy" className="hover:text-white transition-colors whitespace-nowrap rounded focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-purple-500/50" style={{ color: "var(--foreground-muted)" }}>Privacy Policy</Link>
                 <Link href="/terms-and-conditions" className="hover:text-white transition-colors whitespace-nowrap rounded focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-purple-500/50" style={{ color: "var(--foreground-muted)" }}>Terms & Conditions</Link>
@@ -62,7 +62,7 @@ export default function Footer() {
 
           {/* ── Social Media ── */}
           <div className="flex flex-col gap-6 items-center lg:items-end lg:text-right">
-            <h4 className="text-xs font-bold uppercase tracking-[0.2em] text-white">Follow Us</h4>
+            <p className="text-xs font-bold uppercase tracking-[0.2em] text-white">Follow Us</p>
             <ul className="grid grid-cols-3 gap-3.5" role="list">
               <li>
                 <a href="https://whatsapp.com/channel/0029VacAw2rHwXb5SN6oqI0N" target="_blank" rel="noopener noreferrer" className="p-2.5 rounded-xl border border-white/5 bg-white/5 hover:bg-white/10 hover:border-white/20 transition-all group block focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-green-500/50" aria-label="Follow us on WhatsApp">

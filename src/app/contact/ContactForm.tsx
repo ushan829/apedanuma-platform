@@ -94,7 +94,7 @@ export default function ContactForm() {
               type="text"
               autoComplete="name"
               placeholder="Kavindu Perera"
-              className="input"
+              className="w-full px-4 py-3 rounded-xl transition-colors bg-white/5 border border-white/10 text-white placeholder:text-slate-400 focus:outline-none focus:border-purple-500 focus:ring-1 focus:ring-purple-500/50 focus:bg-white/10"
               required
               value={name}
               onChange={(e) => setName(e.target.value)}
@@ -109,7 +109,7 @@ export default function ContactForm() {
               type="email"
               autoComplete="email"
               placeholder="you@example.com"
-              className="input"
+              className="w-full px-4 py-3 rounded-xl transition-colors bg-white/5 border border-white/10 text-white placeholder:text-slate-400 focus:outline-none focus:border-purple-500 focus:ring-1 focus:ring-purple-500/50 focus:bg-white/10"
               required
               value={email}
               onChange={(e) => setEmail(e.target.value)}
@@ -126,7 +126,7 @@ export default function ContactForm() {
             name="subject"
             type="text"
             placeholder="e.g. Missing resource, Technical issue, Feedback…"
-            className="input"
+            className="w-full px-4 py-3 rounded-xl transition-colors bg-white/5 border border-white/10 text-white placeholder:text-slate-400 focus:outline-none focus:border-purple-500 focus:ring-1 focus:ring-purple-500/50 focus:bg-white/10"
             required
             value={subject}
             onChange={(e) => setSubject(e.target.value)}
@@ -142,7 +142,7 @@ export default function ContactForm() {
             name="message"
             rows={6}
             placeholder="Describe your question or issue in detail…"
-            className="input resize-none"
+            className="w-full px-4 py-3 rounded-xl transition-colors bg-white/5 border border-white/10 text-white placeholder:text-slate-400 focus:outline-none focus:border-purple-500 focus:ring-1 focus:ring-purple-500/50 focus:bg-white/10 resize-none"
             required
             style={{ lineHeight: "1.6" }}
             value={message}

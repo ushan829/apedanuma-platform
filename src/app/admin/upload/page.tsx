@@ -28,14 +28,19 @@ function FieldLabel({ htmlFor, children, required }: { htmlFor: string; children
 }
 
 function InputField(props: React.InputHTMLAttributes<HTMLInputElement>) {
-  return <input {...props} className={`input ${props.className ?? ""}`} />;
+  return (
+    <input
+      {...props}
+      className={`w-full px-4 py-3 rounded-xl transition-all bg-white/5 border border-white/10 text-white placeholder:text-slate-400 focus:outline-none focus:border-purple-500 focus:ring-1 focus:ring-purple-500/50 focus:bg-white/10 ${props.className ?? ""}`}
+    />
+  );
 }
 
 function SelectField({ children, ...props }: React.SelectHTMLAttributes<HTMLSelectElement>) {
   return (
     <select
       {...props}
-      className="input appearance-none cursor-pointer bg-slate-900 text-white"
+      className="w-full px-4 py-3 rounded-xl transition-all bg-white/5 border border-white/10 text-white focus:outline-none focus:border-purple-500 focus:ring-1 focus:ring-purple-500/50 focus:bg-white/10 appearance-none cursor-pointer"
       style={{ backgroundImage: "none" }}
     >
       {children}
@@ -429,7 +434,7 @@ export default function AdminUploadPage() {
                   disabled={loading}
                 >
                   {GRADES.map((g) => (
-                    <option key={g} value={g}>Grade {g}</option>
+                    <option className="bg-slate-900 text-white" key={g} value={g}>Grade {g}</option>
                   ))}
                 </SelectField>
               </div>
@@ -443,7 +448,7 @@ export default function AdminUploadPage() {
                   disabled={loading}
                 >
                   {SUBJECT_VALUES.map((s) => (
-                    <option key={s} value={s}>{s}</option>
+                    <option className="bg-slate-900 text-white" key={s} value={s}>{s}</option>
                   ))}
                 </SelectField>
               </div>
@@ -460,7 +465,7 @@ export default function AdminUploadPage() {
                   disabled={loading}
                 >
                   {MATERIAL_TYPE_VALUES.map((m) => (
-                    <option key={m} value={m}>{m}</option>
+                    <option className="bg-slate-900 text-white" key={m} value={m}>{m}</option>
                   ))}
                 </SelectField>
               </div>
@@ -479,10 +484,10 @@ export default function AdminUploadPage() {
                   onChange={(e) => setTerm(e.target.value)}
                   disabled={loading || materialType !== "Term Test Paper"}
                 >
-                  <option value="">— Not applicable —</option>
-                  <option value="1">Term 1</option>
-                  <option value="2">Term 2</option>
-                  <option value="3">Term 3</option>
+                  <option className="bg-slate-900 text-white" value="">— Not applicable —</option>
+                  <option className="bg-slate-900 text-white" value="1">Term 1</option>
+                  <option className="bg-slate-900 text-white" value="2">Term 2</option>
+                  <option className="bg-slate-900 text-white" value="3">Term 3</option>
                 </SelectField>
               </div>
             </div>

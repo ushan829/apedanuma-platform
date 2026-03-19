@@ -50,9 +50,9 @@ export default function HomePage() {
                 >
                   {f.icon}
                 </div>
-                <h4 className="mb-3 font-display font-bold text-lg text-white">
+                <p className="mb-3 font-display font-bold text-lg text-white">
                   {f.title}
-                </h4>
+                </p>
                 <p className="text-sm leading-relaxed text-slate-400 group-hover:text-slate-300 transition-colors">
                   {f.description}
                 </p>
