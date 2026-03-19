@@ -5,9 +5,8 @@ import { inter, poppins } from "./fonts";
 import "./globals.css";
 import Navbar from "@/components/layout/Navbar";
 import Footer from "@/components/layout/Footer";
-import BackgroundClouds from "@/components/layout/BackgroundClouds";
-import BackgroundEffects from "@/components/layout/BackgroundEffects";
 import FramerProvider from "@/components/providers/FramerProvider";
+import { GoogleAnalytics } from "@next/third-parties/google";
 
 const BackToTop = dynamic(() => import("@/components/ui/BackToTop"), { 
   ssr: false 
@@ -15,6 +14,14 @@ const BackToTop = dynamic(() => import("@/components/ui/BackToTop"), {
 
 const ToastProvider = dynamic(() => import("@/components/layout/ToastProvider"), { 
   ssr: false 
+});
+
+const BackgroundClouds = dynamic(() => import("@/components/layout/BackgroundClouds"), {
+  ssr: false
+});
+
+const BackgroundEffects = dynamic(() => import("@/components/layout/BackgroundEffects"), {
+  ssr: false
 });
 
 export const metadata: Metadata = {
@@ -90,7 +97,7 @@ export default function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  const gaId = process.env.NEXT_PUBLIC_GA_ID;
+  const gaId = "G-20515HV157";
 
   const jsonLd = {
     "@context": "https://schema.org",
@@ -130,42 +137,15 @@ export default function RootLayout({
             <BackgroundEffects />
             <ToastProvider />
             <BackToTop />
+
+            {/* Cloudflare Web Analytics (Bypass initial payload) */}
+            <Script
+              src="https://static.cloudflareinsights.com/beacon.min.js"
+              strategy="lazyOnload"
+            />
+
+            {gaId && <GoogleAnalytics gaId={gaId} />}
           </FramerProvider>
-
-          {/* ──────────────────────────────────────────────────────────────
-              3rd-Party Scripts (Performance Optimized)
-              All non-critical scripts use strategy="lazyOnload" to bypass
-              the initial critical rendering path.
-              ────────────────────────────────────────────────────────────── */}
-
-          {gaId && (
-            <>
-              <Script
-                src={`https://www.googletagmanager.com/gtag/js?id=${gaId}`}
-                strategy="lazyOnload"
-              />
-              <Script id="google-analytics" strategy="lazyOnload">
-                {`
-                  window.dataLayer = window.dataLayer || [];
-                  function gtag(){dataLayer.push(arguments);}
-                  gtag('js', new Date());
-                  gtag('config', '${gaId}');
-                `}
-              </Script>
-            </>
-          )}
-
-          {/* PayHere Payment Gateway */}
-          <Script
-            src="https://www.payhere.lk/lib/payhere.js"
-            strategy="lazyOnload"
-          />
-
-          {/* Cloudflare Web Analytics (Bypass initial payload) */}
-          <Script
-            src="https://static.cloudflareinsights.com/beacon.min.js"
-            strategy="lazyOnload"
-          />
       </body>
     </html>
   );

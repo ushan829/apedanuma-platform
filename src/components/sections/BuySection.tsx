@@ -230,6 +230,12 @@ export default function BuySection({ resourceId, price }: BuySectionProps) {
         backdropFilter: "blur(24px)",
       }}
     >
+      {/* ── Payment Script ── */}
+      <Script
+        src="https://www.payhere.lk/lib/payhere.js"
+        strategy="lazyOnload"
+      />
+
       {/* Accessibility Status Region */}
       <div className="sr-only" aria-live="polite">
         {state === "loading" && "Initializing checkout..."}
