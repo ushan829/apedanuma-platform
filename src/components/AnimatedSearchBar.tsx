@@ -69,7 +69,7 @@ export default function AnimatedSearchBar({
         value={value}
         onChange={(e) => onChange(e.target.value)}
         placeholder={placeholder}
-        className="w-full pl-12 pr-16 py-4 bg-slate-800/40 backdrop-blur-md border border-slate-700/50 rounded-2xl text-white placeholder-slate-500/70 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:ring-offset-2 focus:ring-offset-[#0B0F19] transition-all duration-300 shadow-[0_0_15px_rgba(0,0,0,0.1)] focus:shadow-[0_0_25px_rgba(168,85,247,0.1)]"
+        className="w-full pl-12 pr-16 py-4 bg-white/5 border border-white/10 text-white placeholder:text-slate-400 focus:outline-none focus:border-purple-500 focus:ring-1 focus:ring-purple-500/50 focus:bg-white/10 transition-all rounded-2xl"
         aria-label="Search resources"
       />
 

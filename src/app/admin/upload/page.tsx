@@ -31,7 +31,7 @@ function InputField(props: React.InputHTMLAttributes<HTMLInputElement>) {
   return (
     <input
       {...props}
-      className={`w-full px-4 py-3 rounded-xl transition-all bg-white/5 border border-white/10 text-white placeholder:text-slate-400 focus:outline-none focus:border-purple-500 focus:ring-1 focus:ring-purple-500/50 focus:bg-white/10 ${props.className ?? ""}`}
+      className={`w-full px-4 py-3 rounded-xl bg-white/5 border border-white/10 text-white placeholder:text-slate-400 focus:outline-none focus:border-purple-500 focus:ring-1 focus:ring-purple-500/50 focus:bg-white/10 transition-all ${props.className ?? ""}`}
     />
   );
 }
@@ -40,7 +40,7 @@ function SelectField({ children, ...props }: React.SelectHTMLAttributes<HTMLSele
   return (
     <select
       {...props}
-      className="w-full px-4 py-3 rounded-xl transition-all bg-white/5 border border-white/10 text-white focus:outline-none focus:border-purple-500 focus:ring-1 focus:ring-purple-500/50 focus:bg-white/10 appearance-none cursor-pointer"
+      className="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/10 text-white focus:outline-none focus:border-purple-500 focus:ring-1 focus:ring-purple-500/50 focus:bg-white/10 transition-all appearance-none cursor-pointer"
       style={{ backgroundImage: "none" }}
     >
       {children}

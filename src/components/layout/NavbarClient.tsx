@@ -45,8 +45,8 @@ function Logo() {
         />
       </div>
 
-      <span className="flex flex-col leading-none select-none">
-        <span className="flex items-baseline gap-0 leading-none">
+      <div className="flex flex-col leading-none select-none">
+        <div className="flex items-baseline gap-0 leading-none">
           <span
             className="font-display font-extrabold tracking-tight transition-colors duration-300 text-slate-50"
             style={{ fontSize: "0.9375rem" }}
@@ -59,14 +59,14 @@ function Logo() {
           >
             EM
           </span>
-        </span>
+        </div>
         <span
           className="font-medium uppercase tracking-[0.14em] mt-[3px] transition-colors duration-300 text-slate-500"
           style={{ fontSize: "0.575rem" }}
         >
           O/L · English Medium · Sri Lanka
         </span>
-      </span>
+      </div>
     </Link>
   );
 }
@@ -338,7 +338,6 @@ export default function NavbarClient({ initialUser }: { initialUser: { name: str
               ref={toggleRef}
               onClick={() => setIsOpen(!isOpen)}
               aria-label={isOpen ? "Close main menu" : "Open main menu"}
-              aria-expanded={isOpen}
               className={`flex lg:hidden items-center justify-center w-10 h-10 rounded-xl transition-all duration-200 border ${
                 isOpen ? "bg-purple-500/20 border-purple-500/40" : "bg-white/5 border-white/10"
               }`}

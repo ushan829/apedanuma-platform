@@ -2,9 +2,7 @@ import type { Config } from "tailwindcss";
 
 const config: Config = {
   content: [
-    "./src/pages/**/*.{js,ts,jsx,tsx,mdx}",
-    "./src/components/**/*.{js,ts,jsx,tsx,mdx}",
-    "./src/app/**/*.{js,ts,jsx,tsx,mdx}",
+    "./src/**/*.{js,ts,jsx,tsx,mdx}",
   ],
   theme: {
     extend: {
@@ -121,8 +119,15 @@ const config: Config = {
         "fade-in": "fadeIn 0.5s ease forwards",
         "fade-up": "fadeUp 0.6s ease forwards",
         "glow-pulse": "glowPulse 3s ease-in-out infinite",
-        "shimmer": "shimmer 2.5s linear infinite",
+        "shimmer": "shimmer 3.5s linear infinite",
         "float": "float 6s ease-in-out infinite",
+        "hero-fade-up": "heroFadeUp 0.8s ease forwards",
+        "hero-scale-in": "heroScaleIn 0.8s ease forwards",
+        "hero-badge-pop": "heroBadgePop 0.6s cubic-bezier(0.34, 1.56, 0.64, 1) forwards",
+        "nav-link-fade-in": "navLinkFadeIn 0.4s ease forwards",
+        "mobile-menu-open": "mobileMenuOpen 0.3s ease-out forwards",
+        "mobile-menu-close": "mobileMenuClose 0.25s ease-in forwards",
+        "twinkle": "twinkle 4s ease-in-out infinite",
       },
       keyframes: {
         fadeIn: {
@@ -138,12 +143,41 @@ const config: Config = {
           "50%": { opacity: "1" },
         },
         shimmer: {
-          "0%": { backgroundPosition: "-200% 0" },
-          "100%": { backgroundPosition: "200% 0" },
+          "0%": { backgroundPosition: "-200% 0", transform: "translateX(-100%)" },
+          "100%": { backgroundPosition: "200% 0", transform: "translateX(100%)" },
         },
         float: {
           "0%, 100%": { transform: "translateY(0)" },
           "50%": { transform: "translateY(-8px)" },
+        },
+        heroFadeUp: {
+          from: { opacity: "0", transform: "translateY(28px)", filter: "blur(4px)" },
+          to: { opacity: "1", transform: "translateY(0)", filter: "blur(0)" },
+        },
+        heroScaleIn: {
+          from: { opacity: "0", transform: "scale(0.92) translateY(20px)" },
+          to: { opacity: "1", transform: "scale(1) translateY(0)" },
+        },
+        heroBadgePop: {
+          from: { opacity: "0", transform: "scale(0.85) translateY(8px)" },
+          "60%": { opacity: "1", transform: "scale(1.04) translateY(-2px)" },
+          to: { opacity: "1", transform: "scale(1) translateY(0)" },
+        },
+        navLinkFadeIn: {
+          from: { opacity: "0", transform: "translateX(-8px)" },
+          to: { opacity: "1", transform: "translateX(0)" },
+        },
+        mobileMenuOpen: {
+          from: { opacity: "0", transform: "scaleY(0.95)" },
+          to: { opacity: "1", transform: "scaleY(1)" },
+        },
+        mobileMenuClose: {
+          from: { opacity: "1", transform: "scaleY(1)" },
+          to: { opacity: "0", transform: "scaleY(0.95)" },
+        },
+        twinkle: {
+          "0%, 100%": { transform: "translateY(0) scale(1)", opacity: "0.3" },
+          "50%": { transform: "translateY(-5px) scale(1.05)", opacity: "0.5" },
         },
       },
       borderRadius: {

@@ -134,13 +134,31 @@ export default function RootLayout({
 
   return (
     <html lang="en" className={`${inter.variable} ${poppins.variable}`} suppressHydrationWarning>
+      <head>
+        <link rel="preconnect" href="https://www.payhere.lk" />
+      </head>
       <body className="antialiased selection:bg-purple-500/30 selection:text-white">
         <FramerProvider>
           <script
             type="application/ld+json"
             dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
           />
-          {gaId && <GoogleAnalytics gaId={gaId} />}
+          {gaId && (
+            <>
+              <Script
+                src={`https://www.googletagmanager.com/gtag/js?id=${gaId}`}
+                strategy="lazyOnload"
+              />
+              <Script id="google-analytics" strategy="lazyOnload">
+                {`
+                  window.dataLayer = window.dataLayer || [];
+                  function gtag(){dataLayer.push(arguments);}
+                  gtag('js', new Date());
+                  gtag('config', '${gaId}');
+                `}
+              </Script>
+            </>
+          )}
           
           <BackgroundClouds />
           <BackgroundEffects />
@@ -156,8 +174,6 @@ export default function RootLayout({
 
           <ToastProvider />
           <BackToTop />
-          
-          <Script src="https://www.payhere.lk/lib/payhere.js" strategy="lazyOnload" />
         </FramerProvider>
       </body>
     </html>

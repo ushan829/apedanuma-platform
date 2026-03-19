@@ -68,14 +68,14 @@ export default function UniversalCard({ resource, isPremium = false }: Universal
               alt={resource.title}
               fill
               className="object-cover"
-              sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+              sizes="(max-width: 768px) 48px, 48px"
             />
           </div>
         ) : (
           <DocIcon subject={resource.subject} />
         )}
         <div className="flex flex-col gap-1.5 min-w-0">
-          <div className="flex flex-wrap gap-1">
+          <div className="flex flex-wrap gap-1 items-center">
             <span
               className="inline-flex items-center gap-1.5 text-[0.58rem] font-bold uppercase tracking-widest px-1.5 py-0.5 rounded-md"
               style={{ background: "rgba(255,255,255,0.04)", color: subjectStyle.color, border: "1px solid rgba(255,255,255,0.08)" }}
@@ -85,8 +85,6 @@ export default function UniversalCard({ resource, isPremium = false }: Universal
             <span className="inline-flex items-center gap-1.5 text-[0.58rem] font-bold uppercase tracking-widest px-1.5 py-0.5 rounded-md bg-white/[0.03] text-foreground-muted border border-white/[0.06]">
               Gr {resource.grade}
             </span>
-          </div>
-          <div className="flex flex-wrap gap-1">
              <span
               className={`inline-flex items-center gap-1.5 text-[0.58rem] font-bold uppercase tracking-widest px-1.5 py-0.5 rounded-md ${
                 isPremium 
@@ -97,7 +95,7 @@ export default function UniversalCard({ resource, isPremium = false }: Universal
               {resource.term ? `Term ${resource.term}` : materialType}
             </span>
             {resource.year && (
-              <span className="text-[0.6rem] font-semibold text-foreground-muted">{resource.year}</span>
+              <span className="text-[0.6rem] font-semibold text-foreground-muted ml-0.5">{resource.year}</span>
             )}
           </div>
         </div>

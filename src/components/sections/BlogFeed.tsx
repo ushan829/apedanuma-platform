@@ -89,13 +89,12 @@ function PostCard({ post }: { post: PostSummary }) {
 
         {/* Title */}
         <h3
-          className="font-display font-semibold text-base leading-snug mb-2.5 line-clamp-2 flex-1"
+          className="font-display font-semibold text-base leading-snug mb-2.5 line-clamp-2 flex-1 hover:text-[#b890ff] transition-colors duration-200"
           style={{ color: "var(--foreground)" }}
         >
           <Link
             href={`/blog/${post.slug}`}
-            className="hover:text-[#b890ff] transition-colors duration-200"
-            style={{ textDecoration: "none" }}
+            style={{ textDecoration: "none", color: "inherit" }}
           >
             {post.title}
           </Link>
@@ -104,8 +103,7 @@ function PostCard({ post }: { post: PostSummary }) {
         {/* Excerpt */}
         {post.excerpt && (
           <p
-            className="text-sm leading-relaxed mb-4 line-clamp-2"
-            style={{ color: "var(--foreground-secondary)" }}
+            className="text-sm leading-relaxed mb-4 line-clamp-2 text-foreground-secondary"
           >
             {post.excerpt}
           </p>
@@ -117,12 +115,7 @@ function PostCard({ post }: { post: PostSummary }) {
             {post.tags.slice(0, 3).map((tag) => (
               <span
                 key={tag}
-                className="text-[0.6rem] px-2 py-0.5 rounded-full font-medium"
-                style={{
-                  background: "rgba(255,255,255,0.05)",
-                  color: "var(--foreground-muted)",
-                  border: "1px solid rgba(255,255,255,0.08)",
-                }}
+                className="text-[0.6rem] px-2 py-0.5 rounded-full font-medium bg-white/5 text-foreground-muted border border-white/10"
               >
                 #{tag}
               </span>
@@ -132,21 +125,20 @@ function PostCard({ post }: { post: PostSummary }) {
 
         {/* Footer */}
         <div
-          className="flex items-center justify-between mt-auto pt-4"
-          style={{ borderTop: "1px solid rgba(255,255,255,0.05)" }}
+          className="flex items-center justify-between mt-auto pt-4 border-t border-white/5"
         >
-          <div>
-            <p className="text-xs font-medium" style={{ color: "var(--foreground-secondary)" }}>
+          <div className="flex flex-col">
+            <span className="text-xs font-medium text-foreground-secondary">
               {post.author}
-            </p>
-            <p className="text-xs" style={{ color: "var(--foreground-muted)" }}>
-              {fmtDate(post.publishedAt)} · {post.readingTimeMinutes} min read
-            </p>
+            </span>
+            <span className="text-xs text-foreground-muted">
+              {fmtDate(post.publishedAt)} · {post.readingTimeMinutes} min
+            </span>
           </div>
           <Link
             href={`/blog/${post.slug}`}
-            className="inline-flex items-center gap-1 text-xs font-semibold group/link shrink-0"
-            style={{ color: "#9455ff", textDecoration: "none" }}
+            className="inline-flex items-center gap-1 text-xs font-semibold group/link shrink-0 text-arcane-400"
+            style={{ textDecoration: "none" }}
             aria-label={`Read: ${post.title}`}
           >
             Read
@@ -261,7 +253,7 @@ function NewsletterBlock() {
             onChange={(e) => setEmail(e.target.value)}
             placeholder="your@email.com"
             required
-            className="flex-1 px-4 py-3 rounded-xl transition-all bg-white/5 border border-white/10 text-white placeholder:text-slate-400 focus:outline-none focus:border-purple-500 focus:ring-1 focus:ring-purple-500/50 focus:bg-white/10 text-sm"
+            className="flex-1 px-4 py-3 rounded-xl bg-white/5 border border-white/10 text-white placeholder:text-slate-400 focus:outline-none focus:border-purple-500 focus:ring-1 focus:ring-purple-500/50 focus:bg-white/10 transition-all text-sm"
             disabled={status === "loading"}
           />
           <button
@@ -319,7 +311,7 @@ export default function BlogFeed({ initialPosts }: { initialPosts: PostSummary[]
             <path d="M10 10l3 3" stroke="currentColor" strokeWidth="1.3" strokeLinecap="round" />
           </svg>
           <input
-            className="w-full pl-9 pr-4 py-3 rounded-xl transition-all bg-white/5 border border-white/10 text-white placeholder:text-slate-400 focus:outline-none focus:border-purple-500 focus:ring-1 focus:ring-purple-500/50 focus:bg-white/10 text-sm"
+            className="w-full pl-9 pr-4 py-3 rounded-xl bg-white/5 border border-white/10 text-white placeholder:text-slate-400 focus:outline-none focus:border-purple-500 focus:ring-1 focus:ring-purple-500/50 focus:bg-white/10 transition-all text-sm"
             placeholder="Search articles..."
             value={search}
             onChange={(e) => setSearch(e.target.value)}

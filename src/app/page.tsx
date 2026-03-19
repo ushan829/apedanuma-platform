@@ -9,12 +9,12 @@ import HeroSection from "@/components/sections/HeroSection";
  * the initial JavaScript payload and improve Total Blocking Time (TBT).
  */
 const FeaturesGrid = dynamic(() => import("@/components/sections/FeaturesGrid"), {
-  ssr: true, // Keep SSR true for SEO visibility of text content
+  ssr: false, // Lazy-load on client side to reduce initial bundle
   loading: () => <div className="min-h-[400px]" />
 });
 
 const CTABanner = dynamic(() => import("@/components/sections/CTABanner"), {
-  ssr: true,
+  ssr: false,
   loading: () => <div className="min-h-[300px]" />
 });
 

@@ -70,7 +70,7 @@ function StaticResourceCard({ resource }: { resource: FreeResource }) {
       <div className="flex items-start gap-3">
         <DocIcon subject={resource.subject} />
         <div className="flex flex-col gap-1.5 min-w-0">
-          <div className="flex flex-wrap gap-1">
+          <div className="flex flex-wrap gap-1 items-center">
             <span
               className="inline-flex text-[0.58rem] font-bold uppercase tracking-wider px-1.5 py-0.5 rounded-md"
               style={{ background: subjectStyle.bg, color: subjectStyle.color, border: `1px solid ${subjectStyle.border}` }}
@@ -88,10 +88,10 @@ function StaticResourceCard({ resource }: { resource: FreeResource }) {
             >
               {resource.term ? `Term ${resource.term}` : typeMeta.shortLabel}
             </span>
+            {resource.year && (
+              <span className="text-[0.6rem] text-slate-400 ml-0.5">{resource.year}</span>
+            )}
           </div>
-          {resource.year && (
-            <span className="text-[0.6rem] text-slate-400">{resource.year}</span>
-          )}
         </div>
       </div>
       <h3 className="font-display font-semibold text-sm leading-snug line-clamp-2 flex-1 text-white">
@@ -144,14 +144,14 @@ function LiveResourceCard({ resource }: { resource: LiveResource }) {
               alt={`${resource.title} - Grade ${resource.grade} ${resource.subject} study material`}
               fill
               className="object-cover"
-              sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+              sizes="(max-width: 768px) 48px, 48px"
             />
           </div>
         ) : (
           <DocIcon subject={resource.subject} />
         )}
         <div className="flex flex-col gap-1.5 min-w-0">
-          <div className="flex flex-wrap gap-1">
+          <div className="flex flex-wrap gap-1 items-center">
             <span
               className="inline-flex text-[0.58rem] font-bold uppercase tracking-wider px-1.5 py-0.5 rounded-md"
               style={{ background: subjectStyle.bg, color: subjectStyle.color, border: `1px solid ${subjectStyle.border}` }}
@@ -169,10 +169,10 @@ function LiveResourceCard({ resource }: { resource: LiveResource }) {
             >
               {resource.term ? `Term ${resource.term}` : typeMeta.shortLabel}
             </span>
+            {resource.year && (
+              <span className="text-[0.6rem] text-slate-400 ml-0.5">{resource.year}</span>
+            )}
           </div>
-          {resource.year && (
-            <span className="text-[0.6rem] text-slate-400">{resource.year}</span>
-          )}
         </div>
       </div>
       <h3 className="font-display font-semibold text-sm leading-snug line-clamp-2 flex-1 text-white">

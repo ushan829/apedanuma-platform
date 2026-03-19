@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect, useRef } from "react";
+import Script from "next/script";
 import Link from "next/link";
 import { toast } from "sonner";
 import { useRouter, usePathname } from "next/navigation";
@@ -229,6 +230,7 @@ export default function BuySection({ resourceId, price }: BuySectionProps) {
         backdropFilter: "blur(24px)",
       }}
     >
+      <Script src="https://www.payhere.lk/lib/payhere.js" strategy="lazyOnload" />
       {/* Accessibility Status Region */}
       <div className="sr-only" aria-live="polite">
         {state === "loading" && "Initializing checkout..."}
