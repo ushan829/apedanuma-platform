@@ -86,12 +86,12 @@ export default function UltraPremiumDashboard() {
         {/* Header with Light Leak Effect */}
         <div className="flex items-center justify-between mb-8 relative">
           <div className="relative">
-            <h3 className="text-xl font-black text-white tracking-tighter flex items-center gap-2">
+            <p className="text-xl font-black text-white tracking-tighter flex items-center gap-2">
               <span className="relative">
                 QUICK ACCESS
                 <span className="absolute inset-0 bg-gradient-to-r from-arcane-400 via-amber-400 to-cyan-400 blur-md opacity-20 animate-pulse" />
               </span>
-            </h3>
+            </p>
             <p className="text-[0.7rem] font-bold text-slate-400 uppercase tracking-[0.2em] mt-1 opacity-70">
               Select Your Focus Subject
             </p>

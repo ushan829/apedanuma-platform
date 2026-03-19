@@ -35,7 +35,7 @@ export default function HeroSection() {
             </div>
 
             <h1
-              className="font-display leading-[1.08] tracking-tight"
+              className="font-display leading-[1.08] tracking-tight text-white"
               style={{ fontSize: "clamp(2.4rem, 6.5vw, 4.5rem)" }}
             >
               <span className="text-foreground">Master Your</span>
@@ -51,7 +51,7 @@ export default function HeroSection() {
             </h1>
 
             <p
-              className="text-base sm:text-lg leading-[1.75] max-w-[520px] text-foreground-secondary"
+              className="text-base sm:text-lg leading-[1.75] max-w-[520px] text-slate-300"
             >
               Access <span className="font-medium text-white">elite study materials</span>, comprehensive notes, and expert guidance designed exclusively for <span className="font-bold text-arcane-400">English Medium achievers</span>.
             </p>

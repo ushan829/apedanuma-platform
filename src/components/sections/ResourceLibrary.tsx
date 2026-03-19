@@ -326,7 +326,7 @@ function Sidebar({
   return (
     <nav className="scrollbar-hide overflow-y-auto" aria-label="Resource Filters">
       <div className="flex items-center justify-between mb-5">
-        <h2 className="text-xs font-bold uppercase tracking-widest text-slate-400">Filters</h2>
+        <p className="text-xs font-bold uppercase tracking-widest text-slate-400">Filters</p>
         {activeFilterCount > 0 && (
           <button 
             type="button" 
@@ -439,11 +439,11 @@ function Sidebar({
           <select
             value={year ?? ""}
             onChange={(e) => onYearChange(e.target.value ? Number(e.target.value) : null)}
-            className={`w-full rounded-xl px-3 py-2 text-xs font-medium appearance-none focus:outline-none focus:ring-2 focus:ring-purple-500/40 bg-white/5 border ${year ? "border-purple-500/30 text-purple-300" : "border-white/10 text-slate-400"} cursor-pointer`}
+            className="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/10 text-white focus:outline-none focus:border-purple-500 focus:ring-1 focus:ring-purple-500/50 focus:bg-white/10 transition-all appearance-none cursor-pointer text-sm"
           >
-            <option value="">All Years</option>
+            <option className="bg-slate-900 text-white" value="">All Years</option>
             {availableYears.map((y) => (
-              <option key={y} value={y}>{y}</option>
+              <option className="bg-slate-900 text-white" key={y} value={y}>{y}</option>
             ))}
           </select>
         </div>

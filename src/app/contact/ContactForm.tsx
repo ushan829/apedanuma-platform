@@ -154,7 +154,7 @@ export default function ContactForm() {
         {/* Privacy note */}
         <p className="text-xs" style={{ color: "var(--foreground-muted)" }}>
           By submitting this form you agree to our{" "}
-          <a href="/privacy" className="underline underline-offset-2 hover:text-[#b890ff] transition-colors">
+          <a href="/privacy-policy" className="underline underline-offset-2 hover:text-[#b890ff] transition-colors">
             Privacy Policy
           </a>
           . We never share your data with third parties.

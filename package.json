@@ -6,7 +6,6 @@
     ">0.3%",
     "not dead",
     "not op_mini all",
-    "not IE > 0",
     "last 2 versions"
   ],
   "scripts": {

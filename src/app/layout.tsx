@@ -2,7 +2,6 @@ import type { Metadata, Viewport } from "next";
 import { Inter, Poppins } from "next/font/google";
 import Script from "next/script";
 import dynamic from "next/dynamic";
-import { GoogleAnalytics } from "@next/third-parties/google";
 import "./globals.css";
 import Navbar from "@/components/layout/Navbar";
 import FramerProvider from "@/components/providers/FramerProvider";
@@ -136,6 +135,7 @@ export default function RootLayout({
     <html lang="en" className={`${inter.variable} ${poppins.variable}`} suppressHydrationWarning>
       <head>
         <link rel="preconnect" href="https://www.payhere.lk" />
+        <link rel="preconnect" href="https://www.googletagmanager.com" />
       </head>
       <body className="antialiased selection:bg-purple-500/30 selection:text-white">
         <FramerProvider>
@@ -159,6 +159,12 @@ export default function RootLayout({
               </Script>
             </>
           )}
+
+          {/* PayHere Payment Gateway */}
+          <Script
+            src="https://www.payhere.lk/lib/payhere.js"
+            strategy="lazyOnload"
+          />
           
           <BackgroundClouds />
           <BackgroundEffects />

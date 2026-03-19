@@ -244,13 +244,11 @@ export default function FilterSidebar({
             id="year-filter"
             value={year ?? ""}
             onChange={(e) => onYearChange(e.target.value ? Number(e.target.value) : null)}
-            className={`w-full rounded-xl px-3 py-2 text-xs font-bold appearance-none focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-arcane-500/50 cursor-pointer bg-white/[0.05] ${
-              year ? "border-arcane-500/30 text-arcane-300" : "border-white/[0.09] text-foreground-muted"
-            } border`}
+            className="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/10 text-white placeholder:text-slate-400 focus:outline-none focus:border-purple-500 focus:ring-1 focus:ring-purple-500/50 focus:bg-white/10 transition-all appearance-none cursor-pointer text-sm"
           >
-            <option value="">All Years</option>
+            <option className="bg-slate-900 text-white" value="">All Years</option>
             {availableYears.map((y) => (
-              <option key={y} value={y}>{y}</option>
+              <option className="bg-slate-900 text-white" key={y} value={y}>{y}</option>
             ))}
           </select>
         </div>
