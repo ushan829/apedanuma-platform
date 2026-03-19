@@ -1,18 +1,17 @@
 "use client";
 
-import { LazyMotion, domAnimation } from "framer-motion";
+import { LazyMotion } from "framer-motion";
 
-/**
- * Technical SEO & Performance: Framer Motion Optimization
- * 
- * By using LazyMotion and domAnimation, we reduce the initial 
- * JavaScript bundle size significantly. Framer Motion features 
- * are loaded only when needed.
- */
+// Technical SEO & Performance: Framer Motion Optimization
+// By using dynamic import for domAnimation, we prevent the heavy 
+// physics and animation logic from evaluating synchronously on initial load.
+const loadFeatures = () => import("framer-motion").then((res) => res.domAnimation);
+
 export default function FramerProvider({ children }: { children: React.ReactNode }) {
   return (
-    <LazyMotion features={domAnimation} strict>
+    <LazyMotion features={loadFeatures} strict>
       {children}
     </LazyMotion>
   );
 }
+

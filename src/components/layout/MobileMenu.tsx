@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { m, LazyMotion, domAnimation, AnimatePresence } from "framer-motion";
+import { m, AnimatePresence } from "framer-motion";
 
 interface NavItem {
   label: string;
@@ -85,82 +85,80 @@ export default function MobileMenu({
   handleLogout,
 }: MobileMenuProps) {
   return (
-    <LazyMotion features={domAnimation} strict>
-      <AnimatePresence>
-        <m.div
-          initial={{ opacity: 0, height: 0 }}
-          animate={{ opacity: 1, height: "auto" }}
-          exit={{ opacity: 0, height: 0 }}
-          transition={{ duration: 0.2, ease: "easeInOut" }}
-          className="fixed inset-x-0 top-[68px] bg-slate-950/98 backdrop-blur-3xl border-b border-white/10 shadow-2xl origin-top lg:hidden overflow-hidden"
-        >
-          <div className="container-xl py-6 pb-8">
-            <nav className="flex flex-col gap-1.5 mb-6">
-              {navLinks.map((item, i) => (
-                <MobileNavLink
-                  key={item.href}
-                  item={item}
-                  isActive={item.href === "/" ? pathname === "/" : pathname.startsWith(item.href)}
-                  index={i}
-                  onClick={onClose}
-                />
-              ))}
-            </nav>
+    <AnimatePresence>
+      <m.div
+        initial={{ opacity: 0, height: 0 }}
+        animate={{ opacity: 1, height: "auto" }}
+        exit={{ opacity: 0, height: 0 }}
+        transition={{ duration: 0.2, ease: "easeInOut" }}
+        className="fixed inset-x-0 top-[68px] bg-slate-950/98 backdrop-blur-3xl border-b border-white/10 shadow-2xl origin-top lg:hidden overflow-hidden"
+      >
+        <div className="container-xl py-6 pb-8">
+          <nav className="flex flex-col gap-1.5 mb-6">
+            {navLinks.map((item, i) => (
+              <MobileNavLink
+                key={item.href}
+                item={item}
+                isActive={item.href === "/" ? pathname === "/" : pathname.startsWith(item.href)}
+                index={i}
+                onClick={onClose}
+              />
+            ))}
+          </nav>
 
-            <div className="w-full h-px bg-gradient-to-r from-transparent via-white/10 to-transparent mb-6" />
+          <div className="w-full h-px bg-gradient-to-r from-transparent via-white/10 to-transparent mb-6" />
 
-            <div className="flex flex-col gap-3 px-1">
-              {isLoggedIn ? (
-                <>
-                  <div className="flex items-center gap-3 rounded-xl px-4 py-3 bg-purple-500/10 border border-purple-500/20">
-                    <span className="flex items-center justify-center w-8 h-8 rounded-lg text-xs font-bold bg-gradient-to-br from-purple-500 to-purple-800 text-purple-100">
-                      {initials}
-                    </span>
-                    <div className="min-w-0">
-                      <p className="text-sm font-bold truncate text-white">{userName}</p>
-                      <p className="text-[0.65rem] font-bold text-purple-400 uppercase tracking-wider">Student</p>
-                    </div>
+          <div className="flex flex-col gap-3 px-1">
+            {isLoggedIn ? (
+              <>
+                <div className="flex items-center gap-3 rounded-xl px-4 py-3 bg-purple-500/10 border border-purple-500/20">
+                  <span className="flex items-center justify-center w-8 h-8 rounded-lg text-xs font-bold bg-gradient-to-br from-purple-500 to-purple-800 text-purple-100">
+                    {initials}
+                  </span>
+                  <div className="min-w-0">
+                    <p className="text-sm font-bold truncate text-white">{userName}</p>
+                    <p className="text-[0.65rem] font-bold text-purple-400 uppercase tracking-wider">Student</p>
                   </div>
-                  <Link
-                    href={isAdmin ? "/admin" : "/dashboard"}
-                    onClick={onClose}
-                    className={`flex items-center justify-center gap-2 rounded-xl py-3.5 text-sm font-bold shadow-lg transition-all duration-300 ${
-                      isAdmin 
-                        ? "bg-gradient-to-r from-amber-500 to-amber-600 text-slate-950" 
-                        : "bg-gradient-to-r from-purple-500 to-purple-600 text-white"
-                    }`}
-                  >
-                    Go to Dashboard
-                  </Link>
-                  <button
-                    onClick={handleLogout}
-                    className="flex items-center justify-center gap-2 rounded-xl py-3.5 text-sm font-bold text-red-400 bg-red-500/10 border border-red-500/20"
-                  >
-                    Logout
-                  </button>
-                </>
-              ) : (
-                <>
-                  <Link
-                    href="/login"
-                    onClick={onClose}
-                    className="flex items-center justify-center gap-2 rounded-xl py-3.5 text-sm font-bold text-slate-300 bg-white/5 border border-white/10"
-                  >
-                    Sign In
-                  </Link>
-                  <Link
-                    href="/register"
-                    onClick={onClose}
-                    className="inline-flex items-center justify-center gap-2 font-display font-bold text-sm tracking-wide py-4 rounded-xl text-white bg-gradient-to-br from-purple-500 to-purple-800 border border-purple-500/50 shadow-[0_0_20px_rgba(124,31,255,0.3)] w-full"
-                  >
-                    Create Free Account
-                  </Link>
-                </>
-              )}
-            </div>
+                </div>
+                <Link
+                  href={isAdmin ? "/admin" : "/dashboard"}
+                  onClick={onClose}
+                  className={`flex items-center justify-center gap-2 rounded-xl py-3.5 text-sm font-bold shadow-lg transition-all duration-300 ${
+                    isAdmin 
+                      ? "bg-gradient-to-r from-amber-500 to-amber-600 text-slate-950" 
+                      : "bg-gradient-to-r from-purple-500 to-purple-600 text-white"
+                  }`}
+                >
+                  Go to Dashboard
+                </Link>
+                <button
+                  onClick={handleLogout}
+                  className="flex items-center justify-center gap-2 rounded-xl py-3.5 text-sm font-bold text-red-400 bg-red-500/10 border border-red-500/20"
+                >
+                  Logout
+                </button>
+              </>
+            ) : (
+              <>
+                <Link
+                  href="/login"
+                  onClick={onClose}
+                  className="flex items-center justify-center gap-2 rounded-xl py-3.5 text-sm font-bold text-slate-300 bg-white/5 border border-white/10"
+                >
+                  Sign In
+                </Link>
+                <Link
+                  href="/register"
+                  onClick={onClose}
+                  className="inline-flex items-center justify-center gap-2 font-display font-bold text-sm tracking-wide py-4 rounded-xl text-white bg-gradient-to-br from-purple-500 to-purple-800 border border-purple-500/50 shadow-[0_0_20px_rgba(124,31,255,0.3)] w-full"
+                >
+                  Create Free Account
+                </Link>
+              </>
+            )}
           </div>
-        </m.div>
-      </AnimatePresence>
-    </LazyMotion>
+        </div>
+      </m.div>
+    </AnimatePresence>
   );
 }

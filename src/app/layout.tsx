@@ -7,6 +7,7 @@ import Navbar from "@/components/layout/Navbar";
 import Footer from "@/components/layout/Footer";
 import BackgroundClouds from "@/components/layout/BackgroundClouds";
 import BackgroundEffects from "@/components/layout/BackgroundEffects";
+import FramerProvider from "@/components/providers/FramerProvider";
 
 const BackToTop = dynamic(() => import("@/components/ui/BackToTop"), { 
   ssr: false 
@@ -115,19 +116,21 @@ export default function RootLayout({
             dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
           />
           
-          <Navbar />
-          
-          <div className="pt-[68px] min-h-dvh flex flex-col">
-            <main className="flex-1">
-              {children}
-            </main>
-            <Footer />
-          </div>
+          <FramerProvider>
+            <Navbar />
+            
+            <div className="pt-[68px] min-h-dvh flex flex-col">
+              <main className="flex-1">
+                {children}
+              </main>
+              <Footer />
+            </div>
 
-          <BackgroundClouds />
-          <BackgroundEffects />
-          <ToastProvider />
-          <BackToTop />
+            <BackgroundClouds />
+            <BackgroundEffects />
+            <ToastProvider />
+            <BackToTop />
+          </FramerProvider>
 
           {/* ──────────────────────────────────────────────────────────────
               3rd-Party Scripts (Performance Optimized)
