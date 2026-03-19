@@ -133,16 +133,27 @@ export default function RootLayout({
 
   return (
     <html lang="en" className={`${inter.variable} ${poppins.variable}`} suppressHydrationWarning>
-      <head>
-        <link rel="preconnect" href="https://www.payhere.lk" />
-        <link rel="preconnect" href="https://www.googletagmanager.com" />
-      </head>
       <body className="antialiased selection:bg-purple-500/30 selection:text-white">
         <FramerProvider>
           <script
             type="application/ld+json"
             dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
           />
+          
+          <Navbar />
+          
+          <div className="pt-[68px] min-h-dvh flex flex-col">
+            <main className="flex-1">
+              {children}
+            </main>
+            <Footer />
+          </div>
+
+          <BackgroundClouds />
+          <BackgroundEffects />
+          <ToastProvider />
+          <BackToTop />
+
           {gaId && (
             <>
               <Script
@@ -160,26 +171,11 @@ export default function RootLayout({
             </>
           )}
 
-          {/* PayHere Payment Gateway */}
+          {/* PayHere Payment Gateway - Loaded ONLY when needed or on idle */}
           <Script
             src="https://www.payhere.lk/lib/payhere.js"
             strategy="lazyOnload"
           />
-          
-          <BackgroundClouds />
-          <BackgroundEffects />
-          
-          <Navbar />
-          
-          <div className="pt-[68px] min-h-dvh flex flex-col">
-            <main className="flex-1">
-              {children}
-            </main>
-            <Footer />
-          </div>
-
-          <ToastProvider />
-          <BackToTop />
         </FramerProvider>
       </body>
     </html>

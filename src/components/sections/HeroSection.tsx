@@ -83,7 +83,7 @@ export default function HeroSection() {
             </div>
           </div>
 
-          <div className="hidden lg:flex items-center justify-center w-full lg:animate-heroScaleIn lg:[animation-duration:0.3s] lg:[animation-delay:0.2s] motion-reduce:animate-none min-h-[500px]">
+          <div className="hidden lg:flex items-center justify-center w-full min-h-[500px]">
             {/* Desktop-only: Heavy dashboard logic */}
             <DesktopHeroVisuals type="dashboard" />
           </div>
