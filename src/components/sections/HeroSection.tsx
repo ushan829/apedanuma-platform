@@ -57,7 +57,7 @@ export default function HeroSection() {
             </p>
 
             {/* CTA Container */}
-            <div className="flex flex-col sm:flex-row gap-4 lg:animate-heroFadeUp lg:[animation-duration:0.25s] motion-reduce:animate-none">
+            <div className="flex flex-col sm:flex-row gap-4 motion-reduce:animate-none">
               <Link 
                 href="/premium-store" 
                 className="relative inline-flex items-center justify-center gap-2.5 font-display font-bold text-[0.9375rem] tracking-wide px-8 py-3.5 rounded-[0.875rem] text-white bg-gradient-to-br from-purple-500 via-purple-600 to-purple-800 shadow-[0_0_24px_rgba(124,31,255,0.4),0_8px_24px_rgba(0,0,0,0.4),inset_0_1px_0_rgba(255,255,255,0.15)] border border-purple-400/50 transition-all duration-300 hover:-translate-y-1 hover:scale-[1.02] hover:shadow-[0_0_36px_rgba(124,31,255,0.55),0_12px_32px_rgba(0,0,0,0.5)] overflow-hidden group w-full sm:w-auto"
