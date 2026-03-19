@@ -4,21 +4,11 @@ import dynamic from "next/dynamic";
 import { inter, poppins } from "./fonts";
 import "./globals.css";
 import Navbar from "@/components/layout/Navbar";
-import FramerProvider from "@/components/providers/FramerProvider";
-
-const Footer = dynamic(() => import("@/components/layout/Footer"), { 
-  ssr: false 
-});
+import Footer from "@/components/layout/Footer";
+import BackgroundClouds from "@/components/layout/BackgroundClouds";
+import BackgroundEffects from "@/components/layout/BackgroundEffects";
 
 const BackToTop = dynamic(() => import("@/components/ui/BackToTop"), { 
-  ssr: false 
-});
-
-const BackgroundClouds = dynamic(() => import("@/components/layout/BackgroundClouds"), { 
-  ssr: false 
-});
-
-const BackgroundEffects = dynamic(() => import("@/components/layout/BackgroundEffects"), { 
   ssr: false 
 });
 
@@ -120,7 +110,6 @@ export default function RootLayout({
   return (
     <html lang="en" className={`${inter.variable} ${poppins.variable}`} suppressHydrationWarning>
       <body className="antialiased selection:bg-purple-500/30 selection:text-white font-sans">
-        <FramerProvider>
           <script
             type="application/ld+json"
             dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
@@ -140,6 +129,12 @@ export default function RootLayout({
           <ToastProvider />
           <BackToTop />
 
+          {/* ──────────────────────────────────────────────────────────────
+              3rd-Party Scripts (Performance Optimized)
+              All non-critical scripts use strategy="lazyOnload" to bypass
+              the initial critical rendering path.
+              ────────────────────────────────────────────────────────────── */}
+
           {gaId && (
             <>
               <Script
@@ -157,12 +152,17 @@ export default function RootLayout({
             </>
           )}
 
-          {/* PayHere Payment Gateway - Loaded ONLY when needed or on idle */}
+          {/* PayHere Payment Gateway */}
           <Script
             src="https://www.payhere.lk/lib/payhere.js"
             strategy="lazyOnload"
           />
-        </FramerProvider>
+
+          {/* Cloudflare Web Analytics (Bypass initial payload) */}
+          <Script
+            src="https://static.cloudflareinsights.com/beacon.min.js"
+            strategy="lazyOnload"
+          />
       </body>
     </html>
   );

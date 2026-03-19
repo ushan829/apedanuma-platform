@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { m, AnimatePresence } from "framer-motion";
+import { m, AnimatePresence, LazyMotion, domAnimation } from "framer-motion";
 import { ArrowUp } from "lucide-react";
 
 export default function BackToTop() {
@@ -29,22 +29,24 @@ export default function BackToTop() {
   };
 
   return (
-    <AnimatePresence>
-      {isVisible && (
-        <m.button
-          initial={{ opacity: 0, scale: 0.5, y: 20 }}
-          animate={{ opacity: 1, scale: 1, y: 0 }}
-          exit={{ opacity: 0, scale: 0.5, y: 20 }}
-          whileHover={{ y: -4, transition: { duration: 0.2 } }}
-          whileTap={{ scale: 0.9 }}
-          onClick={scrollToTop}
-          aria-label="Back to top"
-          className="fixed bottom-8 right-8 z-50 p-3 rounded-full bg-void-950/80 backdrop-blur-md border border-arcane-500/30 text-arcane-400 shadow-arcane-sm hover:shadow-arcane-md hover:border-arcane-400 hover:text-white transition-colors group"
-        >
-          <div className="absolute inset-0 rounded-full bg-gradient-to-tr from-arcane-600/10 to-luminary-600/10 opacity-0 group-hover:opacity-100 transition-opacity" />
-          <ArrowUp className="w-6 h-6 relative z-10" />
-        </m.button>
-      )}
-    </AnimatePresence>
+    <LazyMotion features={domAnimation} strict>
+      <AnimatePresence>
+        {isVisible && (
+          <m.button
+            initial={{ opacity: 0, scale: 0.5, y: 20 }}
+            animate={{ opacity: 1, scale: 1, y: 0 }}
+            exit={{ opacity: 0, scale: 0.5, y: 20 }}
+            whileHover={{ y: -4, transition: { duration: 0.2 } }}
+            whileTap={{ scale: 0.9 }}
+            onClick={scrollToTop}
+            aria-label="Back to top"
+            className="fixed bottom-8 right-8 z-50 p-3 rounded-full bg-void-950/80 backdrop-blur-md border border-arcane-500/30 text-arcane-400 shadow-arcane-sm hover:shadow-arcane-md hover:border-arcane-400 hover:text-white transition-colors group"
+          >
+            <div className="absolute inset-0 rounded-full bg-gradient-to-tr from-arcane-600/10 to-luminary-600/10 opacity-0 group-hover:opacity-100 transition-opacity" />
+            <ArrowUp className="w-6 h-6 relative z-10" />
+          </m.button>
+        )}
+      </AnimatePresence>
+    </LazyMotion>
   );
 }

@@ -1,20 +1,8 @@
-"use client";
-
-import { useEffect, useState } from "react";
-
 /**
  * BackgroundEffects: Renders the Ghibli-inspired stars and noise texture.
- * Loaded dynamically with ssr: false to remove this weight from the critical CSS.
+ * Optimized as a Server Component to keep JS execution off the main thread.
  */
 export default function BackgroundEffects() {
-  const [mounted, setMounted] = useState(false);
-
-  useEffect(() => {
-    setMounted(true);
-  }, []);
-
-  if (!mounted) return null;
-
   return (
     <>
       {/* Ghibli-inspired Star Glimmers */}

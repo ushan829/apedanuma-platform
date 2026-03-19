@@ -22,6 +22,9 @@ if (expiresIn && !/^\d+[smhd]$/.test(expiresIn)) {
 // ──────────────────────────────────────────────────────────────────────────────
 
 const nextConfig = {
+  // Re-enable SWC compiler (CRITICAL for performance)
+  swcMinify: true,
+  
   images: {
     remotePatterns: [
       {
@@ -34,7 +37,6 @@ const nextConfig = {
     config.resolve.alias.canvas = false;
     return config;
   },
-  // මේ අලුත් පේළි ටික මෙතනට එකතු කරන්න:
   typescript: {
     ignoreBuildErrors: true,
   },

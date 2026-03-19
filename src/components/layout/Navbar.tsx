@@ -1,5 +1,9 @@
 import { getServerSession } from "@/lib/auth-cookie";
-import NavbarClient from "./NavbarClient";
+import dynamic from "next/dynamic";
+
+const NavbarClient = dynamic(() => import("./NavbarClient"), {
+  ssr: true
+});
 
 export default function Navbar() {
   const session = getServerSession();
