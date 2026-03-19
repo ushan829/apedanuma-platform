@@ -2,7 +2,7 @@
 
 import React, { useState, useMemo } from "react";
 import Link from "next/link";
-import { motion, AnimatePresence } from "framer-motion";
+import { m, AnimatePresence } from "framer-motion";
 import { 
   Search, 
   Plus, 
@@ -92,7 +92,7 @@ function AccordionItem({ item, isOpen, toggle }: { item: FAQItem; isOpen: boolea
 
       <AnimatePresence initial={false}>
         {isOpen && (
-          <motion.div
+          <m.div
             initial={{ height: 0, opacity: 0 }}
             animate={{ height: "auto", opacity: 1 }}
             exit={{ height: 0, opacity: 0 }}
@@ -104,7 +104,7 @@ function AccordionItem({ item, isOpen, toggle }: { item: FAQItem; isOpen: boolea
                 {item.answer}
               </p>
             </div>
-          </motion.div>
+          </m.div>
         )}
       </AnimatePresence>
     </div>
@@ -162,25 +162,25 @@ export default function FAQPage() {
         
         {/* ── Header ── */}
         <div className="mx-auto max-w-3xl text-center mb-16 lg:mb-20">
-          <motion.div 
+          <m.div 
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5 }}
             className="badge-accent mx-auto w-fit mb-6"
           >
             Support Center
-          </motion.div>
-          <motion.h1 
+          </m.div>
+          <m.h1 
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5, delay: 0.1 }}
             className="font-display font-black text-4xl sm:text-5xl lg:text-6xl tracking-tight mb-8"
           >
             Frequently Asked <span className="text-gradient-premium">Questions</span>
-          </motion.h1>
+          </m.h1>
           
           {/* Search Bar */}
-          <motion.div 
+          <m.div 
             initial={{ opacity: 0, scale: 0.95 }}
             animate={{ opacity: 1, scale: 1 }}
             transition={{ duration: 0.4, delay: 0.2 }}
@@ -196,7 +196,7 @@ export default function FAQPage() {
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
             />
-          </motion.div>
+          </m.div>
         </div>
 
         {/* ── FAQ Content ── */}
@@ -262,7 +262,7 @@ export default function FAQPage() {
         </div>
 
         {/* ── Still Have Questions Section ── */}
-        <motion.div 
+        <m.div 
           initial={{ opacity: 0, y: 30 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
@@ -299,7 +299,7 @@ export default function FAQPage() {
               </a>
             </div>
           </div>
-        </motion.div>
+        </m.div>
 
       </div>
     </main>

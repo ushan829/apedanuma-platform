@@ -2,7 +2,7 @@
 
 import { useState, useMemo, useEffect } from "react";
 import { useRouter, usePathname, useSearchParams } from "next/navigation";
-import { AnimatePresence, motion } from "framer-motion";
+import { AnimatePresence, m } from "framer-motion";
 import AnimatedSearchBar from "@/components/AnimatedSearchBar";
 import FilterSidebar from "@/components/layout/FilterSidebar";
 import UniversalCard from "@/components/Resource/UniversalCard";
@@ -86,8 +86,6 @@ export default function PremiumGrid({ products }: { products: LiveResource[] }) 
     return products.filter((r) => {
       if (r.grade !== grade) return false;
       if (materialType !== "all") {
-        // Need to map MaterialType back to DB types if necessary, but products use DB types
-        // This is a simplification for the unification
         if (searchQuery && !r.title.toLowerCase().includes(searchQuery.toLowerCase())) return false;
       }
       if (selectedSubjects.size > 0 && !selectedSubjects.has(r.subject)) return false;
@@ -190,7 +188,7 @@ export default function PremiumGrid({ products }: { products: LiveResource[] }) 
           <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-6">
             <AnimatePresence mode="popLayout">
               {filtered.map((p) => (
-                <motion.div
+                <m.div
                   key={p._id}
                   layout
                   initial={{ opacity: 0, y: 12 }}
@@ -199,12 +197,12 @@ export default function PremiumGrid({ products }: { products: LiveResource[] }) 
                   transition={{ duration: 0.22, ease: "easeOut" }}
                 >
                   <UniversalCard resource={p} isPremium={true} />
-                </motion.div>
+                </m.div>
               ))}
             </AnimatePresence>
           </div>
         ) : (
-          <motion.div 
+          <m.div 
             initial={{ opacity: 0, scale: 0.98 }}
             animate={{ opacity: 1, scale: 1 }}
             className="py-24 text-center glass rounded-[2rem] flex flex-col items-center justify-center gap-5"
@@ -225,7 +223,7 @@ export default function PremiumGrid({ products }: { products: LiveResource[] }) 
             <button onClick={clearAll} className="btn-primary px-8 py-2.5 mt-2 rounded-xl text-sm font-bold">
               Clear All Filters
             </button>
-          </motion.div>
+          </m.div>
         )}
       </div>
     </div>

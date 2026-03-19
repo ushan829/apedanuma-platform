@@ -2,7 +2,7 @@
 
 import { useState, useMemo, useEffect } from "react";
 import { useRouter, usePathname, useSearchParams } from "next/navigation";
-import { AnimatePresence, motion } from "framer-motion";
+import { AnimatePresence, m } from "framer-motion";
 import AnimatedSearchBar from "@/components/AnimatedSearchBar";
 import FilterSidebar from "@/components/layout/FilterSidebar";
 import UniversalCard from "@/components/Resource/UniversalCard";
@@ -229,7 +229,7 @@ export default function FreeResourcesSection() {
               <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-5">
                 <AnimatePresence mode="popLayout">
                   {filtered.map(r => (
-                    <motion.div
+                    <m.div
                       key={r.id}
                       layout
                       initial={{ opacity: 0, y: 12 }}
@@ -238,12 +238,12 @@ export default function FreeResourcesSection() {
                       transition={{ duration: 0.22, ease: "easeOut" }}
                     >
                       <UniversalCard resource={r} isPremium={false} />
-                    </motion.div>
+                    </m.div>
                   ))}
                 </AnimatePresence>
               </div>
             ) : (
-              <motion.div 
+              <m.div 
                 initial={{ opacity: 0, scale: 0.98 }}
                 animate={{ opacity: 1, scale: 1 }}
                 className="py-24 text-center glass rounded-[2rem] flex flex-col items-center justify-center gap-5"
@@ -264,7 +264,7 @@ export default function FreeResourcesSection() {
                 <button onClick={clearAll} className="btn-primary px-8 py-2.5 mt-2 rounded-xl text-sm font-bold">
                   Clear All Filters
                 </button>
-              </motion.div>
+              </m.div>
             )}
           </div>
         </div>

@@ -4,6 +4,7 @@ import { useState, useEffect, useRef, useCallback } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { usePathname, useRouter } from "next/navigation";
+import { m, AnimatePresence } from "framer-motion";
 
 /* ─────────────────────────────────────────
    Types
@@ -113,38 +114,43 @@ function MobileNavLink({
   onClick: () => void;
 }) {
   return (
-    <Link
-      href={item.href}
-      className={`flex items-center gap-3 w-full px-5 py-3.5 rounded-xl text-sm font-bold tracking-wide transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-purple-500/40 group ${
-        isActive 
-          ? "text-white bg-purple-500/10 border border-purple-500/20 shadow-[0_0_15px_rgba(139,92,246,0.1)]" 
-          : "text-slate-400 hover:text-white hover:bg-white/5 border border-transparent"
-      }`}
-      onClick={onClick}
-      style={{ animationDelay: `${index * 45}ms`, animation: "navLinkFadeIn 280ms ease forwards" }}
+    <m.div
+      initial={{ opacity: 0, x: -10 }}
+      animate={{ opacity: 1, x: 0 }}
+      transition={{ delay: index * 0.05 }}
     >
-      <span
-        className={`flex h-1.5 w-1.5 rounded-full shrink-0 transition-all duration-300 ${
-          isActive
-            ? "bg-gradient-to-br from-purple-400 to-amber-500 shadow-[0_0_8px_rgba(139,92,246,0.8)]"
-            : "bg-slate-700"
+      <Link
+        href={item.href}
+        className={`flex items-center gap-3 w-full px-5 py-3.5 rounded-xl text-sm font-bold tracking-wide transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-purple-500/40 group ${
+          isActive 
+            ? "text-white bg-purple-500/10 border border-purple-500/20 shadow-[0_0_15px_rgba(139,92,246,0.1)]" 
+            : "text-slate-400 hover:text-white hover:bg-white/5 border border-transparent"
         }`}
-      />
-      <span className="flex-1">{item.label}</span>
-      {item.badge && (
-        <span
-          className="text-[0.6rem] font-black px-2 py-0.5 rounded-full tracking-wider uppercase bg-purple-500/20 text-purple-300 border border-purple-500/30"
-        >
-          {item.badge}
-        </span>
-      )}
-      <svg
-        className={`w-4 h-4 transition-all duration-300 ${isActive ? "opacity-100 translate-x-0" : "opacity-0 -translate-x-2"}`}
-        fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}
+        onClick={onClick}
       >
-        <path strokeLinecap="round" strokeLinejoin="round" d="M9 5l7 7-7 7" />
-      </svg>
-    </Link>
+        <span
+          className={`flex h-1.5 w-1.5 rounded-full shrink-0 transition-all duration-300 ${
+            isActive
+              ? "bg-gradient-to-br from-purple-400 to-amber-500 shadow-[0_0_8px_rgba(139,92,246,0.8)]"
+              : "bg-slate-700"
+          }`}
+        />
+        <span className="flex-1">{item.label}</span>
+        {item.badge && (
+          <span
+            className="text-[0.6rem] font-black px-2 py-0.5 rounded-full tracking-wider uppercase bg-purple-500/20 text-purple-300 border border-purple-500/30"
+          >
+            {item.badge}
+          </span>
+        )}
+        <svg
+          className={`w-4 h-4 transition-all duration-300 ${isActive ? "opacity-100 translate-x-0" : "opacity-0 -translate-x-2"}`}
+          fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}
+        >
+          <path strokeLinecap="round" strokeLinejoin="round" d="M9 5l7 7-7 7" />
+        </svg>
+      </Link>
+    </m.div>
   );
 }
 
@@ -184,7 +190,6 @@ export default function NavbarClient({ initialUser }: { initialUser: { name: str
   const router = useRouter();
   const [isOpen, setIsOpen] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false);
-  const [isClosing, setIsClosing] = useState(false);
   const menuRef = useRef<HTMLDivElement>(null);
   const toggleRef = useRef<HTMLButtonElement>(null);
 
@@ -206,7 +211,7 @@ export default function NavbarClient({ initialUser }: { initialUser: { name: str
     setIsLoggedIn(false);
     setUserName("");
     setUserRole("");
-    closeMenu();
+    setIsOpen(false);
     router.push("/");
     router.refresh();
   }
@@ -223,12 +228,12 @@ export default function NavbarClient({ initialUser }: { initialUser: { name: str
     return () => window.removeEventListener("scroll", onScroll);
   }, []);
 
-  useEffect(() => { closeMenu(); }, [pathname]);
+  useEffect(() => { setIsOpen(false); }, [pathname]);
 
   useEffect(() => {
     const handler = (e: MouseEvent) => {
       if (menuRef.current && !menuRef.current.contains(e.target as Node) && !toggleRef.current?.contains(e.target as Node)) {
-        closeMenu();
+        setIsOpen(false);
       }
     };
     if (isOpen) document.addEventListener("mousedown", handler);
@@ -237,7 +242,7 @@ export default function NavbarClient({ initialUser }: { initialUser: { name: str
 
   useEffect(() => {
     const handler = (e: KeyboardEvent) => {
-      if (e.key === "Escape" && isOpen) closeMenu();
+      if (e.key === "Escape" && isOpen) setIsOpen(false);
     };
     document.addEventListener("keydown", handler);
     return () => document.removeEventListener("keydown", handler);
@@ -250,23 +255,6 @@ export default function NavbarClient({ initialUser }: { initialUser: { name: str
       document.body.style.overflow = "";
     }
   }, [isOpen]);
-
-  const closeMenu = useCallback(() => {
-    if (!isOpen) return;
-    setIsClosing(true);
-    setTimeout(() => {
-      setIsOpen(false);
-      setIsClosing(false);
-    }, 200);
-  }, [isOpen]);
-
-  const toggleMenu = useCallback(() => {
-    if (isOpen) {
-      closeMenu();
-    } else {
-      setIsOpen(true);
-    }
-  }, [isOpen, closeMenu]);
 
   return (
     <header
@@ -348,7 +336,7 @@ export default function NavbarClient({ initialUser }: { initialUser: { name: str
 
             <button
               ref={toggleRef}
-              onClick={toggleMenu}
+              onClick={() => setIsOpen(!isOpen)}
               aria-label={isOpen ? "Close main menu" : "Open main menu"}
               aria-expanded={isOpen}
               className={`flex lg:hidden items-center justify-center w-10 h-10 rounded-xl transition-all duration-200 border ${
@@ -361,80 +349,84 @@ export default function NavbarClient({ initialUser }: { initialUser: { name: str
         </div>
       </div>
 
-      {isOpen && (
-        <div
-          ref={menuRef}
-          className={`fixed inset-x-0 top-full bg-slate-950/98 backdrop-blur-3xl border-b border-white/10 shadow-2xl origin-top lg:hidden ${
-            isClosing ? "animate-mobileMenuClose" : "animate-mobileMenuOpen"
-          }`}
-        >
-          <div className="container-xl py-6 pb-8">
-            <nav className="flex flex-col gap-1.5 mb-6">
-              {NAV_LINKS.map((item, i) => (
-                <MobileNavLink
-                  key={item.href}
-                  item={item}
-                  isActive={item.href === "/" ? pathname === "/" : pathname.startsWith(item.href)}
-                  index={i}
-                  onClick={closeMenu}
-                />
-              ))}
-            </nav>
+      <AnimatePresence>
+        {isOpen && (
+          <m.div
+            ref={menuRef}
+            initial={{ opacity: 0, height: 0 }}
+            animate={{ opacity: 1, height: "auto" }}
+            exit={{ opacity: 0, height: 0 }}
+            transition={{ duration: 0.2, ease: "easeInOut" }}
+            className="fixed inset-x-0 top-[68px] bg-slate-950/98 backdrop-blur-3xl border-b border-white/10 shadow-2xl origin-top lg:hidden overflow-hidden"
+          >
+            <div className="container-xl py-6 pb-8">
+              <nav className="flex flex-col gap-1.5 mb-6">
+                {NAV_LINKS.map((item, i) => (
+                  <MobileNavLink
+                    key={item.href}
+                    item={item}
+                    isActive={item.href === "/" ? pathname === "/" : pathname.startsWith(item.href)}
+                    index={i}
+                    onClick={() => setIsOpen(false)}
+                  />
+                ))}
+              </nav>
 
-            <div className="w-full h-px bg-gradient-to-r from-transparent via-white/10 to-transparent mb-6" />
+              <div className="w-full h-px bg-gradient-to-r from-transparent via-white/10 to-transparent mb-6" />
 
-            <div className="flex flex-col gap-3 px-1">
-              {isLoggedIn ? (
-                <>
-                  <div className="flex items-center gap-3 rounded-xl px-4 py-3 bg-purple-500/10 border border-purple-500/20">
-                    <span className="flex items-center justify-center w-8 h-8 rounded-lg text-xs font-bold bg-gradient-to-br from-purple-500 to-purple-800 text-purple-100">
-                      {initials}
-                    </span>
-                    <div className="min-w-0">
-                      <p className="text-sm font-bold truncate text-white">{userName}</p>
-                      <p className="text-[0.65rem] font-bold text-purple-400 uppercase tracking-wider">Student</p>
+              <div className="flex flex-col gap-3 px-1">
+                {isLoggedIn ? (
+                  <>
+                    <div className="flex items-center gap-3 rounded-xl px-4 py-3 bg-purple-500/10 border border-purple-500/20">
+                      <span className="flex items-center justify-center w-8 h-8 rounded-lg text-xs font-bold bg-gradient-to-br from-purple-500 to-purple-800 text-purple-100">
+                        {initials}
+                      </span>
+                      <div className="min-w-0">
+                        <p className="text-sm font-bold truncate text-white">{userName}</p>
+                        <p className="text-[0.65rem] font-bold text-purple-400 uppercase tracking-wider">Student</p>
+                      </div>
                     </div>
-                  </div>
-                  <Link
-                    href={isAdmin ? "/admin" : "/dashboard"}
-                    onClick={closeMenu}
-                    className={`flex items-center justify-center gap-2 rounded-xl py-3.5 text-sm font-bold shadow-lg transition-all duration-300 ${
-                      isAdmin 
-                        ? "bg-gradient-to-r from-amber-500 to-amber-600 text-slate-950" 
-                        : "bg-gradient-to-r from-purple-500 to-purple-600 text-white"
-                    }`}
-                  >
-                    Go to Dashboard
-                  </Link>
-                  <button
-                    onClick={handleLogout}
-                    className="flex items-center justify-center gap-2 rounded-xl py-3.5 text-sm font-bold text-red-400 bg-red-500/10 border border-red-500/20"
-                  >
-                    Logout
-                  </button>
-                </>
-              ) : (
-                <>
-                  <Link
-                    href="/login"
-                    onClick={closeMenu}
-                    className="flex items-center justify-center gap-2 rounded-xl py-3.5 text-sm font-bold text-slate-300 bg-white/5 border border-white/10"
-                  >
-                    Sign In
-                  </Link>
-                  <Link
-                    href="/register"
-                    onClick={closeMenu}
-                    className="inline-flex items-center justify-center gap-2 font-display font-bold text-sm tracking-wide py-4 rounded-xl text-white bg-gradient-to-br from-purple-500 to-purple-800 border border-purple-500/50 shadow-[0_0_20px_rgba(124,31,255,0.3)] w-full"
-                  >
-                    Create Free Account
-                  </Link>
-                </>
-              )}
+                    <Link
+                      href={isAdmin ? "/admin" : "/dashboard"}
+                      onClick={() => setIsOpen(false)}
+                      className={`flex items-center justify-center gap-2 rounded-xl py-3.5 text-sm font-bold shadow-lg transition-all duration-300 ${
+                        isAdmin 
+                          ? "bg-gradient-to-r from-amber-500 to-amber-600 text-slate-950" 
+                          : "bg-gradient-to-r from-purple-500 to-purple-600 text-white"
+                      }`}
+                    >
+                      Go to Dashboard
+                    </Link>
+                    <button
+                      onClick={handleLogout}
+                      className="flex items-center justify-center gap-2 rounded-xl py-3.5 text-sm font-bold text-red-400 bg-red-500/10 border border-red-500/20"
+                    >
+                      Logout
+                    </button>
+                  </>
+                ) : (
+                  <>
+                    <Link
+                      href="/login"
+                      onClick={() => setIsOpen(false)}
+                      className="flex items-center justify-center gap-2 rounded-xl py-3.5 text-sm font-bold text-slate-300 bg-white/5 border border-white/10"
+                    >
+                      Sign In
+                    </Link>
+                    <Link
+                      href="/register"
+                      onClick={() => setIsOpen(false)}
+                      className="inline-flex items-center justify-center gap-2 font-display font-bold text-sm tracking-wide py-4 rounded-xl text-white bg-gradient-to-br from-purple-500 to-purple-800 border border-purple-500/50 shadow-[0_0_20px_rgba(124,31,255,0.3)] w-full"
+                    >
+                      Create Free Account
+                    </Link>
+                  </>
+                )}
+              </div>
             </div>
-          </div>
-        </div>
-      )}
+          </m.div>
+        )}
+      </AnimatePresence>
     </header>
   );
 }

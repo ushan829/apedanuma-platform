@@ -199,7 +199,7 @@ export default function LoginPage() {
                 type="email"
                 autoComplete="email"
                 placeholder="you@example.com"
-                className="input"
+                className="w-full px-4 py-3 rounded-xl transition-all bg-white/5 border border-white/10 text-white placeholder:text-slate-400 focus:outline-none focus:border-purple-500 focus:ring-1 focus:ring-purple-500/50 focus:bg-white/10"
                 required
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
@@ -231,7 +231,7 @@ export default function LoginPage() {
                 type="password"
                 autoComplete="current-password"
                 placeholder="Enter your password"
-                className="input"
+                className="w-full px-4 py-3 rounded-xl transition-all bg-white/5 border border-white/10 text-white placeholder:text-slate-400 focus:outline-none focus:border-purple-500 focus:ring-1 focus:ring-purple-500/50 focus:bg-white/10"
                 required
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
@@ -312,11 +312,11 @@ export default function LoginPage() {
         {/* Footer note */}
         <p className="text-center text-xs mt-6" style={{ color: "var(--foreground-disabled)" }}>
           By signing in you agree to our{" "}
-          <Link href="/terms" className="underline underline-offset-2 hover:text-[#b890ff] transition-colors">
+          <Link href="/terms-and-conditions" className="underline underline-offset-2 hover:text-[#b890ff] transition-colors">
             Terms
           </Link>
           {" "}and{" "}
-          <Link href="/privacy" className="underline underline-offset-2 hover:text-[#b890ff] transition-colors">
+          <Link href="/privacy-policy" className="underline underline-offset-2 hover:text-[#b890ff] transition-colors">
             Privacy Policy
           </Link>.
         </p>

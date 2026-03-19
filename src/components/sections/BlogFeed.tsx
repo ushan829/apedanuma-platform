@@ -3,7 +3,7 @@
 import { useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
-import { AnimatePresence, motion } from "framer-motion";
+import { AnimatePresence, m } from "framer-motion";
 import type { PostSummary } from "@/app/blog/page";
 
 /* ── Category colours ── */
@@ -261,7 +261,7 @@ function NewsletterBlock() {
             onChange={(e) => setEmail(e.target.value)}
             placeholder="your@email.com"
             required
-            className="input flex-1 text-sm"
+            className="flex-1 px-4 py-3 rounded-xl transition-all bg-white/5 border border-white/10 text-white placeholder:text-slate-400 focus:outline-none focus:border-purple-500 focus:ring-1 focus:ring-purple-500/50 focus:bg-white/10 text-sm"
             disabled={status === "loading"}
           />
           <button
@@ -319,7 +319,7 @@ export default function BlogFeed({ initialPosts }: { initialPosts: PostSummary[]
             <path d="M10 10l3 3" stroke="currentColor" strokeWidth="1.3" strokeLinecap="round" />
           </svg>
           <input
-            className="input w-full pl-9 text-sm"
+            className="w-full pl-9 pr-4 py-3 rounded-xl transition-all bg-white/5 border border-white/10 text-white placeholder:text-slate-400 focus:outline-none focus:border-purple-500 focus:ring-1 focus:ring-purple-500/50 focus:bg-white/10 text-sm"
             placeholder="Search articles..."
             value={search}
             onChange={(e) => setSearch(e.target.value)}
@@ -377,7 +377,7 @@ export default function BlogFeed({ initialPosts }: { initialPosts: PostSummary[]
           </div>
         </div>
       ) : filtered.length === 0 ? (
-        <motion.div
+        <m.div
           initial={{ opacity: 0, scale: 0.98 }}
           animate={{ opacity: 1, scale: 1 }}
           className="rounded-[2rem] py-24 text-center flex flex-col items-center justify-center gap-5"
@@ -402,12 +402,12 @@ export default function BlogFeed({ initialPosts }: { initialPosts: PostSummary[]
           >
             Clear All Filters
           </button>
-        </motion.div>
+        </m.div>
       ) : (
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
           <AnimatePresence mode="popLayout">
             {filtered.map((post) => (
-              <motion.div
+              <m.div
                 key={post._id}
                 layout
                 initial={{ opacity: 0, y: 12 }}
@@ -416,7 +416,7 @@ export default function BlogFeed({ initialPosts }: { initialPosts: PostSummary[]
                 transition={{ duration: 0.22, ease: "easeOut" }}
               >
                 <PostCard post={post} />
-              </motion.div>
+              </m.div>
             ))}
           </AnimatePresence>
         </div>

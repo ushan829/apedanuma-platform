@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { motion, AnimatePresence } from "framer-motion";
+import { m, AnimatePresence } from "framer-motion";
 import { ArrowUp } from "lucide-react";
 
 export default function BackToTop() {
@@ -31,7 +31,7 @@ export default function BackToTop() {
   return (
     <AnimatePresence>
       {isVisible && (
-        <motion.button
+        <m.button
           initial={{ opacity: 0, scale: 0.5, y: 20 }}
           animate={{ opacity: 1, scale: 1, y: 0 }}
           exit={{ opacity: 0, scale: 0.5, y: 20 }}
@@ -43,7 +43,7 @@ export default function BackToTop() {
         >
           <div className="absolute inset-0 rounded-full bg-gradient-to-tr from-arcane-600/10 to-luminary-600/10 opacity-0 group-hover:opacity-100 transition-opacity" />
           <ArrowUp className="w-6 h-6 relative z-10" />
-        </motion.button>
+        </m.button>
       )}
     </AnimatePresence>
   );
