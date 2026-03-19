@@ -1,7 +1,7 @@
 import type { Metadata, Viewport } from "next";
-import { Inter, Poppins } from "next/font/google";
 import Script from "next/script";
 import dynamic from "next/dynamic";
+import { inter, poppins } from "./fonts";
 import "./globals.css";
 import Navbar from "@/components/layout/Navbar";
 import FramerProvider from "@/components/providers/FramerProvider";
@@ -24,20 +24,6 @@ const BackgroundEffects = dynamic(() => import("@/components/layout/BackgroundEf
 
 const ToastProvider = dynamic(() => import("@/components/layout/ToastProvider"), { 
   ssr: false 
-});
-
-const inter = Inter({
-  subsets: ["latin"],
-  variable: "--font-inter",
-  display: "swap",
-  weight: ["400", "500", "600", "700"],
-});
-
-const poppins = Poppins({
-  subsets: ["latin"],
-  variable: "--font-poppins",
-  display: "swap",
-  weight: ["600", "700", "800"],
 });
 
 export const metadata: Metadata = {
@@ -133,7 +119,7 @@ export default function RootLayout({
 
   return (
     <html lang="en" className={`${inter.variable} ${poppins.variable}`} suppressHydrationWarning>
-      <body className="antialiased selection:bg-purple-500/30 selection:text-white">
+      <body className="antialiased selection:bg-purple-500/30 selection:text-white font-sans">
         <FramerProvider>
           <script
             type="application/ld+json"

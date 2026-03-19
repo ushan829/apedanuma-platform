@@ -2,7 +2,9 @@ import type { Config } from "tailwindcss";
 
 const config: Config = {
   content: [
-    "./src/**/*.{js,ts,jsx,tsx,mdx}",
+    "./src/app/**/*.{js,ts,jsx,tsx,mdx}",
+    "./src/components/**/*.{js,ts,jsx,tsx,mdx}",
+    "./src/lib/**/*.{js,ts,jsx,tsx,mdx}",
   ],
   theme: {
     extend: {
@@ -127,10 +129,16 @@ const config: Config = {
         "nav-link-fade-in": "navLinkFadeIn 0.4s ease forwards",
         "mobile-menu-open": "mobileMenuOpen 0.3s ease-out forwards",
         "mobile-menu-close": "mobileMenuClose 0.25s ease-in forwards",
-        "twinkle": "twinkle 4s ease-in-out infinite",
-      },
-      keyframes: {
+        twinkle: "twinkle 4s ease-in-out infinite",
+        "border-glow": "borderGlow 6s linear infinite",
+        },
+        keyframes: {
+        borderGlow: {
+          "0%, 100%": { backgroundPosition: "0% 50%" },
+          "50%": { backgroundPosition: "100% 50%" },
+        },
         fadeIn: {
+
           from: { opacity: "0" },
           to: { opacity: "1" },
         },

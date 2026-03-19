@@ -6,7 +6,7 @@ import connectToDatabase from "@/lib/mongodb";
 import Resource from "@/models/Resource";
 import { getSubjectStyle, getFilterType } from "@/lib/free-resources";
 import { getPresignedUrl } from "@/lib/s3";
-import PDFViewer from "@/components/Resource/PDFViewer";
+import PDFViewer from "@/components/Resource/DynamicPDFViewer";
 import DownloadButton from "@/components/Resource/DownloadButton";
 import type { LiveResource } from "@/lib/resource-constants";
 import { sanitizeHtml } from "@/lib/sanitize";

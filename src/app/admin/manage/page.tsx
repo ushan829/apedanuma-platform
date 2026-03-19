@@ -2,9 +2,18 @@
 
 import { useState, useEffect, useMemo, useCallback } from "react";
 import Link from "next/link";
+import dynamic from "next/dynamic";
 import { SUBJECT_VALUES, MATERIAL_TYPE_VALUES } from "@/lib/resource-constants";
 import { getSubjectStyle } from "@/lib/free-resources";
-import RichTextEditor from "@/components/RichTextEditor";
+
+const RichTextEditor = dynamic(() => import("@/components/RichTextEditor"), {
+  ssr: false,
+  loading: () => (
+    <div className="w-full h-[200px] rounded-xl bg-white/5 border border-white/10 animate-pulse flex items-center justify-center">
+      <span className="text-xs text-slate-500">Loading editor...</span>
+    </div>
+  ),
+});
 
 /* ─────────────────────────────────────────
    Types

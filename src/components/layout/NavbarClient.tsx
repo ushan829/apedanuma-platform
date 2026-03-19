@@ -222,7 +222,10 @@ export default function NavbarClient({ initialUser }: { initialUser: { name: str
     : "??";
 
   useEffect(() => {
-    const onScroll = () => setIsScrolled(window.scrollY > 12);
+    const onScroll = () => {
+      const scrolled = window.scrollY > 12;
+      setIsScrolled(scrolled);
+    };
     onScroll();
     window.addEventListener("scroll", onScroll, { passive: true });
     return () => window.removeEventListener("scroll", onScroll);
@@ -258,10 +261,10 @@ export default function NavbarClient({ initialUser }: { initialUser: { name: str
 
   return (
     <header
-      className={`fixed w-full top-0 z-[100] transition-all duration-300 border-b ${
+      className={`fixed w-full top-0 z-[100] h-[68px] transition-all duration-300 border-b ${
         isScrolled 
-          ? "bg-slate-950/80 backdrop-blur-xl border-white/10 shadow-2xl py-1" 
-          : "bg-transparent border-transparent py-2"
+          ? "bg-slate-950/80 backdrop-blur-xl border-white/10 shadow-2xl" 
+          : "bg-transparent border-transparent"
       }`}
       role="banner"
     >

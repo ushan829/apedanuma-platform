@@ -9,7 +9,7 @@ import { getSubjectStyle } from "@/lib/free-resources";
 import { getServerSession } from "@/lib/auth-cookie";
 import { getPresignedUrl } from "@/lib/s3";
 import BuySection from "@/components/sections/BuySection";
-import PDFViewer from "@/components/Resource/PDFViewer";
+import PDFViewer from "@/components/Resource/DynamicPDFViewer";
 import type { LiveResource } from "@/lib/resource-constants";
 import { sanitizeHtml } from "@/lib/sanitize";
 
