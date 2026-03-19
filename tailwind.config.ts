@@ -5,6 +5,7 @@ const config: Config = {
     "./src/app/**/*.{js,ts,jsx,tsx,mdx}",
     "./src/components/**/*.{js,ts,jsx,tsx,mdx}",
     "./src/lib/**/*.{js,ts,jsx,tsx,mdx}",
+    "./src/models/**/*.{js,ts,jsx,tsx,mdx}",
   ],
   theme: {
     extend: {
@@ -121,8 +122,9 @@ const config: Config = {
         "fade-in": "fadeIn 0.5s ease forwards",
         "fade-up": "fadeUp 0.6s ease forwards",
         "glow-pulse": "glowPulse 3s ease-in-out infinite",
-        "shimmer": "shimmer 3.5s linear infinite",
+        "shimmer": "shimmer 2s linear infinite",
         "float": "float 6s ease-in-out infinite",
+        "drift": "drift 60s linear infinite",
         "hero-fade-up": "heroFadeUp 0.8s ease forwards",
         "hero-scale-in": "heroScaleIn 0.8s ease forwards",
         "hero-badge-pop": "heroBadgePop 0.6s cubic-bezier(0.34, 1.56, 0.64, 1) forwards",
@@ -157,6 +159,10 @@ const config: Config = {
         float: {
           "0%, 100%": { transform: "translateY(0)" },
           "50%": { transform: "translateY(-8px)" },
+        },
+        drift: {
+          from: { transform: "translateX(-100%)" },
+          to: { transform: "translateX(100vw)" },
         },
         heroFadeUp: {
           from: { opacity: "0", transform: "translateY(28px)", filter: "blur(4px)" },
