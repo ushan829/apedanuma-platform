@@ -2,11 +2,14 @@ import Link from "next/link";
 import dynamic from "next/dynamic";
 import { Zap } from "lucide-react";
 import GeometricBackground from "./hero/GeometricBackground";
-import StaticMobileHeroContent from "./hero/StaticMobileHeroContent";
 
-// Desktop visual components are strictly isolated and lazily loaded ONLY for lg screens (1024px+)
+// Performance: Dynamically load heavy visual components
 const DesktopHeroVisuals = dynamic(() => import("./hero/DesktopHeroVisuals"), { 
   ssr: false,
+});
+
+const StaticMobileHeroContent = dynamic(() => import("./hero/StaticMobileHeroContent"), {
+  ssr: true,
 });
 
 export default function HeroSection() {

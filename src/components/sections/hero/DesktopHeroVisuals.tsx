@@ -2,7 +2,6 @@
 
 import dynamic from "next/dynamic";
 import { useState, useEffect } from "react";
-import { LazyMotion, domAnimation } from "framer-motion";
 
 // Dynamically import the heavy animated components
 const RotatingStats = dynamic(() => import("./RotatingStats"), { ssr: false });
@@ -20,9 +19,5 @@ export default function DesktopHeroVisuals({ type }: { type: "stats" | "dashboar
 
   if (!isDesktop) return null;
 
-  return (
-    <LazyMotion features={domAnimation} strict>
-      {type === "stats" ? <RotatingStats /> : <UltraPremiumDashboard />}
-    </LazyMotion>
-  );
+  return type === "stats" ? <RotatingStats /> : <UltraPremiumDashboard />;
 }
