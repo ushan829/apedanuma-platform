@@ -129,9 +129,13 @@ export default function UltraPremiumDashboard() {
                   style={{ background: s.glowColor }}
                 />
 
-                {/* Particle System */}
+                {/* Particle System — Visual Silence: Only trigger on hover */}
                 <AnimatePresence>
-                  <div className="absolute inset-0 pointer-events-none">
+                  <m.div 
+                    initial={{ opacity: 0 }}
+                    whileHover={{ opacity: 1 }}
+                    className="absolute inset-0 pointer-events-none"
+                  >
                     {s.particles.map((p, pIdx) => (
                       <m.span
                         key={pIdx}
@@ -153,7 +157,7 @@ export default function UltraPremiumDashboard() {
                         {p}
                       </m.span>
                     ))}
-                  </div>
+                  </m.div>
                 </AnimatePresence>
 
                 {/* Icon Rendering with Isometric Transforms */}

@@ -66,7 +66,7 @@ function StaticResourceCard({ resource }: { resource: FreeResource }) {
   const typeMeta = TYPE_META[resource.type];
 
   return (
-    <article className="resource-card flex flex-col gap-3">
+    <article className="relative flex flex-col gap-3 group rounded-[1.25rem] p-5 bg-white/[0.04] backdrop-blur-md border border-white/[0.08] overflow-hidden transition-all duration-500 hover:bg-white/[0.08] hover:border-white/[0.2] hover:-translate-y-1 hover:scale-[1.02] hover:shadow-[0_20px_40px_rgba(0,0,0,0.4),0_0_20px_rgba(139,92,246,0.15)]">
       <div className="flex items-start gap-3">
         <DocIcon subject={resource.subject} />
         <div className="flex flex-col gap-1.5 min-w-0">
@@ -78,8 +78,7 @@ function StaticResourceCard({ resource }: { resource: FreeResource }) {
               {resource.subject.length > 16 ? resource.subject.split(" ")[0] : resource.subject}
             </span>
             <span
-              className="inline-flex text-[0.58rem] font-bold uppercase tracking-wider px-1.5 py-0.5 rounded-md"
-              style={{ background: "rgba(255,255,255,0.05)", color: "var(--foreground-muted)", border: "1px solid rgba(255,255,255,0.09)" }}
+              className="inline-flex text-[0.58rem] font-bold uppercase tracking-wider px-1.5 py-0.5 rounded-md bg-white/[0.05] text-slate-400 border border-white/[0.09]"
             >
               Gr {resource.grade}
             </span>
@@ -91,14 +90,14 @@ function StaticResourceCard({ resource }: { resource: FreeResource }) {
             </span>
           </div>
           {resource.year && (
-            <span className="text-[0.6rem]" style={{ color: "var(--foreground-muted)" }}>{resource.year}</span>
+            <span className="text-[0.6rem] text-slate-400">{resource.year}</span>
           )}
         </div>
       </div>
-      <h3 className="font-display font-semibold text-sm leading-snug line-clamp-2 flex-1" style={{ color: "var(--foreground)" }}>
+      <h3 className="font-display font-semibold text-sm leading-snug line-clamp-2 flex-1 text-white">
         {resource.title}
       </h3>
-      <div className="flex items-center gap-3 text-xs" style={{ color: "var(--foreground-muted)" }}>
+      <div className="flex items-center gap-3 text-xs text-slate-400">
         <span className="flex items-center gap-1">
           <svg width="10" height="10" viewBox="0 0 10 10" fill="none" aria-hidden="true">
             <rect x="0.5" y="0.5" width="9" height="9" rx="1.5" stroke="currentColor" strokeWidth="1" />
@@ -108,15 +107,14 @@ function StaticResourceCard({ resource }: { resource: FreeResource }) {
         </span>
         <span>{resource.size}</span>
         <span
-          className="ml-auto text-[0.6rem] font-semibold px-1.5 py-0.5 rounded-md uppercase tracking-wide"
-          style={{ background: "rgba(16,185,129,0.1)", color: "#34d399", border: "1px solid rgba(16,185,129,0.22)" }}
+          className="ml-auto text-[0.6rem] font-bold uppercase tracking-widest px-1.5 py-0.5 rounded-md bg-green-500/10 text-green-400 border border-green-500/20"
         >
           Free
         </span>
       </div>
       <Link 
         href={`/free-resources/${resource.id}`} 
-        className="btn-download w-full mt-auto text-center focus:outline-none focus:ring-2 focus:ring-purple-500/50 focus:ring-offset-2 focus:ring-offset-[#0B0F19]" 
+        className="inline-flex items-center justify-center gap-2 w-full font-display font-semibold text-[0.8125rem] tracking-wider py-2 rounded-xl text-purple-400 bg-purple-500/10 border border-purple-500/20 transition-all duration-300 hover:text-white hover:bg-gradient-to-br hover:from-purple-600/30 hover:to-purple-800/40 hover:-translate-y-1 group/btn mt-auto" 
         aria-label={`View details for ${resource.title}`}
       >
         <svg width="14" height="14" viewBox="0 0 14 14" fill="none" aria-hidden="true">
@@ -137,7 +135,7 @@ function LiveResourceCard({ resource }: { resource: LiveResource }) {
   const typeMeta = getDbTypeMeta(resource.materialType);
 
   return (
-    <article className="resource-card flex flex-col gap-3">
+    <article className="relative flex flex-col gap-3 group rounded-[1.25rem] p-5 bg-white/[0.04] backdrop-blur-md border border-white/[0.08] overflow-hidden transition-all duration-500 hover:bg-white/[0.08] hover:border-white/[0.2] hover:-translate-y-1 hover:scale-[1.02] hover:shadow-[0_20px_40px_rgba(0,0,0,0.4),0_0_20px_rgba(139,92,246,0.15)]">
       <div className="flex items-start gap-3">
         {resource.previewImageUrl ? (
           <div className="relative w-12 h-14 shrink-0 rounded-xl overflow-hidden border border-white/10">
@@ -146,7 +144,7 @@ function LiveResourceCard({ resource }: { resource: LiveResource }) {
               alt={`${resource.title} - Grade ${resource.grade} ${resource.subject} study material`}
               fill
               className="object-cover"
-              sizes="48px"
+              sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
             />
           </div>
         ) : (
@@ -161,8 +159,7 @@ function LiveResourceCard({ resource }: { resource: LiveResource }) {
               {resource.subject.length > 16 ? resource.subject.split(" ")[0] : resource.subject}
             </span>
             <span
-              className="inline-flex text-[0.58rem] font-bold uppercase tracking-wider px-1.5 py-0.5 rounded-md"
-              style={{ background: "rgba(255,255,255,0.05)", color: "var(--foreground-muted)", border: "1px solid rgba(255,255,255,0.09)" }}
+              className="inline-flex text-[0.58rem] font-bold uppercase tracking-wider px-1.5 py-0.5 rounded-md bg-white/[0.05] text-slate-400 border border-white/[0.09]"
             >
               Gr {resource.grade}
             </span>
@@ -174,14 +171,14 @@ function LiveResourceCard({ resource }: { resource: LiveResource }) {
             </span>
           </div>
           {resource.year && (
-            <span className="text-[0.6rem]" style={{ color: "var(--foreground-muted)" }}>{resource.year}</span>
+            <span className="text-[0.6rem] text-slate-400">{resource.year}</span>
           )}
         </div>
       </div>
-      <h3 className="font-display font-semibold text-sm leading-snug line-clamp-2 flex-1" style={{ color: "var(--foreground)" }}>
+      <h3 className="font-display font-semibold text-sm leading-snug line-clamp-2 flex-1 text-white">
         {resource.title}
       </h3>
-      <div className="flex items-center gap-3 text-xs" style={{ color: "var(--foreground-muted)" }}>
+      <div className="flex items-center gap-3 text-xs text-slate-400">
         {resource.pageCount && (
           <span className="flex items-center gap-1">
             <svg width="10" height="10" viewBox="0 0 10 10" fill="none" aria-hidden="true">
@@ -193,15 +190,14 @@ function LiveResourceCard({ resource }: { resource: LiveResource }) {
         )}
         {resource.fileSize && <span>{resource.fileSize}</span>}
         <span
-          className="ml-auto text-[0.6rem] font-semibold px-1.5 py-0.5 rounded-md uppercase tracking-wide"
-          style={{ background: "rgba(16,185,129,0.1)", color: "#34d399", border: "1px solid rgba(16,185,129,0.22)" }}
+          className="ml-auto text-[0.6rem] font-bold uppercase tracking-widest px-1.5 py-0.5 rounded-md bg-green-500/10 text-green-400 border border-green-500/20"
         >
           Free
         </span>
       </div>
       <Link 
         href={`/free-resources/${resource.slug || resource._id}`} 
-        className="btn-download w-full mt-auto text-center focus:outline-none focus:ring-2 focus:ring-purple-500/50 focus:ring-offset-2 focus:ring-offset-[#0B0F19]" 
+        className="inline-flex items-center justify-center gap-2 w-full font-display font-semibold text-[0.8125rem] tracking-wider py-2 rounded-xl text-purple-400 bg-purple-500/10 border border-purple-500/20 transition-all duration-300 hover:text-white hover:bg-gradient-to-br hover:from-purple-600/30 hover:to-purple-800/40 hover:-translate-y-1 group/btn mt-auto" 
         aria-label={`View details for ${resource.title}`}
       >
         <svg width="14" height="14" viewBox="0 0 14 14" fill="none" aria-hidden="true">
@@ -229,19 +225,17 @@ function AccordionSection({
   const activeCount = category.subjects.filter((s) => selectedSubjects.has(s)).length;
 
   return (
-    <div style={{ borderBottom: "1px solid rgba(255,255,255,0.05)" }}>
+    <div className="border-b border-white/5">
       <button
         type="button"
         onClick={() => setIsOpen((v) => !v)}
-        className="w-full flex items-center justify-between py-3 text-left transition-colors duration-150 hover:text-white focus:outline-none focus:ring-2 focus:ring-purple-500/30"
-        style={{ color: "var(--foreground-secondary)" }}
+        className="w-full flex items-center justify-between py-3 text-left transition-colors duration-150 text-slate-300 hover:text-white focus:outline-none focus:ring-2 focus:ring-purple-500/30"
       >
         <div className="flex items-center gap-2">
           <span className="text-xs font-semibold">{category.label}</span>
           {activeCount > 0 && (
             <span
-              className="text-[0.55rem] font-bold px-1.5 py-0.5 rounded-full"
-              style={{ background: "rgba(124,31,255,0.2)", color: "#b890ff", border: "1px solid rgba(124,31,255,0.3)" }}
+              className="text-[0.55rem] font-bold px-1.5 py-0.5 rounded-full bg-purple-500/20 text-purple-300 border border-purple-500/30"
             >
               {activeCount}
             </span>
@@ -249,7 +243,7 @@ function AccordionSection({
         </div>
         <svg
           width="12" height="12" viewBox="0 0 12 12" fill="none" aria-hidden="true"
-          style={{ transform: isOpen ? "rotate(180deg)" : "rotate(0deg)", transition: "transform 220ms ease", flexShrink: 0, color: "var(--foreground-muted)" }}
+          className={`shrink-0 text-slate-500 transition-transform duration-200 ${isOpen ? "rotate-180" : ""}`}
         >
           <path d="M2 4l4 4 4-4" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
         </svg>
@@ -330,15 +324,14 @@ function Sidebar({
   ];
 
   return (
-    <nav className="scrollbar-hide" style={{ overflowY: "auto" }} aria-label="Resource Filters">
+    <nav className="scrollbar-hide overflow-y-auto" aria-label="Resource Filters">
       <div className="flex items-center justify-between mb-5">
-        <h2 className="text-xs font-bold uppercase tracking-widest" style={{ color: "var(--foreground-muted)" }}>Filters</h2>
+        <h2 className="text-xs font-bold uppercase tracking-widest text-slate-400">Filters</h2>
         {activeFilterCount > 0 && (
           <button 
             type="button" 
             onClick={onClearAll} 
-            className="text-[0.65rem] font-semibold transition-colors duration-150 hover:text-white focus:outline-none focus:underline" 
-            style={{ color: "#b890ff" }}
+            className="text-[0.65rem] font-bold uppercase tracking-wider text-purple-400 transition-colors duration-150 hover:text-purple-300 focus:outline-none focus:underline" 
           >
             Clear all ({activeFilterCount})
           </button>
@@ -347,19 +340,18 @@ function Sidebar({
 
       {/* Grade toggle */}
       <div className="mb-5">
-        <p className="text-[0.65rem] font-bold uppercase tracking-widest mb-2.5" style={{ color: "var(--foreground-muted)" }}>Grade</p>
-        <div className="flex rounded-xl p-1 gap-1" style={{ background: "rgba(255,255,255,0.04)", border: "1px solid rgba(255,255,255,0.07)" }}>
+        <p className="text-[0.65rem] font-bold uppercase tracking-widest mb-2.5 text-slate-500">Grade</p>
+        <div className="flex rounded-xl p-1 gap-1 bg-white/[0.04] border border-white/[0.07]">
           {([null, 10, 11] as const).map((g) => (
             <button
               key={g === null ? "all" : g}
               type="button"
               onClick={() => onGradeChange(g)}
-              className="flex-1 py-2 rounded-lg text-xs font-bold transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-purple-500/40"
-              style={
+              className={`flex-1 py-2 rounded-lg text-xs font-bold transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-purple-500/40 ${
                 grade === g
-                  ? { background: "linear-gradient(135deg, rgba(124,31,255,0.4), rgba(87,0,190,0.5))", color: "#e0d0ff", border: "1px solid rgba(124,31,255,0.4)", boxShadow: "0 0 12px rgba(124,31,255,0.25)" }
-                  : { background: "transparent", color: "var(--foreground-muted)", border: "1px solid transparent" }
-              }
+                  ? "bg-gradient-to-br from-purple-500/40 to-purple-800/50 text-purple-100 border border-purple-500/40 shadow-[0_0_12px_rgba(124,31,255,0.25)]"
+                  : "bg-transparent text-slate-400 border border-transparent hover:text-slate-200"
+              }`}
             >
               {g === null ? "All" : `Grade ${g}`}
             </button>
@@ -369,7 +361,7 @@ function Sidebar({
 
       {/* Material Types */}
       <div className="mb-5">
-        <p className="text-[0.65rem] font-bold uppercase tracking-widest mb-2.5" style={{ color: "var(--foreground-muted)" }}>Material Type</p>
+        <p className="text-[0.65rem] font-bold uppercase tracking-widest mb-2.5 text-slate-500">Material Type</p>
         <div className="flex flex-col gap-1">
           {baseMaterialTypes.map((t) => {
             const isActive = materialType === t.value;
@@ -396,12 +388,11 @@ function Sidebar({
                         key={term}
                         type="button"
                         onClick={() => onTermFilterChange(termFilter === term ? null : term)}
-                        className="flex-1 py-1.5 rounded-lg text-[0.65rem] font-bold transition-all duration-150 focus:outline-none focus:ring-2 focus:ring-blue-500/40"
-                        style={
+                        className={`flex-1 py-1.5 rounded-lg text-[0.65rem] font-bold transition-all duration-150 focus:outline-none focus:ring-2 focus:ring-blue-500/40 ${
                           termFilter === term
-                            ? { background: "rgba(96,165,250,0.2)", color: "#93c5fd", border: "1px solid rgba(96,165,250,0.35)" }
-                            : { background: "rgba(255,255,255,0.04)", color: "var(--foreground-muted)", border: "1px solid rgba(255,255,255,0.07)" }
-                        }
+                            ? "bg-blue-500/20 text-blue-300 border border-blue-500/35"
+                            : "bg-white/5 text-slate-400 border border-white/10 hover:text-slate-200"
+                        }`}
                       >
                         T{term}
                       </button>
@@ -414,8 +405,8 @@ function Sidebar({
 
           {grade === 11 && (
             <>
-              <div className="my-1.5 h-px" style={{ background: "linear-gradient(90deg, transparent, rgba(245,158,11,0.25), transparent)" }} />
-              <p className="text-[0.58rem] font-bold uppercase tracking-wider px-1 mb-1" style={{ color: "rgba(245,158,11,0.6)" }}>Grade 11 Only</p>
+              <div className="my-1.5 h-px bg-gradient-to-r from-transparent via-amber-500/25 to-transparent" />
+              <p className="text-[0.58rem] font-bold uppercase tracking-wider px-1 mb-1 text-amber-500/60">Grade 11 Only</p>
               {grade11Types.map((t) => {
                 const isActive = materialType === t.value;
                 const meta = TYPE_META[t.value];
@@ -444,17 +435,11 @@ function Sidebar({
       {/* Year filter */}
       {availableYears.length > 0 && (
         <div className="mb-5">
-          <p className="text-[0.65rem] font-bold uppercase tracking-widest mb-2.5" style={{ color: "var(--foreground-muted)" }}>Year</p>
+          <p className="text-[0.65rem] font-bold uppercase tracking-widest mb-2.5 text-slate-500">Year</p>
           <select
             value={year ?? ""}
             onChange={(e) => onYearChange(e.target.value ? Number(e.target.value) : null)}
-            className="w-full rounded-xl px-3 py-2 text-xs font-medium appearance-none focus:outline-none focus:ring-2 focus:ring-purple-500/40"
-            style={{
-              background: "rgba(255,255,255,0.05)",
-              border: `1px solid ${year ? "rgba(124,31,255,0.3)" : "rgba(255,255,255,0.09)"}`,
-              color: year ? "#c4a0ff" : "var(--foreground-muted)",
-              cursor: "pointer",
-            }}
+            className={`w-full rounded-xl px-3 py-2 text-xs font-medium appearance-none focus:outline-none focus:ring-2 focus:ring-purple-500/40 bg-white/5 border ${year ? "border-purple-500/30 text-purple-300" : "border-white/10 text-slate-400"} cursor-pointer`}
           >
             <option value="">All Years</option>
             {availableYears.map((y) => (
@@ -464,11 +449,11 @@ function Sidebar({
         </div>
       )}
 
-      <div className="mb-4 h-px" style={{ background: "rgba(255,255,255,0.06)" }} />
+      <div className="mb-4 h-px bg-white/5" />
 
       {/* Subject Accordions */}
       <div>
-      <p className="text-[0.65rem] font-bold uppercase tracking-widest mb-1" style={{ color: "var(--foreground-muted)" }}>Subjects</p>
+      <p className="text-[0.65rem] font-bold uppercase tracking-widest mb-1 text-slate-500">Subjects</p>
       {SUBJECT_CATEGORIES.map((cat, i) => (
         <AccordionSection
           key={cat.id}
@@ -490,13 +475,11 @@ function EmptyState({ onReset }: { onReset: () => void }) {
   return (
     <div className="flex flex-col items-center justify-center py-28 gap-5 text-center relative">
       <div
-        className="absolute inset-0 pointer-events-none"
-        style={{ background: "radial-gradient(ellipse 60% 40% at 50% 40%, rgba(124,31,255,0.07) 0%, transparent 70%)" }}
+        className="absolute inset-0 pointer-events-none bg-[radial-gradient(ellipse_60%_40%_at_50%_40%,rgba(124,31,255,0.07)_0%,transparent_70%)]"
         aria-hidden="true"
       />
       <div
-        className="flex items-center justify-center w-16 h-16 rounded-2xl relative"
-        style={{ background: "rgba(124,31,255,0.08)", border: "1px solid rgba(124,31,255,0.22)", boxShadow: "0 0 24px rgba(124,31,255,0.12)" }}
+        className="flex items-center justify-center w-16 h-16 rounded-2xl relative bg-purple-500/10 border border-purple-500/20 shadow-[0_0_24px_rgba(124,31,255,0.12)]"
       >
         <svg width="28" height="28" viewBox="0 0 28 28" fill="none" aria-hidden="true">
           <circle cx="12" cy="12" r="8" stroke="rgba(148,85,255,0.55)" strokeWidth="1.5" />
@@ -505,19 +488,13 @@ function EmptyState({ onReset }: { onReset: () => void }) {
         </svg>
       </div>
       <div>
-        <p className="font-semibold mb-1" style={{ color: "var(--foreground)" }}>No resources match your filters</p>
-        <p className="text-sm" style={{ color: "var(--foreground-muted)" }}>Try a different subject, grade, or material type.</p>
+        <p className="font-semibold mb-1 text-white">No resources match your filters</p>
+        <p className="text-sm text-slate-400">Try a different subject, grade, or material type.</p>
       </div>
       <button
         type="button"
         onClick={onReset}
-        className="inline-flex items-center gap-2 rounded-xl px-5 py-2.5 text-sm font-semibold transition-all duration-200 hover:-translate-y-px focus:outline-none focus:ring-2 focus:ring-purple-500/50 focus:ring-offset-2 focus:ring-offset-[#0B0F19]"
-        style={{
-          background: "linear-gradient(135deg, rgba(124,31,255,0.18) 0%, rgba(87,0,190,0.22) 100%)",
-          border: "1px solid rgba(124,31,255,0.35)",
-          color: "#c4a8ff",
-          boxShadow: "0 0 18px rgba(124,31,255,0.15)",
-        }}
+        className="inline-flex items-center gap-2 rounded-xl px-6 py-2.5 text-sm font-bold bg-gradient-to-br from-purple-500/20 to-purple-800/30 border border-purple-500/40 text-purple-300 shadow-[0_0_18px_rgba(124,31,255,0.15)] transition-all duration-200 hover:-translate-y-0.5 focus:outline-none focus:ring-2 focus:ring-purple-500/50 focus:ring-offset-2 focus:ring-offset-[#0B0F19]"
       >
         <svg width="12" height="12" viewBox="0 0 12 12" fill="none" aria-hidden="true">
           <path d="M1 6h10M6 1l5 5-5 5" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round" strokeLinejoin="round" />
@@ -711,13 +688,13 @@ export default function ResourceLibrary({ resources }: { resources?: LiveResourc
     <div className="container-xl py-14 sm:py-18">
       {/* Page header */}
       <header className="mb-10 space-y-3">
-        <div className="badge-gold w-fit">Completely Free</div>
+        <div className="inline-flex items-center gap-1.5 text-[0.65rem] font-bold uppercase tracking-widest px-2.5 py-1 rounded-full bg-amber-500/10 text-amber-400 border border-amber-500/25">Completely Free</div>
         <div className="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-4">
           <div>
             <h1 className="font-display font-bold text-3xl sm:text-4xl tracking-tight text-balance">
               O/L English Medium <span className="text-gradient-luminary">Free Study Materials</span>
             </h1>
-            <p className="mt-2 text-sm sm:text-base" style={{ color: "var(--foreground-secondary)" }}>
+            <p className="mt-2 text-sm sm:text-base text-slate-300">
               {totalCount}+ resources — Term Tests, Notes, Past Papers &amp; more.
             </p>
           </div>
@@ -725,12 +702,11 @@ export default function ResourceLibrary({ resources }: { resources?: LiveResourc
             <button
               type="button"
               onClick={() => setShowMobileFilters((v) => !v)}
-              className="inline-flex items-center gap-2 rounded-xl px-4 py-2.5 text-sm font-semibold transition-all duration-200 shrink-0 focus:outline-none focus:ring-2 focus:ring-purple-500/50 focus:ring-offset-2 focus:ring-offset-[#0B0F19]"
-              style={{
-                background: showMobileFilters ? "rgba(124,31,255,0.15)" : "rgba(255,255,255,0.05)",
-                border: `1px solid ${showMobileFilters ? "rgba(124,31,255,0.35)" : "rgba(255,255,255,0.09)"}`,
-                color: showMobileFilters ? "#b890ff" : "var(--foreground-secondary)",
-              }}
+              className={`inline-flex items-center gap-2 rounded-xl px-4 py-2.5 text-sm font-bold transition-all duration-200 shrink-0 focus:outline-none focus:ring-2 focus:ring-purple-500/50 focus:ring-offset-2 focus:ring-offset-[#0B0F19] ${
+                showMobileFilters 
+                  ? "bg-purple-500/20 border-purple-500/40 text-purple-300 shadow-[0_0_15px_rgba(139,92,246,0.2)]" 
+                  : "bg-white/5 border border-white/10 text-slate-300"
+              }`}
               aria-expanded={showMobileFilters}
               aria-label="Toggle filters menu"
             >
@@ -739,7 +715,7 @@ export default function ResourceLibrary({ resources }: { resources?: LiveResourc
               </svg>
               Filters
               {activeFilterCount > 0 && (
-                <span className="flex items-center justify-center w-4 h-4 rounded-full text-[0.55rem] font-black" style={{ background: "rgba(124,31,255,0.5)", color: "#e0d0ff" }}>
+                <span className="flex items-center justify-center w-4 h-4 rounded-full text-[0.55rem] font-black bg-purple-500/50 text-purple-100">
                   {activeFilterCount}
                 </span>
               )}
@@ -747,16 +723,9 @@ export default function ResourceLibrary({ resources }: { resources?: LiveResourc
             
             {/* Mobile Helper Badge */}
             <div 
-              className="flex items-center px-3 py-1.5 rounded-full animate-pulse shadow-[0_0_15px_rgba(245,158,11,0.15)]"
-              style={{ 
-                background: "rgba(245, 158, 11, 0.08)", 
-                border: "1px solid rgba(245, 158, 11, 0.25)",
-              }}
+              className="flex items-center px-3 py-1.5 rounded-full animate-pulse shadow-[0_0_15px_rgba(245,158,11,0.15)] bg-amber-500/10 border border-amber-500/25"
             >
-              <span 
-                className="text-[0.62rem] xs:text-[0.68rem] font-bold italic tracking-wide whitespace-nowrap"
-                style={{ color: "#fbbf24" }}
-              >
+              <span className="text-[0.62rem] xs:text-[0.68rem] font-bold italic tracking-wide whitespace-nowrap text-amber-400">
                 👈 Tap to find materials faster!
               </span>
             </div>
@@ -766,7 +735,7 @@ export default function ResourceLibrary({ resources }: { resources?: LiveResourc
 
       {/* Mobile filters panel */}
       {showMobileFilters && (
-        <div className="lg:hidden mb-8 rounded-2xl p-5" style={{ background: "rgba(255,255,255,0.03)", border: "1px solid rgba(255,255,255,0.08)", backdropFilter: "blur(20px)" }}>
+        <div className="lg:hidden mb-8 rounded-2xl p-5 bg-white/[0.03] border border-white/[0.08] backdrop-blur-2xl">
           {sidebarContent}
         </div>
       )}
@@ -775,13 +744,7 @@ export default function ResourceLibrary({ resources }: { resources?: LiveResourc
       <div className="flex gap-7 items-start">
         {/* Sticky sidebar */}
         <aside
-          className="hidden lg:block shrink-0 scrollbar-hide"
-          style={{
-            width: 248, position: "sticky", top: 80,
-            maxHeight: "calc(100vh - 100px)", overflowY: "auto",
-            background: "rgba(255,255,255,0.025)", border: "1px solid rgba(255,255,255,0.07)",
-            borderRadius: "1.25rem", padding: "1.25rem", backdropFilter: "blur(20px)",
-          }}
+          className="hidden lg:block shrink-0 scrollbar-hide w-[248px] sticky top-20 max-h-[calc(100vh-100px)] overflow-y-auto bg-white/[0.025] border border-white/[0.07] rounded-[1.25rem] p-5 backdrop-blur-2xl"
         >
           {sidebarContent}
         </aside>
@@ -806,17 +769,16 @@ export default function ResourceLibrary({ resources }: { resources?: LiveResourc
 
           {/* Results info */}
           <div className="flex flex-wrap items-center justify-between gap-2 mb-4">
-            <p className="text-sm" style={{ color: "var(--foreground-muted)" }}>
-              <span style={{ color: "var(--foreground-secondary)", fontWeight: 600 }}>{filteredCount}</span>{" "}
+            <p className="text-sm text-slate-400">
+              <span className="text-slate-200 font-bold">{filteredCount}</span>{" "}
               {filteredCount === 1 ? "resource" : "resources"} for{" "}
-              <span style={{ color: "var(--foreground)" }}>{grade === null ? "All Grades" : `Grade ${grade}`}</span>
+              <span className="text-white font-bold">{grade === null ? "All Grades" : `Grade ${grade}`}</span>
             </p>
             {activeFilterCount > 0 && (
               <button 
                 type="button" 
                 onClick={clearAll} 
-                className="hidden sm:block text-xs font-semibold transition-colors duration-150 hover:text-white focus:outline-none focus:underline" 
-                style={{ color: "#b890ff" }}
+                className="hidden sm:block text-xs font-bold uppercase tracking-wider text-purple-400 transition-colors duration-150 hover:text-purple-300 focus:outline-none focus:underline" 
               >
                 Clear filters
               </button>
@@ -832,7 +794,7 @@ export default function ResourceLibrary({ resources }: { resources?: LiveResourc
                     key={s} 
                     type="button" 
                     onClick={() => toggleSubject(s)} 
-                    className="inline-flex items-center gap-1 text-[0.65rem] font-semibold px-2 py-1 rounded-full transition-all duration-150 hover:opacity-75 focus:outline-none focus:ring-2 focus:ring-purple-500/40" 
+                    className="inline-flex items-center gap-1 text-[0.65rem] font-bold uppercase tracking-wider px-2.5 py-1 rounded-full transition-all duration-150 hover:opacity-75 focus:outline-none focus:ring-2 focus:ring-purple-500/40" 
                     style={{ background: style.bg, color: style.color, border: `1px solid ${style.border}` }} 
                     aria-label={`Remove filter for ${s}`}
                   >

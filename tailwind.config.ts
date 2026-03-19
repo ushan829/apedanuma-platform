@@ -15,7 +15,12 @@ const config: Config = {
       },
       colors: {
         background: "var(--background)",
-        foreground: "var(--foreground)",
+        foreground: {
+          DEFAULT: "var(--foreground)",
+          secondary: "var(--foreground-secondary)",
+          muted: "var(--foreground-muted)",
+          disabled: "var(--foreground-disabled)",
+        },
         // Deep dark palette
         void: {
           DEFAULT: "#0a0a0a",

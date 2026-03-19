@@ -27,10 +27,12 @@ export default function HomePage() {
             {features.map((f, i) => (
               <div
                 key={f.title}
-                className={`card ${i === 0 ? "card-accent" : i === 2 ? "card-gold" : ""}`}
+                className={`relative p-8 rounded-3xl bg-white/[0.03] border border-white/10 backdrop-blur-xl transition-all duration-500 hover:-translate-y-1 hover:bg-white/[0.06] hover:border-white/20 group ${
+                  i === 0 ? "shadow-[0_0_30px_rgba(139,92,246,0.1)]" : i === 2 ? "shadow-[0_0_30px_rgba(245,158,11,0.1)]" : ""
+                }`}
               >
                 <div
-                  className="mb-4 flex h-11 w-11 items-center justify-center rounded-xl text-xl"
+                  className="mb-6 flex h-12 w-12 items-center justify-center rounded-2xl text-2xl transition-transform duration-500 group-hover:scale-110"
                   style={{
                     background: i % 3 === 0
                       ? "rgba(124,31,255,0.12)"
@@ -48,10 +50,10 @@ export default function HomePage() {
                 >
                   {f.icon}
                 </div>
-                <h4 className="mb-2 font-display font-semibold" style={{ color: "var(--foreground)" }}>
+                <h4 className="mb-3 font-display font-bold text-lg text-white">
                   {f.title}
                 </h4>
-                <p className="text-sm leading-relaxed" style={{ color: "var(--foreground-secondary)" }}>
+                <p className="text-sm leading-relaxed text-slate-400 group-hover:text-slate-300 transition-colors">
                   {f.description}
                 </p>
               </div>

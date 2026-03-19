@@ -6,6 +6,7 @@ import { GoogleAnalytics } from "@next/third-parties/google";
 import "./globals.css";
 import Navbar from "@/components/layout/Navbar";
 import Footer from "@/components/layout/Footer";
+import BackToTop from "@/components/ui/BackToTop";
 
 const BackgroundClouds = dynamic(() => import("@/components/layout/BackgroundClouds"), { 
   ssr: false 
@@ -148,6 +149,7 @@ export default function RootLayout({
         </div>
 
         <ToastProvider />
+        <BackToTop />
         
         {/* Audit: PayHere script uses lazyOnload to improve Initial Page Load performance */}
         <Script src="https://www.payhere.lk/lib/payhere.js" strategy="lazyOnload" />

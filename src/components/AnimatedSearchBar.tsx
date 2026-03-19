@@ -25,36 +25,13 @@ export default function AnimatedSearchBar({
   className = "",
 }: AnimatedSearchBarProps) {
   const [placeholder, setPlaceholder] = useState("");
-  const [placeholderIndex, setPlaceholderIndex] = useState(0);
-  const [charIndex, setCharIndex] = useState(0);
-  const [isDeleting, setIsDeleting] = useState(false);
   const inputRef = useRef<HTMLInputElement>(null);
 
-  // ── Typewriter Effect ──
+  // ── Static Placeholder on Load ──
   useEffect(() => {
-    const currentFullText = placeholders[placeholderIndex % placeholders.length];
-    
-    const timeout = setTimeout(() => {
-      if (!isDeleting) {
-        setPlaceholder(currentFullText.slice(0, charIndex + 1));
-        setCharIndex((prev) => prev + 1);
-
-        if (charIndex === currentFullText.length) {
-          setTimeout(() => setIsDeleting(true), 2000);
-        }
-      } else {
-        setPlaceholder(currentFullText.slice(0, charIndex - 1));
-        setCharIndex((prev) => prev - 1);
-
-        if (charIndex === 0) {
-          setIsDeleting(false);
-          setPlaceholderIndex((prev) => prev + 1);
-        }
-      }
-    }, isDeleting ? 40 : 80);
-
-    return () => clearTimeout(timeout);
-  }, [charIndex, isDeleting, placeholderIndex, placeholders]);
+    const randomIndex = Math.floor(Math.random() * placeholders.length);
+    setPlaceholder(placeholders[randomIndex]);
+  }, [placeholders]);
 
   // ── Keyboard Shortcut ──
   useEffect(() => {
@@ -72,18 +49,14 @@ export default function AnimatedSearchBar({
   return (
     <div className={`relative group w-full ${className}`}>
       
-      {/* ── Premium Animated Icon Container ── */}
+      {/* ── Refined Icon Container ── */}
       <div className="absolute left-4 top-1/2 -translate-y-1/2 z-20 pointer-events-none">
         <div className="relative flex items-center justify-center">
-          {/* Animated Halo Rings (Active on group-focus-within) */}
-          <div className="absolute inset-0 rounded-full bg-purple-500/20 scale-0 group-focus-within:animate-[ping_1.5s_cubic-bezier(0,0,0.2,1)_infinite] opacity-0 group-focus-within:opacity-100" />
-          <div className="absolute inset-0 rounded-full bg-purple-400/10 scale-0 group-focus-within:animate-[ping_2s_cubic-bezier(0,0,0.2,1)_infinite] opacity-0 group-focus-within:opacity-100" style={{ animationDelay: '0.5s' }} />
-          
           <Search 
             className={`w-5 h-5 transition-all duration-500 relative z-10 ${
               value 
-                ? "text-purple-400 scale-110 rotate-[360deg]" 
-                : "text-slate-500 group-focus-within:text-purple-400 group-focus-within:scale-110"
+                ? "text-purple-400" 
+                : "text-slate-500 group-focus-within:text-purple-400"
             }`} 
           />
         </div>
@@ -96,9 +69,12 @@ export default function AnimatedSearchBar({
         value={value}
         onChange={(e) => onChange(e.target.value)}
         placeholder={placeholder}
-        className="w-full pl-12 pr-16 py-4 bg-slate-800/40 backdrop-blur-md border border-slate-700/50 rounded-2xl text-white placeholder-slate-500/70 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:ring-offset-2 focus:ring-offset-[#0B0F19] transition-all duration-300 shadow-[0_0_15px_rgba(0,0,0,0.1)] focus:shadow-[0_0_25px_rgba(168,85,247,0.2)]"
+        className="w-full pl-12 pr-16 py-4 bg-slate-800/40 backdrop-blur-md border border-slate-700/50 rounded-2xl text-white placeholder-slate-500/70 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:ring-offset-2 focus:ring-offset-[#0B0F19] transition-all duration-300 shadow-[0_0_15px_rgba(0,0,0,0.1)] focus:shadow-[0_0_25px_rgba(168,85,247,0.1)]"
         aria-label="Search resources"
       />
+
+      {/* Placeholder display for typewriter effect (if re-enabled later) or static display */}
+      <span className="sr-only" aria-hidden="true">{placeholder}</span>
 
       {/* Right Controls */}
       <div className="absolute right-4 top-1/2 -translate-y-1/2 flex items-center gap-2 z-20">

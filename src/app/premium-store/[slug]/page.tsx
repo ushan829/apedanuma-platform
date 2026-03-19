@@ -11,6 +11,7 @@ import { getPresignedUrl } from "@/lib/s3";
 import BuySection from "@/components/sections/BuySection";
 import PDFViewer from "@/components/Resource/PDFViewer";
 import type { LiveResource } from "@/lib/resource-constants";
+import { sanitizeHtml } from "@/lib/sanitize";
 
 /* ─────────────────────────────────────────
    DB fetch helper
@@ -295,7 +296,7 @@ export default async function ProductPreviewPage({ params }: { params: { slug: s
               </h2>
               <div
                 className="prose prose-invert prose-slate prose-sm max-w-none rich-text-content break-words"
-                dangerouslySetInnerHTML={{ __html: product.description }}
+                dangerouslySetInnerHTML={{ __html: sanitizeHtml(product.description || "") }}
               />
             </div>
 

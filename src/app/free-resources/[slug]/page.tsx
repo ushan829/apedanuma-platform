@@ -9,6 +9,7 @@ import { getPresignedUrl } from "@/lib/s3";
 import PDFViewer from "@/components/Resource/PDFViewer";
 import DownloadButton from "@/components/Resource/DownloadButton";
 import type { LiveResource } from "@/lib/resource-constants";
+import { sanitizeHtml } from "@/lib/sanitize";
 
 /* ─────────────────────────────────────────
    DB fetch helper
@@ -359,7 +360,7 @@ export default async function ResourcePreviewPage({ params }: { params: { slug: 
               {/* Description */}
               <div
                 className="prose prose-invert prose-slate prose-sm max-w-none mb-6 rich-text-content break-words overflow-hidden w-full"
-                dangerouslySetInnerHTML={{ __html: resource.description }}
+                dangerouslySetInnerHTML={{ __html: sanitizeHtml(resource.description || "") }}
               />
 
               {/* Free badge */}

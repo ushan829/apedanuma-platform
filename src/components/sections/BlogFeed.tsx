@@ -3,6 +3,7 @@
 import { useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
+import { AnimatePresence, motion } from "framer-motion";
 import type { PostSummary } from "@/app/blog/page";
 
 /* ── Category colours ── */
@@ -359,34 +360,65 @@ export default function BlogFeed({ initialPosts }: { initialPosts: PostSummary[]
       {/* Grid or empty state */}
       {initialPosts.length === 0 ? (
         <div
-          className="rounded-2xl py-20 text-center"
+          className="rounded-[2rem] py-24 text-center flex flex-col items-center justify-center gap-4"
           style={{ background: "rgba(255,255,255,0.02)", border: "1px solid rgba(255,255,255,0.06)" }}
         >
-          <p className="text-sm" style={{ color: "var(--foreground-muted)" }}>
-            No articles published yet. Check back soon!
-          </p>
+          <div className="w-16 h-16 rounded-2xl flex items-center justify-center mb-2" style={{ background: "rgba(255,255,255,0.03)", border: "1px solid rgba(255,255,255,0.08)" }}>
+            <svg width="32" height="32" viewBox="0 0 24 24" fill="none" style={{ color: "var(--foreground-muted)" }}>
+              <path d="M19 20H5a2 2 0 01-2-2V6a2 2 0 012-2h10l5 5v11a2 2 0 01-2 2z" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+              <path d="M14 4v5h5" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+            </svg>
+          </div>
+          <div>
+            <h3 className="font-display font-bold text-lg" style={{ color: "var(--foreground)" }}>No articles published yet</h3>
+            <p className="text-sm mt-1" style={{ color: "var(--foreground-muted)" }}>
+              We're currently writing new guides. Check back soon!
+            </p>
+          </div>
         </div>
       ) : filtered.length === 0 ? (
-        <div
-          className="rounded-2xl py-20 text-center"
+        <motion.div
+          initial={{ opacity: 0, scale: 0.98 }}
+          animate={{ opacity: 1, scale: 1 }}
+          className="rounded-[2rem] py-24 text-center flex flex-col items-center justify-center gap-5"
           style={{ background: "rgba(255,255,255,0.02)", border: "1px solid rgba(255,255,255,0.06)" }}
         >
-          <p className="text-sm mb-2" style={{ color: "var(--foreground-muted)" }}>
-            No articles match your filters.
-          </p>
+          <div className="w-16 h-16 rounded-2xl flex items-center justify-center" style={{ background: "rgba(124,31,255,0.06)", border: "1px solid rgba(124,31,255,0.15)" }}>
+            <svg width="28" height="28" viewBox="0 0 24 24" fill="none" style={{ color: "#9455ff" }}>
+              <circle cx="11" cy="11" r="8" stroke="currentColor" strokeWidth="1.5" />
+              <path d="M21 21l-4.35-4.35" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
+              <path d="M8 11h6M11 8v6" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" transform="rotate(45 11 11)" />
+            </svg>
+          </div>
+          <div>
+            <h3 className="font-display font-bold text-lg" style={{ color: "var(--foreground)" }}>No matches found</h3>
+            <p className="text-sm mt-1" style={{ color: "var(--foreground-muted)" }}>
+              We couldn't find any articles matching your current filters.
+            </p>
+          </div>
           <button
             onClick={() => { setActiveCategory("All"); setSearch(""); }}
-            className="text-xs font-semibold"
-            style={{ color: "#9455ff" }}
+            className="btn-primary px-8 py-2.5 mt-2 rounded-xl text-sm font-bold"
           >
-            Clear filters
+            Clear All Filters
           </button>
-        </div>
+        </motion.div>
       ) : (
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-          {filtered.map((post) => (
-            <PostCard key={post._id} post={post} />
-          ))}
+          <AnimatePresence mode="popLayout">
+            {filtered.map((post) => (
+              <motion.div
+                key={post._id}
+                layout
+                initial={{ opacity: 0, y: 12 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, scale: 0.95 }}
+                transition={{ duration: 0.22, ease: "easeOut" }}
+              >
+                <PostCard post={post} />
+              </motion.div>
+            ))}
+          </AnimatePresence>
         </div>
       )}
 

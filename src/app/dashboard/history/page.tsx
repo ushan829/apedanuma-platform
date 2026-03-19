@@ -6,6 +6,7 @@ import User from "@/models/User";
 import Order from "@/models/Order";
 import "@/models/Resource"; // Ensure Resource model is registered for populate
 import { redirect } from "next/navigation";
+import { sanitizeHtml } from "@/lib/sanitize";
 
 export const dynamic = "force-dynamic";
 
@@ -56,7 +57,7 @@ function ResourceCard({ resource }: { resource: PurchasedResource }) {
         {resource.description && (
           <div
             className="prose prose-invert prose-slate prose-sm line-clamp-2 rich-text-content break-words overflow-hidden w-full"
-            dangerouslySetInnerHTML={{ __html: resource.description }}
+            dangerouslySetInnerHTML={{ __html: sanitizeHtml(resource.description) }}
           />
         )}
         <a

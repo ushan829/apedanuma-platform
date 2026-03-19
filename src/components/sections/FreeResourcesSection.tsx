@@ -1,612 +1,273 @@
 "use client";
 
-import { useState, useMemo } from "react";
-import { Search, X } from "lucide-react";
+import { useState, useMemo, useEffect } from "react";
+import { useRouter, usePathname, useSearchParams } from "next/navigation";
+import { AnimatePresence, motion } from "framer-motion";
+import AnimatedSearchBar from "@/components/AnimatedSearchBar";
+import FilterSidebar from "@/components/layout/FilterSidebar";
+import UniversalCard from "@/components/Resource/UniversalCard";
+import { 
+  FREE_RESOURCES, 
+  getSubjectStyle,
+  type Grade,
+  type MaterialType,
+  type TermFilter,
+  type FreeResource
+} from "@/lib/free-resources";
 
-/* ─────────────────────────────────────────────────────────────
-   Types & constants
-   ───────────────────────────────────────────────────────────── */
-interface Resource {
-  id: string;
-  subject: string;
-  abbr: string;
-  title: string;
-  description: string;
-  pages: number;
-  fileSize: string;
-  type: "Notes" | "Past Papers" | "Practice" | "Guide";
-  color: string;
-  accent: string;
-}
-
-const FILTER_SUBJECTS = [
-  "All",
-  "Mathematics",
-  "Science",
-  "History",
-  "ICT",
-  "English",
-  "Geography",
-] as const;
-
-type SubjectFilter = (typeof FILTER_SUBJECTS)[number];
-
-/* ─────────────────────────────────────────────────────────────
-   Resource data — 12 O/L English Medium study packs
-   ───────────────────────────────────────────────────────────── */
-const RESOURCES: Resource[] = [
-  // Mathematics
-  {
-    id: "math-01",
-    subject: "Mathematics",
-    abbr: "M",
-    title: "Algebra & Quadratic Equations — Complete Notes",
-    description:
-      "Fully worked examples, formula sheets and step-by-step solutions covering every algebra topic in the 2025 G.C.E. O/L syllabus.",
-    pages: 48,
-    fileSize: "3.2 MB",
-    type: "Notes",
-    color: "#60a5fa",
-    accent: "rgba(96,165,250,0.14)",
-  },
-  {
-    id: "math-02",
-    subject: "Mathematics",
-    abbr: "M",
-    title: "Geometry, Trigonometry & Mensuration Pack",
-    description:
-      "Annotated diagrams, theorems, proofs and practice questions for all geometry, trigonometry and mensuration topics.",
-    pages: 56,
-    fileSize: "4.1 MB",
-    type: "Practice",
-    color: "#60a5fa",
-    accent: "rgba(96,165,250,0.14)",
-  },
-  {
-    id: "math-03",
-    subject: "Mathematics",
-    abbr: "M",
-    title: "Statistics & Probability — Worked Solutions",
-    description:
-      "Frequency tables, histograms, mean / median / mode and probability trees with fully solved model answers.",
-    pages: 32,
-    fileSize: "2.4 MB",
-    type: "Practice",
-    color: "#60a5fa",
-    accent: "rgba(96,165,250,0.14)",
-  },
-  // Science
-  {
-    id: "sci-01",
-    subject: "Science",
-    abbr: "Sc",
-    title: "Combined Science: Chemistry Unit Summary",
-    description:
-      "Atoms, elements, compounds, chemical reactions and the periodic table — crystal-clear notes with lab diagrams.",
-    pages: 60,
-    fileSize: "5.8 MB",
-    type: "Notes",
-    color: "#34d399",
-    accent: "rgba(52,211,153,0.14)",
-  },
-  {
-    id: "sci-02",
-    subject: "Science",
-    abbr: "Sc",
-    title: "Physics: Motion, Forces & Energy Guide",
-    description:
-      "Newton's laws, velocity–acceleration graphs, work, energy and power explained with solved numericals.",
-    pages: 44,
-    fileSize: "3.7 MB",
-    type: "Guide",
-    color: "#34d399",
-    accent: "rgba(52,211,153,0.14)",
-  },
-  // History
-  {
-    id: "hist-01",
-    subject: "History",
-    abbr: "H",
-    title: "Sri Lanka: Colonial Period & Independence",
-    description:
-      "Detailed timeline, key figures and model essay answers covering the colonial era through independence.",
-    pages: 38,
-    fileSize: "2.9 MB",
-    type: "Notes",
-    color: "#fbbf24",
-    accent: "rgba(251,191,36,0.14)",
-  },
-  {
-    id: "hist-02",
-    subject: "History",
-    abbr: "H",
-    title: "World History: 20th Century Key Events",
-    description:
-      "World Wars, the Cold War, post-war reconstruction and the emergence of newly independent nations.",
-    pages: 42,
-    fileSize: "3.4 MB",
-    type: "Notes",
-    color: "#fbbf24",
-    accent: "rgba(251,191,36,0.14)",
-  },
-  // ICT
-  {
-    id: "ict-01",
-    subject: "ICT",
-    abbr: "ICT",
-    title: "Computer Systems & Networking — Full Guide",
-    description:
-      "Hardware, software, OS concepts, network topologies, protocols and data-security essentials in one place.",
-    pages: 50,
-    fileSize: "4.2 MB",
-    type: "Guide",
-    color: "#22d3ee",
-    accent: "rgba(34,211,238,0.14)",
-  },
-  {
-    id: "ict-02",
-    subject: "ICT",
-    abbr: "ICT",
-    title: "Spreadsheets & Database Fundamentals",
-    description:
-      "Functions, formulas, sorting and filtering in spreadsheets; database design, tables and query basics.",
-    pages: 34,
-    fileSize: "2.8 MB",
-    type: "Notes",
-    color: "#22d3ee",
-    accent: "rgba(34,211,238,0.14)",
-  },
-  // English
-  {
-    id: "eng-01",
-    subject: "English",
-    abbr: "En",
-    title: "Essay & Directed Writing Masterclass",
-    description:
-      "Formal and informal letter formats, argumentative essays and report writing with scored sample answers.",
-    pages: 40,
-    fileSize: "3.1 MB",
-    type: "Guide",
-    color: "#b890ff",
-    accent: "rgba(184,144,255,0.14)",
-  },
-  {
-    id: "eng-02",
-    subject: "English",
-    abbr: "En",
-    title: "Grammar, Comprehension & Summary Skills",
-    description:
-      "Tenses, active and passive voice, determiners, comprehension strategies and step-by-step summary writing.",
-    pages: 52,
-    fileSize: "4.5 MB",
-    type: "Notes",
-    color: "#b890ff",
-    accent: "rgba(184,144,255,0.14)",
-  },
-  // Geography
-  {
-    id: "geo-01",
-    subject: "Geography",
-    abbr: "Geo",
-    title: "Physical Geography: Diagrams & Model Answers",
-    description:
-      "Weathering, erosion, rivers, coastal landforms, climate zones and natural disasters with labelled diagrams.",
-    pages: 46,
-    fileSize: "3.8 MB",
-    type: "Notes",
-    color: "#fb923c",
-    accent: "rgba(251,146,60,0.14)",
-  },
-];
-
-/* ─────────────────────────────────────────────────────────────
-   Subject icons — minimal SVG, one per subject
-   ───────────────────────────────────────────────────────────── */
-function SubjectIcon({ subject, color }: { subject: string; color: string }) {
-  const cls = "w-4 h-4 shrink-0";
-  const props = { className: cls, fill: "none", viewBox: "0 0 24 24", stroke: color, strokeWidth: 1.75 };
-
-  switch (subject) {
-    case "Mathematics":
-      return (
-        <svg {...props}>
-          <path strokeLinecap="round" strokeLinejoin="round"
-            d="M4 12h16M12 4v16M7 7l10 10M17 7L7 17" />
-        </svg>
-      );
-    case "Science":
-      return (
-        <svg {...props}>
-          <path strokeLinecap="round" strokeLinejoin="round"
-            d="M9 3h6M10 3v5.5L5.5 17A1 1 0 006.4 19h11.2a1 1 0 00.9-1.45L14 8.5V3" />
-          <circle cx="12" cy="15" r="1" fill={color} stroke="none" />
-        </svg>
-      );
-    case "History":
-      return (
-        <svg {...props}>
-          <path strokeLinecap="round" strokeLinejoin="round"
-            d="M12 8v4l3 3M12 2a10 10 0 100 20A10 10 0 0012 2z" />
-        </svg>
-      );
-    case "ICT":
-      return (
-        <svg {...props}>
-          <rect x="3" y="4" width="18" height="13" rx="1.5" strokeLinecap="round" />
-          <path strokeLinecap="round" d="M8 21h8M12 17v4" />
-          <path strokeLinecap="round" d="M7.5 10l2.5 2-2.5 2" />
-          <path strokeLinecap="round" d="M12.5 14h3" />
-        </svg>
-      );
-    case "English":
-      return (
-        <svg {...props}>
-          <path strokeLinecap="round" strokeLinejoin="round"
-            d="M12 6.5C10 4 6 4 4 6v13c2-2 6-2 8 0V6.5zm0 0C14 4 18 4 20 6v13c-2-2-6-2-8 0" />
-        </svg>
-      );
-    case "Geography":
-      return (
-        <svg {...props}>
-          <circle cx="12" cy="12" r="9" />
-          <path strokeLinecap="round" d="M3 12h18M12 3c-2.5 3-4 6-4 9s1.5 6 4 9M12 3c2.5 3 4 6 4 9s-1.5 6-4 9" />
-        </svg>
-      );
-    default:
-      return (
-        <svg {...props}>
-          <path strokeLinecap="round" d="M9 12h6M12 9v6" />
-          <rect x="3" y="3" width="18" height="18" rx="2" />
-        </svg>
-      );
-  }
-}
-
-/* ─────────────────────────────────────────────────────────────
-   Search bar
-   ───────────────────────────────────────────────────────────── */
-function SearchBar({
-  value,
-  onChange,
-}: {
-  value: string;
-  onChange: (v: string) => void;
-}) {
-  return (
-    <div className="relative">
-      <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 w-5 h-5" />
-
-      <input
-        type="text"
-        value={value}
-        onChange={(e) => onChange(e.target.value)}
-        placeholder="Search by title, subject, or topic…"
-        className="w-full pl-12 pr-12 py-3.5 bg-slate-800 border border-slate-600 rounded-xl text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all shadow-lg shadow-black/20"
-        aria-label="Search free resources"
-        spellCheck={false}
-        autoComplete="off"
-      />
-
-      {/* Clear button — appears when query is non-empty */}
-      {value && (
-        <button
-          onClick={() => onChange("")}
-          aria-label="Clear search"
-          className="absolute right-4 top-1/2 -translate-y-1/2 flex h-7 w-7 items-center justify-center rounded-full transition-all duration-150 hover:bg-white/10 text-gray-400"
-        >
-          <X size={16} strokeWidth={2.5} />
-        </button>
-      )}
-    </div>
-  );
-}
-
-/* ─────────────────────────────────────────────────────────────
-   Single resource card
-   ───────────────────────────────────────────────────────────── */
-function ResourceCard({ r }: { r: Resource }) {
-  const TYPE_COLORS: Record<Resource["type"], string> = {
-    Notes:        "rgba(148,163,184,0.12)",
-    Practice:     "rgba(251,191,36,0.1)",
-    Guide:        "rgba(52,211,153,0.1)",
-    "Past Papers":"rgba(248,113,113,0.1)",
-  };
-  const TYPE_TEXT: Record<Resource["type"], string> = {
-    Notes:        "#94a3b8",
-    Practice:     "#fbbf24",
-    Guide:        "#34d399",
-    "Past Papers":"#f87171",
-  };
-
-  return (
-    <div className="resource-card">
-
-      {/* ── Top: subject badge + type badge ── */}
-      <div className="flex items-start justify-between gap-3 mb-5">
-        {/* Subject badge */}
-        <div
-          className="flex items-center gap-2 px-3 py-1.5 rounded-lg"
-          style={{
-            background: r.accent,
-            border: `1px solid ${r.color}30`,
-          }}
-        >
-          <SubjectIcon subject={r.subject} color={r.color} />
-          <span
-            className="font-display font-bold text-xs leading-none"
-            style={{ color: r.color }}
-          >
-            {r.subject}
-          </span>
-        </div>
-
-        {/* Type badge */}
-        <span
-          className="text-[0.6rem] font-bold uppercase tracking-widest px-2.5 py-1.5 rounded-full shrink-0"
-          style={{
-            background: TYPE_COLORS[r.type],
-            border: `1px solid ${TYPE_TEXT[r.type]}25`,
-            color: TYPE_TEXT[r.type],
-          }}
-        >
-          {r.type}
-        </span>
-      </div>
-
-      {/* ── Title ── */}
-      <h3
-        className="font-display font-bold text-[0.9375rem] leading-snug mb-2.5 line-clamp-2"
-        style={{ color: "var(--foreground)" }}
-      >
-        {r.title}
-      </h3>
-
-      {/* ── Description ── */}
-      <div
-        className="prose prose-invert prose-slate prose-sm line-clamp-3 flex-1 mb-5 rich-text-content break-words overflow-hidden w-full"
-        dangerouslySetInnerHTML={{ __html: r.description }}
-      />
-
-      {/* ── File metadata ── */}
-      <div
-        className="flex items-center gap-3 py-3.5 mb-4"
-        style={{
-          borderTop:    "1px solid rgba(255,255,255,0.05)",
-          borderBottom: "1px solid rgba(255,255,255,0.05)",
-        }}
-      >
-        {/* PDF label chip */}
-        <span
-          className="flex items-center justify-center h-7 px-2 rounded-md text-[0.6rem] font-black tracking-wider shrink-0"
-          style={{
-            background: "rgba(239,68,68,0.1)",
-            border: "1px solid rgba(239,68,68,0.22)",
-            color: "#f87171",
-          }}
-        >
-          PDF
-        </span>
-
-        {/* Stats */}
-        <div
-          className="flex flex-wrap items-center gap-x-2 gap-y-0.5 text-xs"
-          style={{ color: "var(--foreground-muted)" }}
-        >
-          <span>{r.pages} pages</span>
-          <span aria-hidden="true" style={{ opacity: 0.3 }}>·</span>
-          <span>{r.fileSize}</span>
-          <span aria-hidden="true" style={{ opacity: 0.3 }}>·</span>
-          <span style={{ color: "#34d399", fontWeight: 600 }}>Free</span>
-        </div>
-      </div>
-
-      {/* ── Download button ── */}
-      <a
-        href="#"
-        className="btn-download group"
-        aria-label={`Download ${r.title} as PDF`}
-      >
-        {/* Download icon — bounces down on hover */}
-        <svg
-          className="w-4 h-4 shrink-0 transition-transform duration-300 group-hover:translate-y-0.5"
-          fill="none" viewBox="0 0 24 24"
-          stroke="currentColor" strokeWidth={2}
-        >
-          <path strokeLinecap="round" strokeLinejoin="round"
-            d="M12 10v6m0 0l-3-3m3 3l3-3M3 17v3a2 2 0 002 2h14a2 2 0 002-2v-3" />
-        </svg>
-        Download Free PDF
-      </a>
-
-    </div>
-  );
-}
-
-/* ─────────────────────────────────────────────────────────────
-   Empty state
-   ───────────────────────────────────────────────────────────── */
-function EmptyState({ onReset }: { onReset: () => void }) {
-  return (
-    <div className="flex flex-col items-center justify-center py-24 gap-5 text-center">
-      {/* Icon container */}
-      <div
-        className="flex h-16 w-16 items-center justify-center rounded-2xl"
-        style={{
-          background: "rgba(255,255,255,0.04)",
-          border: "1px solid rgba(255,255,255,0.08)",
-        }}
-      >
-        <svg
-          className="w-7 h-7"
-          fill="none" viewBox="0 0 24 24"
-          stroke="currentColor" strokeWidth={1.5}
-          style={{ color: "var(--foreground-muted)" }}
-        >
-          <path strokeLinecap="round" strokeLinejoin="round"
-            d="M21 21l-5.197-5.197m0 0A7.5 7.5 0 105.196 15.803a7.5 7.5 0 0010.607 0z" />
-        </svg>
-      </div>
-
-      <div className="space-y-2">
-        <h4
-          className="font-display font-semibold text-base"
-          style={{ color: "var(--foreground)" }}
-        >
-          No resources found
-        </h4>
-        <p className="text-sm max-w-xs" style={{ color: "var(--foreground-muted)" }}>
-          Try adjusting your search term or selecting a different subject filter.
-        </p>
-      </div>
-
-      <button onClick={onReset} className="btn-ghost text-sm px-5 py-2">
-        Reset all filters
-      </button>
-    </div>
-  );
-}
-
-/* ─────────────────────────────────────────────────────────────
-   Main section export
-   ───────────────────────────────────────────────────────────── */
 export default function FreeResourcesSection() {
-  const [query,        setQuery]        = useState("");
-  const [activeFilter, setActiveFilter] = useState<SubjectFilter>("All");
+  const router = useRouter();
+  const pathname = usePathname();
+  const searchParams = useSearchParams();
 
-  /* Derived filtered list */
-  const filtered = useMemo(() => {
-    const q = query.trim().toLowerCase();
-    return RESOURCES.filter((r) => {
-      const matchSubject = activeFilter === "All" || r.subject === activeFilter;
-      const matchQuery =
-        !q ||
-        r.title.toLowerCase().includes(q) ||
-        r.description.toLowerCase().includes(q) ||
-        r.subject.toLowerCase().includes(q) ||
-        r.type.toLowerCase().includes(q);
-      return matchSubject && matchQuery;
-    });
-  }, [query, activeFilter]);
+  // 1. Initial State from URL
+  const [grade, setGrade] = useState<Grade>(() => {
+    const g = searchParams.get("grade");
+    return (g === "11" ? 11 : 10) as Grade;
+  });
+  const [materialType, setMaterialType] = useState<MaterialType>(() => {
+    return (searchParams.get("type") as MaterialType) || "all";
+  });
+  const [termFilter, setTermFilter] = useState<TermFilter | null>(() => {
+    const t = searchParams.get("term");
+    return t ? (parseInt(t) as TermFilter) : null;
+  });
+  const [selectedSubjects, setSelectedSubjects] = useState<Set<string>>(() => {
+    const s = searchParams.get("subjects");
+    return new Set(s ? s.split(",") : []);
+  });
+  const [searchQuery, setSearchQuery] = useState(() => searchParams.get("q") || "");
+  const [year, setYear] = useState<number | null>(() => {
+    const y = searchParams.get("year");
+    return y ? parseInt(y) : null;
+  });
+  const [showMobileFilters, setShowMobileFilters] = useState(false);
 
-  const resetAll = () => {
-    setQuery("");
-    setActiveFilter("All");
+  // 2. Sync State -> URL
+  useEffect(() => {
+    const params = new URLSearchParams();
+    if (grade === 11) params.set("grade", "11");
+    if (materialType !== "all") params.set("type", materialType);
+    if (termFilter !== null) params.set("term", termFilter.toString());
+    if (selectedSubjects.size > 0) {
+      params.set("subjects", Array.from(selectedSubjects).join(","));
+    }
+    if (searchQuery.trim()) params.set("q", searchQuery.trim());
+    if (year !== null) params.set("year", year.toString());
+
+    const query = params.toString();
+    const url = query ? `${pathname}?${query}` : pathname;
+    router.replace(url, { scroll: false });
+  }, [grade, materialType, termFilter, selectedSubjects, searchQuery, year, pathname, router]);
+
+  const handleGradeChange = (g: Grade) => {
+    setGrade(g);
+    if (g === 10 && (materialType === "ol-past-papers" || materialType === "marking-schemes")) {
+      setMaterialType("all");
+    }
+    setSelectedSubjects(new Set());
   };
 
-  const isFiltered = query.trim() !== "" || activeFilter !== "All";
+  const toggleSubject = (subject: string) => {
+    setSelectedSubjects((prev) => {
+      const next = new Set(prev);
+      if (next.has(subject)) next.delete(subject); else next.add(subject);
+      return next;
+    });
+  };
+
+  const clearAll = () => {
+    setGrade(10);
+    setMaterialType("all");
+    setTermFilter(null);
+    setSelectedSubjects(new Set());
+    setSearchQuery("");
+    setYear(null);
+  };
+
+  /* Client-side filtering */
+  const filtered = useMemo<FreeResource[]>(() => {
+    return FREE_RESOURCES.filter((r) => {
+      if (r.grade !== grade) return false;
+      if (materialType !== "all") {
+        if (r.type !== materialType) return false;
+        if (materialType === "term-test" && termFilter !== null && r.term !== termFilter) return false;
+      }
+      if (selectedSubjects.size > 0 && !selectedSubjects.has(r.subject)) return false;
+      if (year !== null && r.year !== year) return false;
+      if (searchQuery.trim()) {
+        const q = searchQuery.toLowerCase();
+        if (
+          !r.title.toLowerCase().includes(q) &&
+          !r.subject.toLowerCase().includes(q) &&
+          !(r.description ?? "").toLowerCase().includes(q)
+        ) return false;
+      }
+      return true;
+    });
+  }, [grade, materialType, termFilter, selectedSubjects, year, searchQuery]);
+
+  const availableYears = useMemo<number[]>(() => {
+    const years = new Set<number>();
+    FREE_RESOURCES.forEach((r) => { if (r.year) years.add(r.year); });
+    return Array.from(years).sort((a, b) => b - a);
+  }, []);
+
+  const activeFilterCount =
+    (materialType !== "all" ? 1 : 0) +
+    (termFilter !== null ? 1 : 0) +
+    selectedSubjects.size +
+    (year !== null ? 1 : 0);
+
+  const sidebarContent = (
+    <FilterSidebar
+      grade={grade}               onGradeChange={handleGradeChange}
+      materialType={materialType} onMaterialTypeChange={setMaterialType}
+      termFilter={termFilter}     onTermFilterChange={setTermFilter}
+      selectedSubjects={selectedSubjects} onToggleSubject={toggleSubject}
+      onClearAll={clearAll}       activeFilterCount={activeFilterCount}
+      year={year}                 onYearChange={setYear} availableYears={availableYears}
+    />
+  );
 
   return (
-    <section
-      id="free-resources"
-      className="section relative z-10"
-      aria-labelledby="free-resources-title"
-    >
+    <section id="free-resources" className="section relative z-10" aria-labelledby="free-resources-title">
       <div className="container-xl">
-
-        {/* ── Section header ── */}
+        {/* Header */}
         <div className="flex flex-col items-center text-center gap-4 mb-14">
           <div className="badge-gold w-fit">Completely Free</div>
-
           <h2 id="free-resources-title" className="text-balance">
-            Free Study{" "}
-            <span className="text-gradient-luminary">Materials</span>
+            Free Study <span className="text-gradient-luminary">Materials</span>
           </h2>
-
-          <p
-            className="max-w-lg text-lg leading-relaxed"
-            style={{ color: "var(--foreground-secondary)" }}
-          >
+          <p className="max-w-lg text-lg leading-relaxed text-foreground-secondary">
             High-quality notes, guides and practice packs for all O/L English
-            Medium subjects — curated by expert teachers and updated for the{" "}
-            <span style={{ color: "var(--foreground)", fontWeight: 500 }}>
-              2025 G.C.E. O/L syllabus
-            </span>.
+            Medium subjects — curated by expert teachers and updated for the 2025 syllabus.
           </p>
         </div>
 
-        {/* ── Controls: search + filter chips ── */}
-        <div className="flex flex-col gap-4 mb-10">
+        {/* Search */}
+        <div className="mb-10 max-w-2xl mx-auto">
+          <AnimatedSearchBar 
+            value={searchQuery} 
+            onChange={setSearchQuery}
+            placeholders={[
+              "Search for Grade 10 Science...",
+              "Find Mathematics short notes...",
+              "Browse free ICT past papers...",
+              "Look for Grade 11 History guides..."
+            ]}
+          />
+        </div>
 
-          {/* Search bar */}
-          <SearchBar value={query} onChange={setQuery} />
-
-          {/* Filter chips — horizontally scrollable on mobile */}
-          <div
-            className="flex items-center gap-2 overflow-x-auto scrollbar-hide pb-0.5"
-            role="group"
-            aria-label="Filter resources by subject"
+        {/* Mobile Filter Toggle */}
+        <div className="lg:hidden flex items-center justify-between mb-6">
+          <p className="text-sm text-foreground-muted">
+            <span className="text-foreground-secondary font-semibold">{filtered.length}</span>{" "}
+            resources found
+          </p>
+          <button
+            onClick={() => setShowMobileFilters(!showMobileFilters)}
+            className="btn-ghost py-2 px-4 rounded-xl text-sm font-bold flex items-center gap-2"
           >
-            {FILTER_SUBJECTS.map((subject) => {
-              const isActive = activeFilter === subject;
-              return (
-                <button
-                  key={subject}
-                  onClick={() => setActiveFilter(subject)}
-                  className={`filter-chip ${isActive ? "filter-chip-active" : ""}`}
-                  aria-pressed={isActive}
-                >
-                  {/* Active dot indicator */}
-                  {isActive && (
-                    <span
-                      className="inline-block w-1.5 h-1.5 rounded-full shrink-0"
-                      style={{ background: "#b890ff" }}
-                      aria-hidden="true"
-                    />
-                  )}
-                  {subject}
-                </button>
-              );
-            })}
+            <svg width="14" height="14" viewBox="0 0 14 14" fill="none" aria-hidden="true">
+              <path d="M1 3h12M3 7h8M5 11h4" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
+            </svg>
+            Filters {activeFilterCount > 0 && `(${activeFilterCount})`}
+          </button>
+        </div>
+
+        {/* Mobile filters panel */}
+        {showMobileFilters && (
+          <div className="lg:hidden mb-8 rounded-2xl p-5 glass-dark">
+            {sidebarContent}
           </div>
+        )}
 
-          {/* Results count + clear */}
-          <div className="flex items-center justify-between gap-4 min-h-[1.25rem]">
-            <p className="text-xs" style={{ color: "var(--foreground-muted)" }}>
-              Showing{" "}
-              <span
-                className="font-semibold"
-                style={{ color: "var(--foreground-secondary)" }}
-              >
-                {filtered.length}
-              </span>{" "}
-              of {RESOURCES.length} resources
-              {activeFilter !== "All" && (
-                <>
-                  {" "}in{" "}
-                  <span
-                    className="font-semibold"
-                    style={{ color: "var(--foreground-secondary)" }}
-                  >
-                    {activeFilter}
-                  </span>
-                </>
+        <div className="flex gap-8 items-start">
+          {/* Desktop Sidebar */}
+          <aside
+            className="hidden lg:block shrink-0 scrollbar-hide w-[260px] sticky top-20 max-h-[calc(100vh-100px)] overflow-y-auto bg-white/[0.025] border border-white/[0.07] rounded-[1.25rem] p-5 backdrop-blur-[20px]"
+          >
+            {sidebarContent}
+          </aside>
+
+          {/* Grid Area */}
+          <div className="flex-1 min-w-0">
+            {/* Results Info */}
+            <div className="flex flex-wrap items-center justify-between gap-2 mb-6">
+              <p className="text-sm font-medium text-foreground-muted">
+                Showing <span className="text-foreground">{filtered.length}</span> resources
+                {selectedSubjects.size > 0 && ` in ${selectedSubjects.size} subjects`}
+              </p>
+              {activeFilterCount > 0 && (
+                <button onClick={clearAll} className="text-xs font-bold text-arcane-400 hover:text-white transition-colors">
+                  Clear All Filters
+                </button>
               )}
-            </p>
+            </div>
 
-            {/* Clear filters link — only visible when a filter/query is active */}
-            {isFiltered && (
-              <button
-                onClick={resetAll}
-                className="text-xs font-medium shrink-0 transition-colors duration-150"
-                style={{ color: "var(--foreground-muted)" }}
+            {/* Subject Pills */}
+            {selectedSubjects.size > 0 && (
+              <div className="flex flex-wrap gap-2 mb-6">
+                {Array.from(selectedSubjects).map(s => {
+                  const style = getSubjectStyle(s);
+                  return (
+                    <button
+                      key={s}
+                      onClick={() => toggleSubject(s)}
+                      className="chip py-1 px-3"
+                      style={{ background: style.bg, color: style.color, borderColor: style.border }}
+                    >
+                      {s} <span className="ml-1 opacity-60">×</span>
+                    </button>
+                  );
+                })}
+              </div>
+            )}
+
+            {filtered.length > 0 ? (
+              <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-5">
+                <AnimatePresence mode="popLayout">
+                  {filtered.map(r => (
+                    <motion.div
+                      key={r.id}
+                      layout
+                      initial={{ opacity: 0, y: 12 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      exit={{ opacity: 0, scale: 0.95 }}
+                      transition={{ duration: 0.22, ease: "easeOut" }}
+                    >
+                      <UniversalCard resource={r} isPremium={false} />
+                    </motion.div>
+                  ))}
+                </AnimatePresence>
+              </div>
+            ) : (
+              <motion.div 
+                initial={{ opacity: 0, scale: 0.98 }}
+                animate={{ opacity: 1, scale: 1 }}
+                className="py-24 text-center glass rounded-[2rem] flex flex-col items-center justify-center gap-5"
               >
-                Clear all
-              </button>
+                <div className="w-16 h-16 rounded-2xl flex items-center justify-center bg-amber-500/[0.06] border border-amber-500/[0.15]">
+                  <svg width="28" height="28" viewBox="0 0 24 24" fill="none" className="text-luminary-500">
+                    <circle cx="11" cy="11" r="8" stroke="currentColor" strokeWidth="1.5" />
+                    <path d="M21 21l-4.35-4.35" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
+                    <path d="M8 11h6M11 8v6" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" transform="rotate(45 11 11)" />
+                  </svg>
+                </div>
+                <div>
+                  <h3 className="font-display font-bold text-lg text-foreground">No matches found</h3>
+                  <p className="text-sm mt-1 text-foreground-muted">
+                    Try adjusting your filters or search query to find what you're looking for.
+                  </p>
+                </div>
+                <button onClick={clearAll} className="btn-primary px-8 py-2.5 mt-2 rounded-xl text-sm font-bold">
+                  Clear All Filters
+                </button>
+              </motion.div>
             )}
           </div>
         </div>
-
-        {/* ── Resource grid or empty state ── */}
-        {filtered.length > 0 ? (
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-            {filtered.map((r) => (
-              <ResourceCard key={r.id} r={r} />
-            ))}
-          </div>
-        ) : (
-          <EmptyState onReset={resetAll} />
-        )}
-
       </div>
     </section>
   );
