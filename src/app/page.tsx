@@ -1,155 +1,36 @@
-import Link from "next/link";
+import dynamic from "next/dynamic";
 import HeroSection from "@/components/sections/HeroSection";
+
+/**
+ * Performance Optimization: Lazy-loading below-the-fold components
+ * 
+ * FeaturesGrid and CTABanner are moved to separate components and 
+ * dynamically imported with ssr: false (where appropriate) to reduce 
+ * the initial JavaScript payload and improve Total Blocking Time (TBT).
+ */
+const FeaturesGrid = dynamic(() => import("@/components/sections/FeaturesGrid"), {
+  ssr: true, // Keep SSR true for SEO visibility of text content
+  loading: () => <div className="min-h-[400px]" />
+});
+
+const CTABanner = dynamic(() => import("@/components/sections/CTABanner"), {
+  ssr: true,
+  loading: () => <div className="min-h-[300px]" />
+});
 
 export default function HomePage() {
   return (
     <main className="relative overflow-hidden">
 
-      {/* ── Hero ── */}
+      {/* ── Hero (Critical LCP) ── */}
       <HeroSection />
 
-      {/* ── Features Grid ── */}
-      <section className="section z-10 relative">
-        <div className="container-xl">
-          <div className="text-center mb-16 space-y-4">
-            <div className="badge-gold mx-auto w-fit">Why Ape Danuma</div>
-            <h2 className="text-balance">
-              Everything you need to{" "}
-              <span className="text-gradient-luminary">ace your O/Ls</span>
-            </h2>
-            <p className="max-w-xl mx-auto" style={{ color: "var(--foreground-secondary)" }}>
-              We provide the most comprehensive, high-quality study materials designed
-              specifically for Sri Lankan English Medium students.
-            </p>
-          </div>
+      {/* ── Features Grid (Lazy) ── */}
+      <FeaturesGrid />
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-            {features.map((f, i) => (
-              <div
-                key={f.title}
-                className={`relative p-8 rounded-3xl bg-white/[0.03] border border-white/10 backdrop-blur-xl transition-all duration-500 hover:-translate-y-1 hover:bg-white/[0.06] hover:border-white/20 group ${
-                  i === 0 ? "shadow-[0_0_30px_rgba(139,92,246,0.1)]" : i === 2 ? "shadow-[0_0_30px_rgba(245,158,11,0.1)]" : ""
-                }`}
-              >
-                <div
-                  className="mb-6 flex h-12 w-12 items-center justify-center rounded-2xl text-2xl transition-transform duration-500 group-hover:scale-110"
-                  style={{
-                    background: i % 3 === 0
-                      ? "rgba(124,31,255,0.12)"
-                      : i % 3 === 2
-                      ? "rgba(245,158,11,0.12)"
-                      : "rgba(255,255,255,0.05)",
-                    border: `1px solid ${
-                      i % 3 === 0
-                        ? "rgba(124,31,255,0.25)"
-                        : i % 3 === 2
-                        ? "rgba(245,158,11,0.25)"
-                        : "rgba(255,255,255,0.08)"
-                    }`,
-                  }}
-                >
-                  {f.icon}
-                </div>
-                <p className="mb-3 font-display font-bold text-lg text-white">
-                  {f.title}
-                </p>
-                <p className="text-sm leading-relaxed text-slate-400 group-hover:text-slate-300 transition-colors">
-                  {f.description}
-                </p>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* ── CTA Banner ── */}
-      <section className="section z-10 relative">
-        <div className="container-xl">
-          <div
-            className="rounded-3xl p-12 text-center relative overflow-hidden"
-            style={{
-              background:
-                "linear-gradient(135deg, rgba(124,31,255,0.12) 0%, rgba(10,10,10,0.8) 50%, rgba(245,158,11,0.08) 100%)",
-              border: "1px solid rgba(124,31,255,0.2)",
-              boxShadow:
-                "0 0 60px rgba(124,31,255,0.1), inset 0 1px 0 rgba(255,255,255,0.06)",
-            }}
-          >
-            <div
-              className="absolute -top-20 -left-20 rounded-full opacity-30"
-              style={{
-                width: 300, height: 300,
-                background: "radial-gradient(circle, rgba(124,31,255,0.3), transparent 70%)",
-                filter: "blur(40px)",
-              }}
-            />
-            <div
-              className="absolute -bottom-20 -right-20 rounded-full opacity-20"
-              style={{
-                width: 280, height: 280,
-                background: "radial-gradient(circle, rgba(245,158,11,0.3), transparent 70%)",
-                filter: "blur(40px)",
-              }}
-            />
-
-            <div className="relative z-10 space-y-6">
-              <div className="badge-accent mx-auto w-fit">Limited Enrollment Open</div>
-              <h2 className="text-balance max-w-2xl mx-auto">
-                Your journey to{" "}
-                <span className="text-gradient-premium">fluent, powerful English</span>{" "}
-                begins today
-              </h2>
-              <p className="max-w-lg mx-auto" style={{ color: "var(--foreground-secondary)" }}>
-                Join thousands of learners who have transformed their communication,
-                careers, and confidence with Ape Danuma EM.
-              </p>
-              <div className="flex flex-wrap justify-center gap-4 pt-2">
-                <Link href="/premium-store" className="btn-primary px-10 py-3.5 text-base">Claim Your Spot</Link>
-                <Link href="/free-resources" className="btn-outline-accent px-10 py-3.5 text-base">View Curriculum</Link>
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
+      {/* ── CTA Banner (Lazy) ── */}
+      <CTABanner />
+      
     </main>
   );
 }
-
-const features = [
-  {
-    icon: "✦",
-    title: "Complete Resource Library",
-    description:
-      "Access thousands of past papers, term test papers, and model papers for all three terms in one organized place.",
-  },
-  {
-    icon: "⬡",
-    title: "All O/L Subjects Covered",
-    description:
-      "From Core subjects to Categories 1, 2, and 3, find dedicated study materials for every single subject you face.",
-  },
-  {
-    icon: "◈",
-    title: "Premium Short Notes",
-    description:
-      "Highly organized, beautifully formatted short notes designed specifically for quick revision and maximum retention.",
-  },
-  {
-    icon: "◉",
-    title: "Strictly Syllabus Aligned",
-    description:
-      "Every single note and paper is 100% aligned with the latest Sri Lankan G.C.E O/L English Medium curriculum.",
-  },
-  {
-    icon: "⬟",
-    title: "Smart Search & Filters",
-    description:
-      "Don't waste time scrolling. Find the exact grade, subject, and material type you need in seconds with our advanced filters.",
-  },
-  {
-    icon: "✧",
-    title: "High-Quality PDFs",
-    description:
-      "Crystal clear, professionally formatted PDF documents that are perfect for reading on any device or printing out.",
-  },
-];

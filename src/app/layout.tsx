@@ -5,8 +5,15 @@ import dynamic from "next/dynamic";
 import { GoogleAnalytics } from "@next/third-parties/google";
 import "./globals.css";
 import Navbar from "@/components/layout/Navbar";
-import Footer from "@/components/layout/Footer";
-import BackToTop from "@/components/ui/BackToTop";
+import FramerProvider from "@/components/providers/FramerProvider";
+
+const Footer = dynamic(() => import("@/components/layout/Footer"), { 
+  ssr: false 
+});
+
+const BackToTop = dynamic(() => import("@/components/ui/BackToTop"), { 
+  ssr: false 
+});
 
 const BackgroundClouds = dynamic(() => import("@/components/layout/BackgroundClouds"), { 
   ssr: false 
@@ -24,14 +31,14 @@ const inter = Inter({
   subsets: ["latin"],
   variable: "--font-inter",
   display: "swap",
-  weight: ["400", "500", "600", "700"], // Removed 300
+  weight: ["400", "500", "600", "700"],
 });
 
 const poppins = Poppins({
   subsets: ["latin"],
   variable: "--font-poppins",
   display: "swap",
-  weight: ["600", "700", "800"], // Removed 400, 500, 900
+  weight: ["600", "700", "800"],
 });
 
 export const metadata: Metadata = {
@@ -99,7 +106,7 @@ export const viewport: Viewport = {
   colorScheme: "dark",
   width: "device-width",
   initialScale: 1,
-  maximumScale: 5, // Accessibility: allow users to zoom
+  maximumScale: 5,
 };
 
 export default function RootLayout({
@@ -126,33 +133,32 @@ export default function RootLayout({
   };
 
   return (
-    // suppressHydrationWarning added to html to prevent mismatches from browser extensions and GA injections
     <html lang="en" className={`${inter.variable} ${poppins.variable}`} suppressHydrationWarning>
       <body className="antialiased selection:bg-purple-500/30 selection:text-white">
-        <script
-          type="application/ld+json"
-          dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
-        />
-        {gaId && <GoogleAnalytics gaId={gaId} />}
-        
-        <BackgroundClouds />
-        <BackgroundEffects />
-        
-        <Navbar />
-        
-        {/* Audit: min-h-screen replaced with min-h-dvh for better mobile viewport (iOS Safari fix) */}
-        <div className="pt-[68px] min-h-dvh flex flex-col">
-          <main className="flex-1">
-            {children}
-          </main>
-          <Footer />
-        </div>
+        <FramerProvider>
+          <script
+            type="application/ld+json"
+            dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+          />
+          {gaId && <GoogleAnalytics gaId={gaId} />}
+          
+          <BackgroundClouds />
+          <BackgroundEffects />
+          
+          <Navbar />
+          
+          <div className="pt-[68px] min-h-dvh flex flex-col">
+            <main className="flex-1">
+              {children}
+            </main>
+            <Footer />
+          </div>
 
-        <ToastProvider />
-        <BackToTop />
-        
-        {/* Audit: PayHere script uses lazyOnload to improve Initial Page Load performance */}
-        <Script src="https://www.payhere.lk/lib/payhere.js" strategy="lazyOnload" />
+          <ToastProvider />
+          <BackToTop />
+          
+          <Script src="https://www.payhere.lk/lib/payhere.js" strategy="lazyOnload" />
+        </FramerProvider>
       </body>
     </html>
   );
